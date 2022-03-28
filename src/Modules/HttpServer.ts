@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-export * from 'src/Ignite'
+import { Http } from '@athenna/http'
 
-export * from 'src/Modules/HttpRoute'
-export * from 'src/Modules/HttpServer'
+export const Server = ioc.use<Http>('Athenna/Core/HttpServer')

@@ -21,7 +21,7 @@ _Put an `x` in the boxes that apply. You can also fill these out after creating 
 them, don't hesitate to ask. We're here to help! This is simply a reminder of what we are going to look for before
 merging your code._
 
-- [ ] I have read the [CONTRIBUTING](https://github.com/AthennaIO/Template/blob/master/CONTRIBUTING.md) documentation
+- [ ] I have read the [CONTRIBUTING](https://github.com/AthennaIO/Core/blob/master/CONTRIBUTING.md) documentation
 - [ ] Lint and unit tests pass locally with my changes
 - [ ] I have added tests that prove my fix is effective or that my feature works.
 - [ ] I have added necessary documentation (if appropriate)

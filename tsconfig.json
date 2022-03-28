@@ -21,7 +21,13 @@
       "src/*": ["src/*"],
       "tests/*": ["tests/*"]
     },
-    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "jest",
+      "mocha",
+      "@athenna/ioc",
+      "@athenna/config/src/Utils/global"
+    ],
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["*.ts", "**/*.ts"],
   "exclude": ["node_modules", "build", "dist", "tests"]
