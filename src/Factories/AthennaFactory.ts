@@ -7,12 +7,14 @@
  * file that was distributed with this source code.
  */
 
+import { Logger } from '@athenna/logger'
 import { parse, normalize } from 'path'
 import { Http, Router } from '@athenna/http'
 import { resolveEnvFile } from '@athenna/config'
 import { Path, Config as SecConfig, Is } from '@secjs/utils'
 
 export class AthennaFactory {
+  private static logger: Logger
   private static extension: '.js' | '.ts'
 
   private static bootProviders() {
@@ -20,14 +22,19 @@ export class AthennaFactory {
 
     providers.forEach(Provider => {
       if (Is.Class(Provider)) {
+        AthennaFactory.logger.log(`Booting ${Provider.name}`)
+
         return new Provider().boot()
       }
 
       if (Is.Object(Provider) && !Provider.default) {
         const firstProviderKey = Object.keys(Provider)[0]
+        AthennaFactory.logger.log(`Booting ${firstProviderKey}`)
 
         return new Provider[firstProviderKey]().boot()
       }
+
+      AthennaFactory.logger.log(`Booting ${Provider.default.name}`)
 
       // eslint-disable-next-line new-cap
       return new Provider.default().boot()
@@ -39,14 +46,19 @@ export class AthennaFactory {
 
     providers.forEach(Provider => {
       if (Is.Class(Provider)) {
+        AthennaFactory.logger.log(`Registering ${Provider.name}`)
+
         return new Provider().register()
       }
 
       if (Is.Object(Provider) && !Provider.default) {
         const firstProviderKey = Object.keys(Provider)[0]
+        AthennaFactory.logger.log(`Registering ${firstProviderKey}`)
 
         return new Provider[firstProviderKey]().register()
       }
+
+      AthennaFactory.logger.log(`Registering ${Provider.default.name}`)
 
       // eslint-disable-next-line new-cap
       return new Provider.default().register()
@@ -57,7 +69,10 @@ export class AthennaFactory {
     const preloads = Config.get('app.preloads')
 
     preloads.forEach(preload => {
-      const { dir, name } = parse(Path.pwd(normalize(preload)))
+      preload = normalize(preload)
+
+      const { dir, name } = parse(Path.pwd(preload))
+      AthennaFactory.logger.log(`Preloading ${preload} file`)
 
       require(`${dir}/${name}${this.extension}`)
     })
@@ -76,17 +91,29 @@ export class AthennaFactory {
     secConfig.load(Path.config(`app${AthennaFactory.extension}`))
     Config.load(Path.config())
 
+    AthennaFactory.logger = new Logger().channel('application', {
+      formatterConfig: {
+        context: AthennaFactory.name,
+      },
+    })
+
     AthennaFactory.registerProviders()
     AthennaFactory.bootProviders()
     AthennaFactory.preloadFiles()
   }
 
-  http(): Http {
+  async http(): Promise<Http> {
     const http = ioc.use<Http>('Athenna/Core/HttpServer')
     const route = ioc.use<Router>('Athenna/Core/HttpRoute')
 
     route.register()
-    http.listen(Config.get('app.port'), Config.get('app.host'))
+
+    const port = Config.get('app.port')
+    const host = Config.get('app.host')
+
+    await http.listen(port, host)
+
+    AthennaFactory.logger.log(`Http server started on http://${host}:${port}`)
 
     return http
   }

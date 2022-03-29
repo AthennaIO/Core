@@ -21,7 +21,6 @@ export default {
   | other location.
   |
   */
-
   name: Env('APP_NAME', 'Athenna') || require('../package.json').name,
 
   /*
@@ -173,5 +172,5 @@ export default {
   | array.
   |
   */
-  preloads: ['./start/routes', './start/kernel'],
+  preloads: ['./start/routes'],
 }

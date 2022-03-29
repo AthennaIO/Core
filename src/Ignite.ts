@@ -28,7 +28,7 @@ export class Ignite {
   // TODO
   // command() {}
 
-  httpServer(): Http {
+  async httpServer(): Promise<Http> {
     return this.athennaFactory.http()
   }
 }

@@ -18,7 +18,7 @@ describe('\n IgniteTest', () => {
   })
 
   it('should be able to ignite an Athenna http project', async () => {
-    const app = new Ignite(__filename).httpServer()
+    const app = await new Ignite(__filename).httpServer()
 
     expect(Env('APP_NAME')).toBe('Athenna')
     expect(Env('APP_DOMAIN')).toBe('http://localhost:1335')

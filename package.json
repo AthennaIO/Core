@@ -156,6 +156,7 @@
     "@athenna/config": "1.0.4",
     "@athenna/http": "1.0.3",
     "@athenna/ioc": "1.0.3",
+    "@athenna/logger": "1.0.2",
     "@secjs/utils": "1.8.0",
     "reflect-metadata": "0.1.13",
     "tscpaths": "0.0.9"
