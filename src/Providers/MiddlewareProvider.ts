@@ -7,16 +7,14 @@
  * file that was distributed with this source code.
  */
 
-import { Folder, Path } from '@secjs/utils'
+import { Path } from '@secjs/utils'
 import { ServiceProvider } from '@athenna/ioc'
+import { getAppFiles } from 'src/Utils/getAppFiles'
 import { ResolveClassExport } from 'src/Utils/ResolveClassExport'
 
 export class MiddlewareProvider extends ServiceProvider {
   boot(): void {
-    const middlewares = new Folder(Path.app('Http/Middlewares'))
-      .loadSync()
-      // Get all .js and .ts files but not the .d.ts.
-      .getFilesByPattern('!(*.d)*.*(js|ts)')
+    const middlewares = getAppFiles(Path.app('Http/Middlewares'))
 
     middlewares.forEach(File => {
       this.container.bind(

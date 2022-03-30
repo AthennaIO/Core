@@ -12,9 +12,9 @@ import { File, Folder, Path } from '@secjs/utils'
 
 describe('\n IgniteTest', () => {
   beforeAll(() => {
-    new File(Path.tests('Stubs/.env.testing')).loadSync().copySync(Path.pwd('.env.testing'))
+    new File(Path.tests('Stubs/.env.test')).loadSync().copySync(Path.pwd('.env.test'))
     new Folder(Path.tests('Stubs/config')).loadSync().copySync(Path.pwd('config'))
-    new Folder(Path.tests('Stubs/start')).loadSync().copySync(Path.pwd('start'))
+    new Folder(Path.tests('Stubs/routes')).loadSync().copySync(Path.pwd('routes'))
   })
 
   it('should be able to ignite an Athenna http project', async () => {
@@ -39,7 +39,7 @@ describe('\n IgniteTest', () => {
 
   afterAll(() => {
     new Folder(Path.pwd('config')).removeSync()
-    new Folder(Path.pwd('start')).removeSync()
-    new File(Path.pwd('.env.testing')).removeSync()
+    new Folder(Path.pwd('routes')).removeSync()
+    new File(Path.pwd('.env.test')).removeSync()
   })
 })
