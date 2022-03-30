@@ -17,52 +17,41 @@ export class AthennaFactory {
   private static logger: Logger
   private static extension: '.js' | '.ts'
 
-  private static bootProviders() {
+  private static getProviders() {
     const providers = Config.get('app.providers')
+    const providersNormalized: any[] = []
 
     providers.forEach(Provider => {
       if (Is.Class(Provider)) {
-        AthennaFactory.logger.log(`Booting ${Provider.name}`)
+        providersNormalized.push(Provider)
 
-        return new Provider().boot()
+        return
       }
 
       if (Is.Object(Provider) && !Provider.default) {
         const firstProviderKey = Object.keys(Provider)[0]
-        AthennaFactory.logger.log(`Booting ${firstProviderKey}`)
 
-        return new Provider[firstProviderKey]().boot()
+        providersNormalized.push(Provider[firstProviderKey])
+
+        return
       }
 
-      AthennaFactory.logger.log(`Booting ${Provider.default.name}`)
-
-      // eslint-disable-next-line new-cap
-      return new Provider.default().boot()
+      providersNormalized.push(Provider.default())
     })
+
+    providersNormalized.forEach(Provider =>
+      AthennaFactory.logger.log(`Registering ${Provider.name}`),
+    )
+
+    return providersNormalized
   }
 
-  private static registerProviders() {
-    const providers = Config.get('app.providers')
+  private static bootProviders(providers: any[]) {
+    providers.forEach(Provider => new Provider().boot())
+  }
 
-    providers.forEach(Provider => {
-      if (Is.Class(Provider)) {
-        AthennaFactory.logger.log(`Registering ${Provider.name}`)
-
-        return new Provider().register()
-      }
-
-      if (Is.Object(Provider) && !Provider.default) {
-        const firstProviderKey = Object.keys(Provider)[0]
-        AthennaFactory.logger.log(`Registering ${firstProviderKey}`)
-
-        return new Provider[firstProviderKey]().register()
-      }
-
-      AthennaFactory.logger.log(`Registering ${Provider.default.name}`)
-
-      // eslint-disable-next-line new-cap
-      return new Provider.default().register()
-    })
+  private static registerProviders(providers: any[]) {
+    providers.forEach(Provider => new Provider().register())
   }
 
   private static preloadFiles() {
@@ -97,8 +86,10 @@ export class AthennaFactory {
       },
     })
 
-    AthennaFactory.registerProviders()
-    AthennaFactory.bootProviders()
+    const providers = AthennaFactory.getProviders()
+
+    AthennaFactory.registerProviders(providers)
+    AthennaFactory.bootProviders(providers)
     AthennaFactory.preloadFiles()
   }
 
