@@ -11,7 +11,9 @@ import { Logger } from '@athenna/logger'
 import { parse, normalize } from 'path'
 import { Http, Router } from '@athenna/http'
 import { resolveEnvFile } from '@athenna/config'
-import { Path, Config as SecConfig, Is } from '@secjs/utils'
+import { Path, Config as SecConfig } from '@secjs/utils'
+import { ResolveClassExport } from 'src/Utils/ResolveClassExport'
+import { AthennaErrorHandler } from 'src/Utils/AthennaErrorHandler'
 
 export class AthennaFactory {
   private static logger: Logger
@@ -22,21 +24,7 @@ export class AthennaFactory {
     const providersNormalized: any[] = []
 
     providers.forEach(Provider => {
-      if (Is.Class(Provider)) {
-        providersNormalized.push(Provider)
-
-        return
-      }
-
-      if (Is.Object(Provider) && !Provider.default) {
-        const firstProviderKey = Object.keys(Provider)[0]
-
-        providersNormalized.push(Provider[firstProviderKey])
-
-        return
-      }
-
-      providersNormalized.push(Provider.default())
+      providersNormalized.push(ResolveClassExport.resolve(Provider))
     })
 
     providersNormalized.forEach(Provider =>
@@ -98,6 +86,8 @@ export class AthennaFactory {
   async http(): Promise<Http> {
     const http = ioc.use<Http>('Athenna/Core/HttpServer')
     const route = ioc.use<Router>('Athenna/Core/HttpRoute')
+
+    http.setErrorHandler(AthennaErrorHandler.http)
 
     route.register()
 

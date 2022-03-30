@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -128,6 +128,7 @@
       "no-useless-constructor": "off",
       "@typescript-eslint/no-useless-constructor": "off",
       "@typescript-eslint/camelcase": "off",
+      "@typescript-eslint/no-empty-function": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/interface-name-prefix": "off",
       "@typescript-eslint/no-explicit-any": "off",
@@ -145,6 +146,10 @@
     "src/*.d.ts",
     "src/**/*.js",
     "src/**/*.d.ts",
+    "container/*.js",
+    "container/*.d.ts",
+    "container/**/*.js",
+    "container/**/*.d.ts",
     "*.js",
     "*.d.ts"
   ],
@@ -155,9 +160,9 @@
   },
   "dependencies": {
     "@athenna/config": "1.0.5",
-    "@athenna/http": "1.0.4",
-    "@athenna/ioc": "1.0.3",
-    "@athenna/logger": "1.0.2",
+    "@athenna/ioc": "1.0.6",
+    "@athenna/logger": "1.0.4",
+    "@athenna/http": "1.0.5",
     "@secjs/utils": "1.8.0",
     "reflect-metadata": "0.1.13",
     "tscpaths": "0.0.9"
