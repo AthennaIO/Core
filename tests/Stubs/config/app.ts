@@ -170,5 +170,5 @@ export default {
   | array.
   |
   */
-  preloads: ['./start/routes'],
+  preloads: ['../routes/http'],
 }

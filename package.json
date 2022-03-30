@@ -9,9 +9,9 @@
   "homepage": "https://github.com/AthennaIO/Core#readme",
   "scripts": {
     "build": "tsc --project tsconfig.json && tscpaths -p tsconfig.json -s . -o .",
-    "test": "npm run lint:fix && cross-env NODE_TS=true cross-env NODE_ENV=testing jest --verbose",
-    "test:debug": "npm run lint:fix && cross-env NODE_TS=true cross-env NODE_ENV=testing cross-env DEBUG=api:* jest --verbose",
-    "lint:fix": "eslint \"{src,tests}/**/*.ts\" --fix"
+    "test": "npm run lint:fix && cross-env NODE_TS=true jest --verbose",
+    "test:debug": "DEBUG=api:* && npm run test",
+    "lint:fix": "eslint \"{src,container,tests}/**/*.ts\" --fix"
   },
   "keywords": [
     "nodejs",

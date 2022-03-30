@@ -8,16 +8,44 @@
  */
 
 import { Logger } from '@athenna/logger'
-import { parse, normalize } from 'path'
+import { normalize, parse } from 'path'
 import { Http, Router } from '@athenna/http'
 import { resolveEnvFile } from '@athenna/config'
-import { Path, Config as SecConfig } from '@secjs/utils'
+import { Config as SecConfig, Path } from '@secjs/utils'
 import { ResolveClassExport } from 'src/Utils/ResolveClassExport'
 import { AthennaErrorHandler } from 'src/Utils/AthennaErrorHandler'
 
 export class AthennaFactory {
   private static logger: Logger
   private static extension: '.js' | '.ts'
+
+  constructor(fileName: string) {
+    console.clear()
+
+    AthennaFactory.resolveNodeTs(fileName)
+
+    const secConfig = new SecConfig()
+
+    secConfig.load(Path.config(`app${AthennaFactory.extension}`))
+    process.env.NODE_ENV = SecConfig.get('app.environment')
+
+    resolveEnvFile()
+
+    secConfig.load(Path.config(`app${AthennaFactory.extension}`))
+    Config.load(Path.config())
+
+    AthennaFactory.logger = new Logger().channel('application', {
+      formatterConfig: {
+        context: AthennaFactory.name,
+      },
+    })
+
+    const providers = AthennaFactory.getProviders()
+
+    AthennaFactory.registerProviders(providers)
+    AthennaFactory.bootProviders(providers)
+    AthennaFactory.preloadFiles()
+  }
 
   private static getProviders() {
     const providers = Config.get('app.providers')
@@ -48,39 +76,20 @@ export class AthennaFactory {
     preloads.forEach(preload => {
       preload = normalize(preload)
 
-      const { dir, name } = parse(Path.pwd(preload))
+      const { dir, name } = parse(Path.config(preload))
       AthennaFactory.logger.log(`Preloading ${preload} file`)
 
       require(`${dir}/${name}${this.extension}`)
     })
   }
 
-  constructor(fileName: string) {
-    console.clear()
+  private static resolveNodeTs(fileName: string) {
+    const { ext } = parse(fileName)
 
-    AthennaFactory.resolveNodeTs(fileName)
+    if (ext === '.ts') process.env.NODE_TS = 'true'
+    else process.env.NODE_TS = 'false'
 
-    const secConfig = new SecConfig()
-
-    secConfig.load(Path.config(`app${AthennaFactory.extension}`))
-    process.env.NODE_ENV = SecConfig.get('app.environment')
-
-    resolveEnvFile()
-
-    secConfig.load(Path.config(`app${AthennaFactory.extension}`))
-    Config.load(Path.config())
-
-    AthennaFactory.logger = new Logger().channel('application', {
-      formatterConfig: {
-        context: AthennaFactory.name,
-      },
-    })
-
-    const providers = AthennaFactory.getProviders()
-
-    AthennaFactory.registerProviders(providers)
-    AthennaFactory.bootProviders(providers)
-    AthennaFactory.preloadFiles()
+    AthennaFactory.extension = ext as any
   }
 
   async http(): Promise<Http> {
@@ -99,14 +108,5 @@ export class AthennaFactory {
     AthennaFactory.logger.log(`Http server started on http://${host}:${port}`)
 
     return http
-  }
-
-  private static resolveNodeTs(fileName: string) {
-    const { ext } = parse(fileName)
-
-    if (ext === '.ts') process.env.NODE_TS = 'true'
-    else process.env.NODE_TS = 'false'
-
-    AthennaFactory.extension = ext as any
   }
 }
