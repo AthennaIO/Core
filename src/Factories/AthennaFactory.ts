@@ -68,6 +68,8 @@ export class AthennaFactory {
   }
 
   constructor(fileName: string) {
+    console.clear()
+
     AthennaFactory.resolveNodeTs(fileName)
 
     const secConfig = new SecConfig()
