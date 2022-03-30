@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { Ignite } from '../../src/Ignite'
+import { Ignite } from 'src/Ignite'
 import { File, Folder, Path } from '@secjs/utils'
 
 describe('\n IgniteTest', () => {
