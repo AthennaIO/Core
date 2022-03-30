@@ -7,7 +7,5 @@
  * file that was distributed with this source code.
  */
 
-export * from 'src/Ignite'
-
 export * from 'src/Modules/HttpRoute'
 export * from 'src/Modules/HttpServer'
