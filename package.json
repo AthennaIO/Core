@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -153,8 +153,8 @@
     }
   },
   "dependencies": {
-    "@athenna/config": "1.0.4",
-    "@athenna/http": "1.0.3",
+    "@athenna/config": "1.0.5",
+    "@athenna/http": "1.0.4",
     "@athenna/ioc": "1.0.3",
     "@athenna/logger": "1.0.2",
     "@secjs/utils": "1.8.0",

@@ -86,6 +86,8 @@ export class AthennaFactory {
     secConfig.load(Path.config(`app${AthennaFactory.extension}`))
     process.env.NODE_ENV = SecConfig.get('app.environment')
 
+    console.log(process.env.NODE_ENV)
+
     resolveEnvFile()
 
     secConfig.load(Path.config(`app${AthennaFactory.extension}`))

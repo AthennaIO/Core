@@ -1,5 +1,3 @@
-import { EnvTypeENUM } from '@athenna/config'
-
 export default {
   /*
   |--------------------------------------------------------------------------
@@ -70,7 +68,7 @@ export default {
   |
   */
 
-  port: Env({ name: 'PORT', type: EnvTypeENUM.NUMBER }, 1335),
+  port: Env('PORT', 1335),
 
   /*
     |--------------------------------------------------------------------------
