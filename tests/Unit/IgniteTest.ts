@@ -26,7 +26,7 @@ describe('\n IgniteTest', () => {
     expect(Config.get('app.name')).toBe('Athenna')
     expect(Config.get('app.domain')).toBe('http://localhost:1335')
 
-    const { json, statusCode } = await app.getServer().inject({
+    const { json, statusCode } = await app.request({
       method: 'GET',
       url: '/healthcheck',
     })

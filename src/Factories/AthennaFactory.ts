@@ -7,11 +7,12 @@
  * file that was distributed with this source code.
  */
 
+import { Path } from '@secjs/utils'
 import { Logger } from '@athenna/logger'
 import { normalize, parse } from 'path'
 import { Http, Router } from '@athenna/http'
 import { resolveEnvFile } from '@athenna/config'
-import { Config as SecConfig, Path } from '@secjs/utils'
+import { getAppEnvironment } from 'src/Utils/getAppEnvironment'
 import { ResolveClassExport } from 'src/Utils/ResolveClassExport'
 import { AthennaErrorHandler } from 'src/Utils/AthennaErrorHandler'
 
@@ -24,14 +25,11 @@ export class AthennaFactory {
 
     AthennaFactory.resolveNodeTs(fileName)
 
-    const secConfig = new SecConfig()
-
-    secConfig.load(Path.config(`app${AthennaFactory.extension}`))
-    process.env.NODE_ENV = SecConfig.get('app.environment')
+    process.env.NODE_ENV = getAppEnvironment(
+      Path.config(`app${AthennaFactory.extension}`),
+    )
 
     resolveEnvFile()
-
-    secConfig.load(Path.config(`app${AthennaFactory.extension}`))
     Config.load(Path.config())
 
     AthennaFactory.logger = new Logger().channel('application', {
