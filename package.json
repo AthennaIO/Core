@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -144,6 +144,7 @@
     }
   },
   "files": [
+    "_tsconfig.json",
     "src/*.js",
     "src/*.d.ts",
     "src/**/*.js",
