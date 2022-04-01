@@ -13,7 +13,12 @@ import { getAppFiles } from 'src/Utils/getAppFiles'
 import { ResolveClassExport } from 'src/Utils/ResolveClassExport'
 
 export class ServicesProvider extends ServiceProvider {
-  boot(): void {
+  /**
+   * Bootstrap any application services.
+   *
+   * @return void
+   */
+  public boot(): void {
     const controllers = getAppFiles(Path.app('Services'))
 
     controllers.forEach(File => {
@@ -23,6 +28,4 @@ export class ServicesProvider extends ServiceProvider {
       )
     })
   }
-
-  register(): void {}
 }
