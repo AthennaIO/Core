@@ -8,9 +8,9 @@
  */
 
 /**
- * Importing global file to add Env function
- * and Config class to global module of Node.js
+ * Importing global files to be added to global module of Node.js
  */
+import '@athenna/ioc'
 import '@athenna/config/src/Utils/global'
 
 import { Http } from '@athenna/http'
