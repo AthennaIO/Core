@@ -162,9 +162,9 @@
   },
   "dependencies": {
     "@athenna/config": "1.0.5",
-    "@athenna/ioc": "1.0.6",
-    "@athenna/logger": "1.0.4",
-    "@athenna/http": "1.0.8",
+    "@athenna/ioc": "1.0.7",
+    "@athenna/logger": "1.0.5",
+    "@athenna/http": "1.0.9",
     "@secjs/utils": "1.8.0",
     "reflect-metadata": "0.1.13",
     "tscpaths": "0.0.9"

@@ -17,7 +17,7 @@ import { ResolveClassExport } from 'src/Utils/ResolveClassExport'
 import { AthennaErrorHandler } from 'src/Utils/AthennaErrorHandler'
 
 export class AthennaFactory {
-  private static logger: Logger
+  private static logger: any
   private static extension: '.js' | '.ts'
 
   constructor(fileName: string) {
@@ -37,6 +37,16 @@ export class AthennaFactory {
         context: AthennaFactory.name,
       },
     })
+
+    if (
+      !Env('APP_DEBUG') &&
+      (Env('NODE_ENV') === 'test' || Env('NODE_ENV') === 'testing')
+    ) {
+      AthennaFactory.logger = {
+        log: () => {},
+        error: () => {},
+      }
+    }
 
     const providers = AthennaFactory.getProviders()
 
@@ -75,7 +85,7 @@ export class AthennaFactory {
       preload = normalize(preload)
 
       const { dir, name } = parse(Path.config(preload))
-      AthennaFactory.logger.log(`Preloading ${preload} file`)
+      AthennaFactory.logger.log(`Preloading ${name} file`)
 
       require(`${dir}/${name}${this.extension}`)
     })
@@ -91,8 +101,8 @@ export class AthennaFactory {
   }
 
   async http(): Promise<Http> {
-    const http = ioc.use<Http>('Athenna/Core/HttpServer')
-    const route = ioc.use<Router>('Athenna/Core/HttpRoute')
+    const http = ioc.safeUse<Http>('Athenna/Core/HttpServer')
+    const route = ioc.safeUse<Router>('Athenna/Core/HttpRoute')
 
     http.setErrorHandler(AthennaErrorHandler.http)
 

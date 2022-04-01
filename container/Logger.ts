@@ -7,6 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import { Router } from '@athenna/http'
+import { Logger as ILogger } from '@athenna/logger'
 
-export const Route = ioc.safeUse<Router>('Athenna/Core/HttpRoute')
+export const Logger = ioc.safeUse<ILogger>('Athenna/Core/Logger')

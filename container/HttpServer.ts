@@ -9,4 +9,4 @@
 
 import { Http } from '@athenna/http'
 
-export const Server = ioc.use<Http>('Athenna/Core/HttpServer')
+export const Server = ioc.safeUse<Http>('Athenna/Core/HttpServer')

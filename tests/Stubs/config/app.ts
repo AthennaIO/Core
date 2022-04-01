@@ -158,6 +158,7 @@ export default {
   providers: [
     require('@athenna/http/src/Providers/HttpServerProvider'),
     require('@athenna/http/src/Providers/HttpRouteProvider'),
+    require('@athenna/logger/src/Providers/LoggerProvider'),
   ],
 
   /*
