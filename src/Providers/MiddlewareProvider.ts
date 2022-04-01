@@ -13,7 +13,12 @@ import { getAppFiles } from 'src/Utils/getAppFiles'
 import { ResolveClassExport } from 'src/Utils/ResolveClassExport'
 
 export class MiddlewareProvider extends ServiceProvider {
-  boot(): void {
+  /**
+   * Bootstrap any application services.
+   *
+   * @return void
+   */
+  public boot(): void {
     const middlewares = getAppFiles(Path.app('Http/Middlewares'))
 
     middlewares.forEach(File => {
@@ -23,6 +28,4 @@ export class MiddlewareProvider extends ServiceProvider {
       )
     })
   }
-
-  register(): void {}
 }

@@ -71,11 +71,23 @@ export class AthennaFactory {
   }
 
   private static bootProviders(providers: any[]) {
-    providers.forEach(Provider => new Provider().boot())
+    providers.forEach(Provider => {
+      const provider = new Provider()
+
+      provider.registerAttributes()
+
+      if (provider.boot) provider.boot()
+    })
   }
 
   private static registerProviders(providers: any[]) {
-    providers.forEach(Provider => new Provider().register())
+    providers.forEach(Provider => {
+      const provider = new Provider()
+
+      provider.registerAttributes()
+
+      if (provider.register) provider.register()
+    })
   }
 
   private static preloadFiles() {
