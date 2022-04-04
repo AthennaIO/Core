@@ -21,8 +21,6 @@ export class AthennaFactory {
   private static extension: '.js' | '.ts'
 
   constructor(fileName: string) {
-    console.clear()
-
     AthennaFactory.resolveNodeTs(fileName)
 
     process.env.NODE_ENV = getAppEnvironment(
@@ -46,6 +44,8 @@ export class AthennaFactory {
         log: () => {},
         error: () => {},
       }
+    } else {
+      console.clear()
     }
 
     const providers = AthennaFactory.getProviders()
