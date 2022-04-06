@@ -197,7 +197,9 @@ export class Ignite {
       providersNormalized.push(ResolveClassExport.resolve(Provider))
     })
 
-    providersNormalized.forEach(p => this.logger.log(`Registering ${p.name}`))
+    providersNormalized.forEach(p =>
+      this.logger.success(`Registering ${p.name}`),
+    )
 
     return providersNormalized
   }
@@ -247,7 +249,7 @@ export class Ignite {
       preload = normalize(preload)
 
       const { dir, name } = parse(Path.config(preload))
-      this.logger.log(`Preloading ${name} file`)
+      this.logger.success(`Preloading ${name} file`)
 
       require(`${dir}/${name}${this.extension}`)
     })
