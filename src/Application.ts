@@ -135,7 +135,7 @@ export class Application {
 
     await this.httpServer.listen(port, host)
 
-    this.logger.log(`Http server started on http://${host}:${port}`)
+    this.logger.success(`Http server started on http://${host}:${port}`)
 
     return this.httpServer
   }
@@ -167,7 +167,7 @@ export class Application {
   private preloadFile(filePath: string) {
     const { dir, name } = parse(filePath)
 
-    this.logger.log(`Preloading ${name} file`)
+    this.logger.success(`Preloading ${name} file`)
 
     require(`${dir}/${name}${this.extension}`)
   }
@@ -184,7 +184,13 @@ export class Application {
       require(`${dir}/${name}${this.extension}`),
     )
 
+    this.logger.success('Booting the Http Kernel')
+
     const httpKernel = new HttpKernel()
+
+    /**
+     * Using getters because they are possible null
+     */
     const container = this.getContainer()
     const httpServer = this.getHttpServer()
 
@@ -210,19 +216,25 @@ export class Application {
     /**
      * Resolving global middlewares inside the Http server.
      */
-    httpKernel.globalMiddlewares.forEach(globalMiddleware => {
-      globalMiddleware = ResolveClassExport.resolve(globalMiddleware)
+    httpKernel.globalMiddlewares.forEach(Middleware => {
+      Middleware = ResolveClassExport.resolve(Middleware)
 
-      if (globalMiddleware.handle) {
-        httpServer.use(globalMiddleware.handle, 'handle')
+      if (!container.hasDependency(`App/Middlewares/${Middleware.name}`)) {
+        container.bind(`App/Middlewares/${Middleware.name}`, Middleware)
       }
 
-      if (globalMiddleware.intercept) {
-        httpServer.use(globalMiddleware.intercept, 'intercept')
+      Middleware = container.safeUse(`App/Middlewares/${Middleware.name}`)
+
+      if (Middleware.handle) {
+        httpServer.use(Middleware.handle, 'handle')
       }
 
-      if (globalMiddleware.terminate) {
-        httpServer.use(globalMiddleware.terminate, 'terminate')
+      if (Middleware.intercept) {
+        httpServer.use(Middleware.intercept, 'intercept')
+      }
+
+      if (Middleware.terminate) {
+        httpServer.use(Middleware.terminate, 'terminate')
       }
     })
   }
