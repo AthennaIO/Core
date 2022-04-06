@@ -10,7 +10,7 @@
 import { parse } from 'path'
 import { Ioc } from '@athenna/ioc'
 import { Path } from '@secjs/utils'
-import { Logger } from 'src/Utils/Logger'
+import { Logger } from '@athenna/logger'
 import { Http, Router as HttpRoute } from '@athenna/http'
 import { ResolveClassExport } from 'src/Utils/ResolveClassExport'
 import { AthennaErrorHandler } from 'src/Utils/AthennaErrorHandler'
@@ -19,6 +19,13 @@ import { AlreadyBootedException } from 'src/Exceptions/AlreadyBootedException'
 import { AlreadyShutdownException } from 'src/Exceptions/AlreadyShutdownException'
 
 export class Application {
+  /**
+   * Simple logger for Application class.
+   *
+   * @private
+   */
+  private logger: Logger
+
   /**
    * An instance of the Ioc class that is a Monostate with
    * the Awilix container inside.
@@ -42,6 +49,7 @@ export class Application {
     this.httpServer = null
     this.httpRoute = null
     this.extension = extension
+    this.logger = require('./Utils/Logger')
   }
 
   /**
@@ -127,7 +135,7 @@ export class Application {
 
     await this.httpServer.listen(port, host)
 
-    Logger.log(`Http server started on http://${host}:${port}`)
+    this.logger.log(`Http server started on http://${host}:${port}`)
 
     return this.httpServer
   }
@@ -159,7 +167,7 @@ export class Application {
   private preloadFile(filePath: string) {
     const { dir, name } = parse(filePath)
 
-    Logger.log(`Preloading ${name} file`)
+    this.logger.log(`Preloading ${name} file`)
 
     require(`${dir}/${name}${this.extension}`)
   }
