@@ -49,7 +49,7 @@ export class Application {
     this.httpServer = null
     this.httpRoute = null
     this.extension = extension
-    this.logger = require('./Utils/Logger')
+    this.logger = ResolveClassExport.resolve(require('./Utils/Logger'))
   }
 
   /**
