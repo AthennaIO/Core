@@ -15,16 +15,18 @@ describe('\n IgniteTest', () => {
     new File(Path.tests('Stubs/.env.test')).loadSync().copySync(Path.pwd('.env.test'))
     new Folder(Path.tests('Stubs/config')).loadSync().copySync(Path.pwd('config'))
     new Folder(Path.tests('Stubs/routes')).loadSync().copySync(Path.pwd('routes'))
+    new Folder(Path.tests('Stubs/app')).copySync(Path.pwd('app'))
+    new File(Path.tests('Stubs/app/Http/Kernel.ts')).copySync(Path.pwd('app/Http/Kernel.ts'))
   })
 
   it('should be able to ignite an Athenna http project', async () => {
-    const app = await new Ignite(__filename).httpServer()
+    const app = await new Ignite(__filename).createApplication().bootHttpServer()
 
     expect(Env('APP_NAME')).toBe('Athenna')
     expect(Env('APP_DOMAIN')).toBe('http://localhost:1335')
 
     expect(Config.get('app.name')).toBe('Athenna')
-    expect(Config.get('app.domain')).toBe('http://localhost:1335')
+    expect(Config.get('http.domain')).toBe('http://localhost:1335')
 
     const { json, statusCode } = await app.request({
       method: 'GET',
@@ -38,6 +40,7 @@ describe('\n IgniteTest', () => {
   })
 
   afterAll(() => {
+    new Folder(Path.pwd('app')).removeSync()
     new Folder(Path.pwd('config')).removeSync()
     new Folder(Path.pwd('routes')).removeSync()
     new File(Path.pwd('.env.test')).removeSync()

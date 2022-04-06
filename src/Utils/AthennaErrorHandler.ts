@@ -16,7 +16,7 @@ export class AthennaErrorHandler {
   // static worker() {}
 
   // TODO
-  // static command() {}
+  // static console() {}
 
   static http({ error, request, response }: ErrorContextContract) {
     const code = error.code || error.name
