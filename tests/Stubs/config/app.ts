@@ -7,7 +7,20 @@ export default {
   | Default environment of the application.
   |
   */
+
   environment: process.env.NODE_ENV || 'production',
+
+  /*
+  |--------------------------------------------------------------------------
+  | Application debug
+  |--------------------------------------------------------------------------
+  |
+  | Set if the application will start in debug mode or not. If in debug mode,
+  | the application will show sensitive logs and return sensitive data on errors.
+  |
+  */
+
+  debug: Env('APP_DEBUG', 'false'),
 
   /*
   |--------------------------------------------------------------------------
@@ -19,6 +32,7 @@ export default {
   | other location.
   |
   */
+
   name: Env('APP_NAME', 'Athenna') || require('../package.json').name,
 
   /*
@@ -31,6 +45,7 @@ export default {
   | other location.
   |
   */
+
   version: require('../package.json').version,
 
   /*
@@ -45,42 +60,6 @@ export default {
   */
 
   description: Env('APP_DESCRIPTION', 'Athenna Framework'),
-
-  /*
-  |--------------------------------------------------------------------------
-  | Application host
-  |--------------------------------------------------------------------------
-  |
-  | This value is the HOST of your application and its used to access your
-  | application.
-  |
-  */
-
-  host: Env('HOST', '127.0.0.1'),
-
-  /*
-  |--------------------------------------------------------------------------
-  | Application port
-  |--------------------------------------------------------------------------
-  |
-  | This value is the PORT of your application and its used to access your
-  | application.
-  |
-  */
-
-  port: Env('PORT', 1335),
-
-  /*
-    |--------------------------------------------------------------------------
-    | Application domain
-    |--------------------------------------------------------------------------
-    |
-    | This value is the APP_DOMAIN of your application and its used to access your
-    | application.
-    |
-    */
-
-  domain: Env('APP_DOMAIN', 'http://localhost:1335'),
 
   /*
   |--------------------------------------------------------------------------
@@ -103,6 +82,7 @@ export default {
   | sitory.
   |
   */
+
   source: Env('APP_SOURCE', 'https://github.com'),
 
   /*
@@ -114,6 +94,7 @@ export default {
   | main documentation of the API.
   |
   */
+
   documentation: Env('APP_DOMAIN', 'http://localhost:1335'),
 
   /*
@@ -126,6 +107,7 @@ export default {
   | based on HTTP headers/query string.
   |
   */
+
   locale: Env('APP_LOCALE', 'pt'),
 
   /*
@@ -136,6 +118,7 @@ export default {
   | Default authorization strategy for the entire application.
   |
   */
+
   authorization: {
     defaultStrategy: 'jwt',
     jwt: {
@@ -155,6 +138,7 @@ export default {
   | this array to grant expanded functionality to your applications.
   |
   */
+
   providers: [
     require('@athenna/http/src/Providers/HttpServerProvider'),
     require('@athenna/http/src/Providers/HttpRouteProvider'),
@@ -171,5 +155,6 @@ export default {
   | array.
   |
   */
-  preloads: ['../routes/http'],
+
+  preloads: [],
 }
