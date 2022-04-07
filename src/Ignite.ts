@@ -64,25 +64,30 @@ export class Ignite {
 
     this.resolveNodeTs(fileName)
     this.resolveNodeEnv()
+  }
 
+  async fire() {
     /**
      * Load all config files of config folder
      */
-    Config.load(Path.config())
+    await Config.load(Path.config())
 
     this.clearConsole()
 
     /**
-     * Using require because logger needs to be set after
+     * Using import because logger needs to be set after
      * resolveNodeEnv method has been called.
      */
-    this.logger = ResolveClassExport.resolve(require('./Utils/Logger'))
+    this.logger = ResolveClassExport.resolve(await import('./Utils/Logger'))
 
-    const providers = this.getProviders()
+    const providers = await this.getProviders()
 
     this.registerProviders(providers)
     this.bootProviders(providers)
-    this.preloadFiles()
+
+    await this.preloadFiles()
+
+    return this.createApplication()
   }
 
   /**
@@ -104,7 +109,7 @@ export class Ignite {
    *
    * @return Application
    */
-  createApplication(): Application {
+  private createApplication(): Application {
     if (this.application) {
       throw new DuplicatedApplicationException()
     }
@@ -189,8 +194,8 @@ export class Ignite {
    *
    * @private
    */
-  private getProviders() {
-    const providers = Config.get('app.providers')
+  private async getProviders() {
+    const providers = await Promise.all(Config.get('app.providers') as any[])
     const providersNormalized: any[] = []
 
     providers.forEach(Provider => {
@@ -210,14 +215,18 @@ export class Ignite {
    *
    * @private
    */
-  private bootProviders(providers: any[]) {
-    providers.forEach(Provider => {
+  private async bootProviders(providers: any[]) {
+    const promises = providers.map(Provider => {
       const provider = new Provider()
 
       provider.registerAttributes()
 
-      if (provider.boot) provider.boot()
+      if (provider.boot) return provider.boot()
+
+      return null
     })
+
+    await Promise.all(promises)
   }
 
   /**
@@ -226,14 +235,18 @@ export class Ignite {
    *
    * @private
    */
-  private registerProviders(providers: any[]) {
-    providers.forEach(Provider => {
+  private async registerProviders(providers: any[]) {
+    const promises = providers.map(Provider => {
       const provider = new Provider()
 
       provider.registerAttributes()
 
-      if (provider.register) provider.register()
+      if (provider.register) return provider.register()
+
+      return null
     })
+
+    await Promise.all(promises)
   }
 
   /**
@@ -242,16 +255,18 @@ export class Ignite {
    *
    * @private
    */
-  private preloadFiles() {
-    const preloads = Config.get('app.preloads')
+  private async preloadFiles() {
+    const preloads = await Promise.all(Config.get('app.preloads') as any[])
 
-    preloads.forEach(preload => {
+    const promises = preloads.map(preload => {
       preload = normalize(preload)
 
       const { dir, name } = parse(Path.config(preload))
       this.logger.success(`Preloading ${name} file`)
 
-      require(`${dir}/${name}${this.extension}`)
+      return import(`${dir}/${name}${this.extension}`)
     })
+
+    await Promise.all(promises)
   }
 }

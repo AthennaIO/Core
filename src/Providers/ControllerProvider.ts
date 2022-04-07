@@ -18,14 +18,13 @@ export class ControllerProvider extends ServiceProvider {
    *
    * @return void
    */
-  public boot(): void {
-    const controllers = getAppFiles(Path.app('Http/Controllers'))
+  public async boot(): Promise<void> {
+    let controllers = getAppFiles(Path.app('Http/Controllers'))
+    controllers = await Promise.all(controllers.map(File => import(File.path)))
 
-    controllers.forEach(File => {
-      this.container.bind(
-        `App/Controllers/${File.name}`,
-        ResolveClassExport.resolve(require(File.path)),
-      )
+    controllers.forEach(Module => {
+      const Controller = ResolveClassExport.resolve(Module)
+      this.container.bind(`App/Controllers/${Controller.name}`, Controller)
     })
   }
 }
