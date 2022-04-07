@@ -28,6 +28,7 @@
       "@athenna/ioc",
       "@athenna/config/src/Utils/global"
     ],
+    "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true
   },
   "include": ["*.ts", "**/*.ts"],

@@ -1,3 +1,5 @@
+import { name, version } from '../package.json'
+
 export default {
   /*
   |--------------------------------------------------------------------------
@@ -33,7 +35,7 @@ export default {
   |
   */
 
-  name: Env('APP_NAME', 'Athenna') || require('../package.json').name,
+  name: Env('APP_NAME', 'Athenna') || name,
 
   /*
   |--------------------------------------------------------------------------
@@ -46,7 +48,7 @@ export default {
   |
   */
 
-  version: require('../package.json').version,
+  version: version,
 
   /*
   |--------------------------------------------------------------------------
@@ -140,9 +142,9 @@ export default {
   */
 
   providers: [
-    require('@athenna/http/src/Providers/HttpServerProvider'),
-    require('@athenna/http/src/Providers/HttpRouteProvider'),
-    require('@athenna/logger/src/Providers/LoggerProvider'),
+    import('@athenna/http/src/Providers/HttpServerProvider'),
+    import('@athenna/http/src/Providers/HttpRouteProvider'),
+    import('@athenna/logger/src/Providers/LoggerProvider'),
   ],
 
   /*

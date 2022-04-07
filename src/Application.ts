@@ -49,7 +49,6 @@ export class Application {
     this.httpServer = null
     this.httpRoute = null
     this.extension = extension
-    this.logger = ResolveClassExport.resolve(require('./Utils/Logger'))
   }
 
   /**
@@ -108,6 +107,10 @@ export class Application {
    * @return void
    */
   async bootHttpServer(): Promise<Http> {
+    if (!this.logger) {
+      this.logger = ResolveClassExport.resolve(await import('./Utils/Logger'))
+    }
+
     if (this.httpServer) {
       throw new AlreadyBootedException('HttpServer')
     }
@@ -120,12 +123,12 @@ export class Application {
      * extremely important to call this method before preloading
      * the routes/http file because of named middlewares
      */
-    this.resolveHttpKernel()
+    await this.resolveHttpKernel()
 
     /**
      * Preload default http route file
      */
-    this.preloadFile(Path.pwd('routes/http'))
+    await this.preloadFile(Path.pwd('routes/http'))
 
     this.httpServer.setErrorHandler(AthennaErrorHandler.http)
     this.httpRoute.register()
@@ -150,6 +153,8 @@ export class Application {
       throw new AlreadyShutdownException('HttpServer')
     }
 
+    this.logger.warn(`Http server shutdown, bye! :)`)
+
     await this.httpServer.close()
 
     this.httpRoute = null
@@ -164,12 +169,12 @@ export class Application {
    * @param filePath
    * @private
    */
-  private preloadFile(filePath: string) {
+  private async preloadFile(filePath: string) {
     const { dir, name } = parse(filePath)
 
     this.logger.success(`Preloading ${name} file`)
 
-    require(`${dir}/${name}${this.extension}`)
+    await import(`${dir}/${name}${this.extension}`)
   }
 
   /**
@@ -177,11 +182,11 @@ export class Application {
    *
    * @private
    */
-  private resolveHttpKernel() {
+  private async resolveHttpKernel() {
     const { dir, name } = parse(Path.app('Http/Kernel'))
 
     const HttpKernel = ResolveClassExport.resolve(
-      require(`${dir}/${name}${this.extension}`),
+      await import(`${dir}/${name}${this.extension}`),
     )
 
     this.logger.success('Booting the Http Kernel')

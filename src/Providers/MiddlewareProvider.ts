@@ -18,14 +18,13 @@ export class MiddlewareProvider extends ServiceProvider {
    *
    * @return void
    */
-  public boot(): void {
-    const middlewares = getAppFiles(Path.app('Http/Middlewares'))
+  public async boot(): Promise<void> {
+    let middlewares = getAppFiles(Path.app('Http/Middlewares'))
+    middlewares = await Promise.all(middlewares.map(File => import(File.path)))
 
-    middlewares.forEach(File => {
-      this.container.bind(
-        `App/Middlewares/${File.name}`,
-        ResolveClassExport.resolve(require(File.path)),
-      )
+    middlewares.forEach(Module => {
+      const Controller = ResolveClassExport.resolve(Module)
+      this.container.bind(`App/Middlewares/${Controller.name}`, Controller)
     })
   }
 }

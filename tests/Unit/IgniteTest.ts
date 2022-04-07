@@ -20,7 +20,8 @@ describe('\n IgniteTest', () => {
   })
 
   it('should be able to ignite an Athenna http project', async () => {
-    const app = await new Ignite(__filename).createApplication().bootHttpServer()
+    const application = await new Ignite(__filename).fire()
+    const httpServer = await application.bootHttpServer()
 
     expect(Env('APP_NAME')).toBe('Athenna')
     expect(Env('APP_DOMAIN')).toBe('http://localhost:1335')
@@ -28,7 +29,7 @@ describe('\n IgniteTest', () => {
     expect(Config.get('app.name')).toBe('Athenna')
     expect(Config.get('http.domain')).toBe('http://localhost:1335')
 
-    const { json, statusCode } = await app.request({
+    const { json, statusCode } = await httpServer.request({
       method: 'GET',
       url: '/healthcheck',
     })
@@ -36,7 +37,7 @@ describe('\n IgniteTest', () => {
     expect(statusCode).toBe(200)
     expect(json()).toStrictEqual({ status: 'ok' })
 
-    await app.close()
+    await application.shutdownHttpServer()
   })
 
   afterAll(() => {
