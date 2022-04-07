@@ -34,4 +34,16 @@ export default {
   */
 
   domain: Env('APP_DOMAIN', 'http://localhost:1335'),
+
+  /*
+  |--------------------------------------------------------------------------
+  | Log http requests
+  |--------------------------------------------------------------------------
+  |
+  | This value defines if HttpKernel will register a Logger to log all the
+  | server requests.
+  |
+  */
+
+  log: Env('APP_DEBUG', true),
 }

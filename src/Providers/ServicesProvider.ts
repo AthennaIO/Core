@@ -7,10 +7,9 @@
  * file that was distributed with this source code.
  */
 
-import { Path } from '@secjs/utils'
+import { Path, resolveModule } from '@secjs/utils'
 import { ServiceProvider } from '@athenna/ioc'
 import { getAppFiles } from 'src/Utils/getAppFiles'
-import { ResolveClassExport } from 'src/Utils/ResolveClassExport'
 
 export class ServicesProvider extends ServiceProvider {
   /**
@@ -23,7 +22,7 @@ export class ServicesProvider extends ServiceProvider {
     services = await Promise.all(services.map(File => import(File.path)))
 
     services.forEach(Module => {
-      const Service = ResolveClassExport.resolve(Module)
+      const Service = resolveModule(Module)
       this.container.bind(`App/Services/${Service.name}`, Service)
     })
   }

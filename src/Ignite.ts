@@ -14,11 +14,10 @@ import '@athenna/ioc'
 import '@athenna/config/src/Utils/global'
 
 import { Logger } from '@athenna/logger'
-import { File, Path } from '@secjs/utils'
+import { File, Path, resolveModule } from '@secjs/utils'
 import { Application } from 'src/Application'
 import { resolveEnvFile } from '@athenna/config'
 import { normalize, parse, resolve } from 'path'
-import { ResolveClassExport } from 'src/Utils/ResolveClassExport'
 import { DuplicatedApplicationException } from 'src/Exceptions/DuplicatedApplicationException'
 
 export class Ignite {
@@ -78,12 +77,12 @@ export class Ignite {
      * Using import because logger needs to be set after
      * resolveNodeEnv method has been called.
      */
-    this.logger = ResolveClassExport.resolve(await import('./Utils/Logger'))
+    this.logger = resolveModule(await import('./Utils/Logger'))
 
     const providers = await this.getProviders()
 
-    this.registerProviders(providers)
-    this.bootProviders(providers)
+    await this.registerProviders(providers)
+    await this.bootProviders(providers)
 
     await this.preloadFiles()
 
@@ -199,7 +198,7 @@ export class Ignite {
     const providersNormalized: any[] = []
 
     providers.forEach(Provider => {
-      providersNormalized.push(ResolveClassExport.resolve(Provider))
+      providersNormalized.push(resolveModule(Provider))
     })
 
     providersNormalized.forEach(p =>

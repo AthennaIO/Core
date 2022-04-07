@@ -9,10 +9,9 @@
 
 import { parse } from 'path'
 import { Ioc } from '@athenna/ioc'
-import { Path } from '@secjs/utils'
 import { Logger } from '@athenna/logger'
+import { Path, resolveModule } from '@secjs/utils'
 import { Http, Router as HttpRoute } from '@athenna/http'
-import { ResolveClassExport } from 'src/Utils/ResolveClassExport'
 import { AthennaErrorHandler } from 'src/Utils/AthennaErrorHandler'
 import { NotBootedException } from 'src/Exceptions/NotBootedException'
 import { AlreadyBootedException } from 'src/Exceptions/AlreadyBootedException'
@@ -108,7 +107,7 @@ export class Application {
    */
   async bootHttpServer(): Promise<Http> {
     if (!this.logger) {
-      this.logger = ResolveClassExport.resolve(await import('./Utils/Logger'))
+      this.logger = resolveModule(await import('./Utils/Logger'))
     }
 
     if (this.httpServer) {
@@ -185,62 +184,12 @@ export class Application {
   private async resolveHttpKernel() {
     const { dir, name } = parse(Path.app('Http/Kernel'))
 
-    const HttpKernel = ResolveClassExport.resolve(
+    const HttpKernel = resolveModule(
       await import(`${dir}/${name}${this.extension}`),
     )
 
     this.logger.success('Booting the Http Kernel')
 
-    const httpKernel = new HttpKernel()
-
-    /**
-     * Using getters because they are possible null
-     */
-    const container = this.getContainer()
-    const httpServer = this.getHttpServer()
-
-    /**
-     * Binding the named middlewares inside the container and
-     * creating a simple alias for it.
-     */
-    Object.keys(httpKernel.namedMiddlewares).forEach(key => {
-      const Middleware = ResolveClassExport.resolve(
-        httpKernel.namedMiddlewares[key],
-      )
-
-      if (!container.hasDependency(`App/Middlewares/${Middleware.name}`)) {
-        container.bind(`App/Middlewares/${Middleware.name}`, Middleware)
-      }
-
-      container.alias(
-        `App/Middlewares/Names/${key}`,
-        `App/Middlewares/${Middleware.name}`,
-      )
-    })
-
-    /**
-     * Resolving global middlewares inside the Http server.
-     */
-    httpKernel.globalMiddlewares.forEach(Middleware => {
-      Middleware = ResolveClassExport.resolve(Middleware)
-
-      if (!container.hasDependency(`App/Middlewares/${Middleware.name}`)) {
-        container.bind(`App/Middlewares/${Middleware.name}`, Middleware)
-      }
-
-      Middleware = container.safeUse(`App/Middlewares/${Middleware.name}`)
-
-      if (Middleware.handle) {
-        httpServer.use(Middleware.handle, 'handle')
-      }
-
-      if (Middleware.intercept) {
-        httpServer.use(Middleware.intercept, 'intercept')
-      }
-
-      if (Middleware.terminate) {
-        httpServer.use(Middleware.terminate, 'terminate')
-      }
-    })
+    await new HttpKernel().registerMiddlewares()
   }
 }
