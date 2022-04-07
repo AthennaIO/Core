@@ -23,7 +23,7 @@ export default {
   | Here you may configure the log channels for your application.
   |
   | Available Drivers: "console", "debug", "file".
-  | Available Formatters: "cli", "simple", "nest", "json".
+  | Available Formatters: "cli", "simple", "nest", "json", "request".
   |
   */
 
@@ -36,6 +36,14 @@ export default {
         level: 'INFO',
         chalk: Color.cyan,
         context: 'Logger',
+      },
+    },
+    request: {
+      driver: 'console',
+      formatter: 'request',
+      streamType: 'stdout',
+      formatterConfig: {
+        method: 'GET',
       },
     },
     debug: {

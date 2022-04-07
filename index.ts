@@ -9,5 +9,4 @@
 
 export * from 'src/Ignite'
 
-export * from 'src/Utils/ResolveClassExport'
 export * from 'src/Utils/AthennaErrorHandler'
