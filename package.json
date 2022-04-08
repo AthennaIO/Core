@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "1.1.9",
+  "version": "1.2.0",
   "description": "",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -149,10 +149,6 @@
     "src/*.d.ts",
     "src/**/*.js",
     "src/**/*.d.ts",
-    "container/*.js",
-    "container/*.d.ts",
-    "container/**/*.js",
-    "container/**/*.d.ts",
     "*.js",
     "*.d.ts"
   ],
@@ -165,7 +161,7 @@
     "@athenna/config": "1.0.8",
     "@athenna/ioc": "1.1.2",
     "@athenna/logger": "1.1.4",
-    "@athenna/http": "1.1.9",
+    "@athenna/http": "1.2.0",
     "@secjs/utils": "1.8.3",
     "reflect-metadata": "0.1.13",
     "tscpaths": "0.0.9"

@@ -9,22 +9,14 @@
 
 import { parse } from 'path'
 import { Ioc } from '@athenna/ioc'
-import { Logger } from '@athenna/logger'
+import { Log } from 'src/Facades/Log'
 import { Path, resolveModule } from '@secjs/utils'
 import { Http, Router as HttpRoute } from '@athenna/http'
-import { AthennaErrorHandler } from 'src/Utils/AthennaErrorHandler'
 import { NotBootedException } from 'src/Exceptions/NotBootedException'
 import { AlreadyBootedException } from 'src/Exceptions/AlreadyBootedException'
 import { AlreadyShutdownException } from 'src/Exceptions/AlreadyShutdownException'
 
 export class Application {
-  /**
-   * Simple logger for Application class.
-   *
-   * @private
-   */
-  private logger: Logger
-
   /**
    * An instance of the Ioc class that is a Monostate with
    * the Awilix container inside.
@@ -106,10 +98,6 @@ export class Application {
    * @return void
    */
   async bootHttpServer(): Promise<Http> {
-    if (!this.logger) {
-      this.logger = resolveModule(await import('./Utils/Logger'))
-    }
-
     if (this.httpServer) {
       throw new AlreadyBootedException('HttpServer')
     }
@@ -129,7 +117,6 @@ export class Application {
      */
     await this.preloadFile(Path.pwd('routes/http'))
 
-    this.httpServer.setErrorHandler(AthennaErrorHandler.http)
     this.httpRoute.register()
 
     const port = Config.get('http.port')
@@ -137,7 +124,7 @@ export class Application {
 
     await this.httpServer.listen(port, host)
 
-    this.logger.success(`Http server started on http://${host}:${port}`)
+    Log.success(`Http server started on http://${host}:${port}`)
 
     return this.httpServer
   }
@@ -152,7 +139,7 @@ export class Application {
       throw new AlreadyShutdownException('HttpServer')
     }
 
-    this.logger.warn(`Http server shutdown, bye! :)`)
+    Log.warn(`Http server shutdown, bye! :)`)
 
     await this.httpServer.close()
 
@@ -171,7 +158,7 @@ export class Application {
   private async preloadFile(filePath: string) {
     const { dir, name } = parse(filePath)
 
-    this.logger.success(`Preloading ${name} file`)
+    Log.success(`Preloading ${name} file`)
 
     await import(`${dir}/${name}${this.extension}`)
   }
@@ -188,7 +175,7 @@ export class Application {
       await import(`${dir}/${name}${this.extension}`),
     )
 
-    this.logger.success('Booting the Http Kernel')
+    Log.success('Booting the Http Kernel')
 
     await new HttpKernel().registerMiddlewares()
   }

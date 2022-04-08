@@ -13,21 +13,14 @@
 import '@athenna/ioc'
 import '@athenna/config/src/Utils/global'
 
-import { Logger } from '@athenna/logger'
-import { File, Path, resolveModule } from '@secjs/utils'
+import { Log } from 'src/Facades/Log'
 import { Application } from 'src/Application'
 import { resolveEnvFile } from '@athenna/config'
 import { normalize, parse, resolve } from 'path'
+import { File, Path, resolveModule } from '@secjs/utils'
 import { DuplicatedApplicationException } from 'src/Exceptions/DuplicatedApplicationException'
 
 export class Ignite {
-  /**
-   * Simple logger for Ignite class.
-   *
-   * @private
-   */
-  private logger: Logger
-
   /**
    * An instance of the application. Is here that the
    * client will bootstrap his type of application.
@@ -72,12 +65,6 @@ export class Ignite {
     await Config.load(Path.config())
 
     this.clearConsole()
-
-    /**
-     * Using import because logger needs to be set after
-     * resolveNodeEnv method has been called.
-     */
-    this.logger = resolveModule(await import('./Utils/Logger'))
 
     const providers = await this.getProviders()
 
@@ -201,9 +188,7 @@ export class Ignite {
       providersNormalized.push(resolveModule(Provider))
     })
 
-    providersNormalized.forEach(p =>
-      this.logger.success(`Registering ${p.name}`),
-    )
+    providersNormalized.forEach(p => Log.success(`Registering ${p.name}`))
 
     return providersNormalized
   }
@@ -261,7 +246,7 @@ export class Ignite {
       preload = normalize(preload)
 
       const { dir, name } = parse(Path.config(preload))
-      this.logger.success(`Preloading ${name} file`)
+      Log.success(`Preloading ${name} file`)
 
       return import(`${dir}/${name}${this.extension}`)
     })

@@ -19,8 +19,7 @@
     "experimentalDecorators": true,
     "paths": {
       "src/*": ["src/*"],
-      "tests/*": ["tests/*"],
-      "container/*": ["container/*"]
+      "tests/*": ["tests/*"]
     },
     "types": [
       "jest",

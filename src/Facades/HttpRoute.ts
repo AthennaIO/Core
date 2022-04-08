@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { Facade } from 'src/Facade'
 import { Router } from '@athenna/http'
 
-export const Route = ioc.safeUse<Router>('Athenna/Core/HttpRoute')
+export const Route = Facade.createFor<Router>('Athenna/Core/HttpRoute')

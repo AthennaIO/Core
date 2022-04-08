@@ -7,5 +7,7 @@
  * file that was distributed with this source code.
  */
 
-export * from './HttpRoute'
-export * from './HttpServer'
+import { Facade } from 'src/Facade'
+import { Http } from '@athenna/http'
+
+export const HttpServer = Facade.createFor<Http>('Athenna/Core/HttpServer')
