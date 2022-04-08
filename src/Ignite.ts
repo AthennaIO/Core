@@ -159,7 +159,11 @@ export class Ignite {
         .trim()
 
       if (env.includes('process.env.NODE_ENV')) {
-        env = env.split('process.env.NODE_ENV')[1].replace(/\|\|/g, '').trim()
+        env = env
+          .split('process.env.NODE_ENV')[1]
+          .replace(/'|"/g, '')
+          .replace(/\|/g, '')
+          .trim()
       }
 
       process.env.NODE_ENV = env
