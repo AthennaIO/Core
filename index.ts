@@ -11,6 +11,6 @@ export * from 'src/Facade'
 export * from 'src/Ignite'
 export * from 'src/Application'
 
-export * from 'src/Facades/Logger'
+export * from 'src/Facades/Log'
 export * from 'src/Facades/HttpRoute'
 export * from 'src/Facades/HttpServer'
