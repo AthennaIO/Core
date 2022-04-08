@@ -10,4 +10,4 @@
 import { Facade } from 'src/Facade'
 import { Logger as ILogger } from '@athenna/logger'
 
-export const Logger = Facade.createFor<ILogger>('Athenna/Core/Logger')
+export const Log = Facade.createFor<ILogger>('Athenna/Core/Logger')
