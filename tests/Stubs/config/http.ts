@@ -45,5 +45,5 @@ export default {
   |
   */
 
-  log: Env('APP_DEBUG', true),
+  log: Env('APP_DEBUG', false),
 }

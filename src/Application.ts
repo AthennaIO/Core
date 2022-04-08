@@ -12,7 +12,6 @@ import { Ioc } from '@athenna/ioc'
 import { Logger } from '@athenna/logger'
 import { Path, resolveModule } from '@secjs/utils'
 import { Http, Router as HttpRoute } from '@athenna/http'
-import { AthennaErrorHandler } from 'src/Utils/AthennaErrorHandler'
 import { NotBootedException } from 'src/Exceptions/NotBootedException'
 import { AlreadyBootedException } from 'src/Exceptions/AlreadyBootedException'
 import { AlreadyShutdownException } from 'src/Exceptions/AlreadyShutdownException'
@@ -129,7 +128,6 @@ export class Application {
      */
     await this.preloadFile(Path.pwd('routes/http'))
 
-    this.httpServer.setErrorHandler(AthennaErrorHandler.http)
     this.httpRoute.register()
 
     const port = Config.get('http.port')

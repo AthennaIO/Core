@@ -7,5 +7,7 @@
  * file that was distributed with this source code.
  */
 
-export * from './HttpRoute'
-export * from './HttpServer'
+import { Facade } from 'src/Facade'
+import { Logger as ILogger } from '@athenna/logger'
+
+export const Logger = Facade.createFor<ILogger>('Athenna/Core/Logger')
