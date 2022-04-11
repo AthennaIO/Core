@@ -18,7 +18,9 @@ import { AlreadyShutdownException } from 'src/Exceptions/AlreadyShutdownExceptio
 
 export class Application {
   /**
-   * Simple logger for Application class.
+   * Simple logger for Application class. Application creates
+   * a new instance of Logger because providers are not
+   * registered yet.
    *
    * @private
    */
