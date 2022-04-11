@@ -22,7 +22,9 @@ import { DuplicatedApplicationException } from 'src/Exceptions/DuplicatedApplica
 
 export class Ignite {
   /**
-   * Simple logger for Ignite class.
+   * Simple logger for Ignite class. Ignite creates a new
+   * instance of Logger because providers are not registered
+   * yet.
    *
    * @private
    */
