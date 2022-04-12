@@ -184,12 +184,18 @@ export class Application {
   private async resolveHttpKernel() {
     const { dir, name } = parse(Path.app('Http/Kernel'))
 
-    const HttpKernel = resolveModule(
+    const Kernel = resolveModule(
       await import(`${dir}/${name}${this.extension}`),
     )
 
+    const kernel = new Kernel()
+
     this.logger.success('Booting the Http Kernel')
 
-    await new HttpKernel().registerMiddlewares()
+    await kernel.registerCors()
+    await kernel.registerRateLimit()
+    await kernel.registerErrorHandler()
+    await kernel.registerLogMiddleware()
+    await kernel.registerMiddlewares()
   }
 }
