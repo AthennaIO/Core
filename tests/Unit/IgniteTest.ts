@@ -29,13 +29,18 @@ describe('\n IgniteTest', () => {
     expect(Config.get('app.name')).toBe('Athenna')
     expect(Config.get('http.domain')).toBe('http://localhost:1335')
 
-    const { json, statusCode } = await httpServer.request({
+    const { json, statusCode, headers } = await httpServer.request({
       method: 'GET',
       url: '/healthcheck',
     })
 
     expect(statusCode).toBe(200)
     expect(json()).toStrictEqual({ status: 'ok' })
+
+    expect(headers['access-control-expose-headers']).toBe('*')
+    expect(headers['x-ratelimit-limit']).toBe(1000)
+    expect(headers['x-ratelimit-remaining']).toBe(999)
+    expect(headers['x-ratelimit-reset']).toBe(60)
 
     await application.shutdownHttpServer()
   })
