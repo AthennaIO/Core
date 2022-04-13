@@ -22,8 +22,10 @@ export default {
   |
   | Here you may configure the log channels for your application.
   |
-  | Available Drivers: "console", "debug", "file".
-  | Available Formatters: "cli", "simple", "nest", "json", "request".
+  | Available Drivers:
+  |   "console", "debug", "discord", "file", "null", "pino", "slack", "telegram".
+  | Available Formatters:
+  |   "cli", "simple", "nest", "json", "request", "message", "pino-pretty(only for pino driver)".
   |
   */
 
@@ -31,40 +33,85 @@ export default {
     application: {
       driver: 'console',
       formatter: 'nest',
-      streamType: 'stdout',
       formatterConfig: {
         level: 'INFO',
         chalk: Color.cyan,
         context: 'Logger',
       },
+
+      streamType: 'stdout',
     },
     request: {
       driver: 'console',
       formatter: 'request',
-      streamType: 'stdout',
       formatterConfig: {
-        method: 'GET',
+        asJson: false,
+      },
+
+      streamType: 'stdout',
+    },
+    pino: {
+      driver: 'pino',
+      formatter: 'pino-pretty',
+      formatterConfig: {
+        level: 'INFO',
+        colorize: true,
       },
     },
     debug: {
       driver: 'debug',
       formatter: 'nest',
-      namespace: 'api:main',
       formatterConfig: {
         level: 'DEBUG',
         chalk: Color.purple,
         context: 'Debugger',
       },
+
+      namespace: 'api:main',
+    },
+    discard: {
+      driver: 'null',
     },
     file: {
       driver: 'file',
       formatter: 'simple',
-      filePath: Path.noBuild().logs('athenna.log'),
       formatterConfig: {
         level: 'INFO',
         chalk: Color.cyan,
         context: 'Logger',
       },
+
+      filePath: Path.noBuild().logs('athenna.log'),
+    },
+    slack: {
+      driver: 'slack',
+      formatter: 'message',
+      formatterConfig: {
+        level: 'INFO',
+      },
+
+      url: 'your-slack-webhook-url',
+    },
+    discord: {
+      driver: 'discord',
+      formatter: 'message',
+      formatterConfig: {
+        level: 'INFO',
+      },
+
+      username: 'Athenna',
+      url: 'your-discord-webhook-url',
+    },
+    telegram: {
+      driver: 'telegram',
+      formatter: 'message',
+      formatterConfig: {
+        level: 'INFO',
+      },
+
+      token: 'your-telegram-bot-token',
+      chatId: 0,
+      parseMode: 'HTML',
     },
   },
 }
