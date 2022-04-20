@@ -11,15 +11,16 @@ import { Ignite } from 'src/Ignite'
 import { File, Folder, Path } from '@secjs/utils'
 
 describe('\n IgniteTest', () => {
-  beforeAll(() => {
+  beforeEach(() => {
     new File(Path.tests('Stubs/.env.test')).loadSync().copySync(Path.pwd('.env.test'))
     new Folder(Path.tests('Stubs/config')).loadSync().copySync(Path.pwd('config'))
     new Folder(Path.tests('Stubs/routes')).loadSync().copySync(Path.pwd('routes'))
     new Folder(Path.tests('Stubs/app')).copySync(Path.pwd('app'))
     new File(Path.tests('Stubs/app/Http/Kernel.ts')).copySync(Path.pwd('app/Http/Kernel.ts'))
+    new File(Path.tests('Stubs/app/Console/Kernel.ts')).copySync(Path.pwd('app/Console/Kernel.ts'))
   })
 
-  it('should be able to ignite an Athenna http project', async () => {
+  it('should be able to ignite an Athenna http application', async () => {
     const application = await new Ignite(__filename).fire()
     const httpServer = await application.bootHttpServer()
 
@@ -45,10 +46,25 @@ describe('\n IgniteTest', () => {
     await application.shutdownHttpServer()
   })
 
-  afterAll(() => {
-    new Folder(Path.pwd('app')).removeSync()
-    new Folder(Path.pwd('config')).removeSync()
-    new Folder(Path.pwd('routes')).removeSync()
-    new File(Path.pwd('.env.test')).removeSync()
+  it('should be able to ignite an Athenna artisan application', async () => {
+    const application = await new Ignite(__filename).fire()
+    const artisan = await application.bootArtisan()
+
+    expect(Env('APP_NAME')).toBe('Athenna')
+    expect(Env('APP_DOMAIN')).toBe('http://localhost:1335')
+
+    expect(Config.get('app.name')).toBe('Athenna')
+    expect(Config.get('http.domain')).toBe('http://localhost:1335')
+
+    await artisan.call('make:controller TestController')
+
+    await application.shutdownArtisan()
+  })
+
+  afterEach(async () => {
+    await Folder.safeRemove(Path.app())
+    await Folder.safeRemove(Path.config())
+    await Folder.safeRemove(Path.pwd('routes'))
+    await File.safeRemove(Path.pwd('.env.test'))
   })
 })

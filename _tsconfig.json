@@ -18,15 +18,15 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "paths": {
-      "app/*": ["app/*"],
-      "bootstrap/*": ["bootstrap/*"],
-      "config/*": ["config/*"],
-      "database/*": ["database/*"],
-      "lang/*": ["lang/*"],
-      "providers/*": ["providers/*"],
-      "routes/*": ["routes/*"],
-      "storage/*": ["storage/*"],
-      "tests/*": ["tests/*"]
+      "App/*": ["app/*"],
+      "Bootstrap/*": ["bootstrap/*"],
+      "Config/*": ["config/*"],
+      "Database/*": ["database/*"],
+      "Lang/*": ["lang/*"],
+      "Providers/*": ["providers/*"],
+      "Routes/*": ["routes/*"],
+      "Storage/*": ["storage/*"],
+      "Tests/*": ["tests/*"]
     },
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true

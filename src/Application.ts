@@ -11,6 +11,7 @@ import { parse } from 'path'
 import { Ioc } from '@athenna/ioc'
 import { Logger } from '@athenna/logger'
 import { Path, resolveModule } from '@secjs/utils'
+import { Artisan } from '@athenna/artisan/src/Artisan'
 import { Http, Router as HttpRoute } from '@athenna/http'
 import { NotBootedException } from 'src/Exceptions/NotBootedException'
 import { AlreadyBootedException } from 'src/Exceptions/AlreadyBootedException'
@@ -41,8 +42,27 @@ export class Application {
    * @private
    */
   private readonly extension: string
+
+  /**
+   * The http server instance.
+   *
+   * @private
+   */
   private httpServer: Http | null
+
+  /**
+   * The http route instance.
+   *
+   * @private
+   */
   private httpRoute: HttpRoute | null
+
+  /**
+   * The artisan instance.
+   *
+   * @private
+   */
+  private artisan: Artisan | null
 
   public constructor(extension: string) {
     this.container = new Ioc()
@@ -59,6 +79,20 @@ export class Application {
    */
   getContainer(): Ioc {
     return this.container
+  }
+
+  /**
+   * An instance of the Artisan class or an exception if it's not
+   * booted.
+   *
+   * @return Artisan
+   */
+  getArtisan(): Artisan {
+    if (!this.artisan) {
+      throw new NotBootedException('Artisan')
+    }
+
+    return this.artisan
   }
 
   /**
@@ -95,11 +129,49 @@ export class Application {
   // TODO
   // async shutdownWorker() {}
 
-  // TODO
-  // async bootConsole() {}
+  /**
+   * Boot a new Artisan inside this Application instance.
+   *
+   * @return void
+   */
+  async bootArtisan() {
+    if (!this.logger) {
+      this.logger = resolveModule(await import('./Utils/Logger'))
+    }
 
-  // TODO
-  // async shutdownConsole() {}
+    if (this.artisan) {
+      throw new AlreadyBootedException('Artisan')
+    }
+
+    this.artisan = this.container.safeUse<Artisan>('Athenna/Core/Artisan')
+
+    /**
+     * Resolve the Kernel file inside Console directory.
+     */
+    await this.resolveConsoleKernel()
+
+    /**
+     * Preload default console route file
+     */
+    await this.preloadFile(Path.pwd('routes/console'))
+
+    return this.artisan
+  }
+
+  /**
+   * Shutdown the Artisan inside this Application instance.
+   *
+   * @return void
+   */
+  async shutdownArtisan() {
+    if (!this.artisan) {
+      throw new AlreadyShutdownException('Artisan')
+    }
+
+    this.logger.warn(`Artisan shutdown, bye! :)`)
+
+    this.artisan = null
+  }
 
   /**
    * Boot a new HttpServer inside this Application instance.
@@ -163,7 +235,7 @@ export class Application {
   /**
    * Preload the file according to filePath. This is usefully
    * to preload default files of each type of application. Such
-   * as routes and Kernels
+   * as routes and Kernels.
    *
    * @param filePath
    * @private
@@ -177,7 +249,7 @@ export class Application {
   }
 
   /**
-   * Resolve the Kernel of the http server
+   * Resolve the Kernel of the http server.
    *
    * @private
    */
@@ -197,5 +269,24 @@ export class Application {
     await kernel.registerErrorHandler()
     await kernel.registerLogMiddleware()
     await kernel.registerMiddlewares()
+  }
+
+  /**
+   * Resolve the Kernel of the artisan/console.
+   *
+   * @private
+   */
+  private async resolveConsoleKernel() {
+    const { dir, name } = parse(Path.app('Console/Kernel'))
+
+    const Kernel = resolveModule(
+      await import(`${dir}/${name}${this.extension}`),
+    )
+
+    const kernel = new Kernel()
+
+    this.logger.success('Booting the Console Kernel')
+
+    await kernel.registerCommands()
   }
 }
