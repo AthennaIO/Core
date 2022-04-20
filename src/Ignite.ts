@@ -183,7 +183,9 @@ export class Ignite {
   private clearConsole() {
     const isNotDebugModeOrTesting =
       !Env('APP_DEBUG') &&
-      (Env('NODE_ENV') === 'test' || Env('NODE_ENV') === 'testing')
+      (Env('NODE_ENV') === 'test' ||
+        Env('NODE_ENV') === 'testing' ||
+        Env('BOOT_LOGS') === 'false')
 
     if (isNotDebugModeOrTesting) {
       return
