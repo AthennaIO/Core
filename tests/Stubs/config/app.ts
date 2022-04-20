@@ -114,24 +114,6 @@ export default {
 
   /*
   |--------------------------------------------------------------------------
-  | Default authorization strategy
-  |--------------------------------------------------------------------------
-  |
-  | Default authorization strategy for the entire application.
-  |
-  */
-
-  authorization: {
-    defaultStrategy: 'jwt',
-    jwt: {
-      secret: Env('APP_KEY', ''),
-      signOptions: { expiresIn: 18000 },
-    },
-    apiKey: Env('APP_KEY', '12345'),
-  },
-
-  /*
-  |--------------------------------------------------------------------------
   | Application providers
   |--------------------------------------------------------------------------
   |
@@ -142,6 +124,8 @@ export default {
   */
 
   providers: [
+    import('@athenna/artisan/src/Providers/ArtisanProvider'),
+    import('@athenna/artisan/src/Providers/CommandProvider'),
     import('@athenna/http/src/Providers/HttpServerProvider'),
     import('@athenna/http/src/Providers/HttpRouteProvider'),
     import('@athenna/logger/src/Providers/LoggerProvider'),

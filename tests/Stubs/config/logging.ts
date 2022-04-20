@@ -41,6 +41,15 @@ export default {
 
       streamType: 'stdout',
     },
+    console: {
+      driver: 'console',
+      formatter: 'cli',
+      streamType: 'stdout',
+      formatterConfig: {
+        level: 'INFO',
+        chalk: Color.cyan,
+      },
+    },
     request: {
       driver: 'console',
       formatter: 'request',
