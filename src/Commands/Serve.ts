@@ -32,7 +32,7 @@ export class Serve extends Command {
   public addFlags(commander: Commander): Commander {
     return commander.option(
       '-w, --watch',
-      'Watch for file changes and re-start the HTTP server on change',
+      'Watch for file changes and re-start the application on change',
       false,
     )
   }
@@ -44,6 +44,7 @@ export class Serve extends Command {
    */
   async handle(options: any): Promise<void> {
     process.env.BOOT_LOGS = 'true'
+    process.env.NODE_PATH = 'dist/'
 
     await Artisan.call('build')
 
@@ -53,9 +54,9 @@ export class Serve extends Command {
       )}`
 
       nodemon(
-        `--quiet ${ignorePaths} --watch ${Path.pwd()} --exec 'node ${Path.pwd(
+        `--quiet ${ignorePaths} --watch ${Path.pwd()} -e js,ts --exec 'node ${Path.pwd(
           'dist/bootstrap/main.js',
-        )}' -e ts`,
+        )}'`,
       )
 
       return
