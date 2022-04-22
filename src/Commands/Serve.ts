@@ -8,7 +8,6 @@
  */
 
 import nodemon from 'nodemon'
-import tsConfigPaths from 'tsconfig-paths'
 
 import { Path } from '@secjs/utils'
 import { Artisan, Command, Commander } from '@athenna/artisan'
@@ -44,30 +43,23 @@ export class Serve extends Command {
    * @return {Promise<void>}
    */
   async handle(options: any): Promise<void> {
-    const tsConfig = await import(Path.noBuild().pwd('tsconfig.json'))
-    const tsConfigCore = await import('../../_tsconfig.json')
+    process.env.BOOT_LOGS = 'true'
 
-    tsConfigPaths.register({
-      baseUrl: './dist',
-      paths: {
-        ...tsConfigCore.default.compilerOptions.paths,
-        ...tsConfig.compilerOptions.paths,
-      },
-    })
-
-    Path.switchEnvVerify()
+    await Artisan.call('build')
 
     if (options.watch) {
+      const ignorePaths = `--ignore ${Path.tests()} ${Path.storage()} ${Path.pwd(
+        'node_modules',
+      )}`
+
       nodemon(
-        `--quiet --ignore tests storage node_modules --watch '.' --exec 'ts-node ${Path.pwd(
-          'bootstrap/main.ts',
+        `--quiet ${ignorePaths} --watch ${Path.pwd()} --exec 'node ${Path.pwd(
+          'dist/bootstrap/main.js',
         )}' -e ts`,
       )
 
       return
     }
-
-    await Artisan.call('build')
 
     await import(Path.pwd('dist/bootstrap/main.js'))
   }
