@@ -79,7 +79,7 @@ export class Ignite {
      * Using import because logger needs to be set after
      * resolveNodeEnv method has been called.
      */
-    this.logger = resolveModule(await import('./Utils/Logger'))
+    this.logger = resolveModule(await import('./Utils/Logger'))()
 
     const providers = await this.getProviders()
 

@@ -136,7 +136,7 @@ export class Application {
    */
   async bootArtisan() {
     if (!this.logger) {
-      this.logger = resolveModule(await import('./Utils/Logger'))
+      this.logger = resolveModule(await import('./Utils/Logger'))()
     }
 
     if (this.artisan) {
@@ -180,7 +180,7 @@ export class Application {
    */
   async bootHttpServer(): Promise<Http> {
     if (!this.logger) {
-      this.logger = resolveModule(await import('./Utils/Logger'))
+      this.logger = resolveModule(await import('./Utils/Logger'))()
     }
 
     if (this.httpServer) {

@@ -12,8 +12,8 @@ import { Logger as AthennaLogger } from '@athenna/logger'
 /**
  * Mocking the Logger to not show Athenna logs in test environment
  */
-export const Logger: AthennaLogger =
-  Env('NODE_ENV') === 'test' || Env('BOOT_LOGS') === 'false'
+export const Logger: () => AthennaLogger = () => {
+  return Env('NODE_ENV') === 'test' || Env('BOOT_LOGS') === 'false'
     ? ({
         channel: (_channel: string, _runtimeConfig?: any) => {},
         log: (_message: any, _options: any = {}) => {},
@@ -24,3 +24,4 @@ export const Logger: AthennaLogger =
         success: (_message: any, _options: any = {}) => {},
       } as AthennaLogger)
     : new AthennaLogger()
+}
