@@ -202,6 +202,8 @@ export class Application {
      */
     await this.preloadFile(Path.pwd('routes/http'))
 
+    this.registerGracefulShutdown()
+
     this.httpRoute.register()
 
     const port = Config.get('http.port')
@@ -288,5 +290,19 @@ export class Application {
     this.logger.success('Booting the Console Kernel')
 
     await kernel.registerCommands()
+  }
+
+  /**
+   * Register graceful shutdown using config/app file.
+   *
+   * @private
+   */
+  private registerGracefulShutdown() {
+    if (!Config.get('app.gracefulShutdownCb')) {
+      return
+    }
+
+    process.on('SIGINT', Config.get('app.gracefulShutdownCb'))
+    process.on('SIGTERM', Config.get('app.gracefulShutdownCb'))
   }
 }
