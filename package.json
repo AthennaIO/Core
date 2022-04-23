@@ -30,7 +30,7 @@
     "*.d.ts"
   ],
   "dependencies": {
-    "@athenna/artisan": "1.0.9",
+    "@athenna/artisan": "1.1.0",
     "@athenna/config": "1.0.8",
     "@athenna/http": "1.3.2",
     "@athenna/ioc": "1.1.3",
