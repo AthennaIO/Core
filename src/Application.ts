@@ -268,9 +268,10 @@ export class Application {
 
     await kernel.registerCors()
     await kernel.registerRateLimit()
+    await kernel.registerMiddlewares()
     await kernel.registerErrorHandler()
     await kernel.registerLogMiddleware()
-    await kernel.registerMiddlewares()
+    await kernel.registerRequestIdMiddleware()
   }
 
   /**

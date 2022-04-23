@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -20,6 +20,25 @@
     "framework",
     "typescript"
   ],
+  "files": [
+    "_tsconfig.json",
+    "src/*.js",
+    "src/*.d.ts",
+    "src/**/*.js",
+    "src/**/*.d.ts",
+    "*.js",
+    "*.d.ts"
+  ],
+  "dependencies": {
+    "@athenna/artisan": "1.1.0",
+    "@athenna/config": "1.0.8",
+    "@athenna/http": "1.3.2",
+    "@athenna/ioc": "1.1.3",
+    "@athenna/logger": "1.1.8",
+    "@secjs/utils": "1.8.3",
+    "reflect-metadata": "0.1.13",
+    "tscpaths": "0.0.9"
+  },
   "devDependencies": {
     "@types/jest": "27.0.1",
     "@types/mocha": "9.1.0",
@@ -76,7 +95,9 @@
       "ts"
     ],
     "rootDir": ".",
-    "testRegex": "Test.ts$",
+    "testMatch": [
+      "**/tests/**/*Test.ts"
+    ],
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
@@ -144,28 +165,9 @@
       ]
     }
   },
-  "files": [
-    "_tsconfig.json",
-    "src/*.js",
-    "src/*.d.ts",
-    "src/**/*.js",
-    "src/**/*.d.ts",
-    "*.js",
-    "*.d.ts"
-  ],
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  },
-  "dependencies": {
-    "@athenna/artisan": "1.0.9",
-    "@athenna/config": "1.0.8",
-    "@athenna/http": "1.3.0",
-    "@athenna/ioc": "1.1.3",
-    "@athenna/logger": "1.1.8",
-    "@secjs/utils": "1.8.3",
-    "reflect-metadata": "0.1.13",
-    "tscpaths": "0.0.9"
   }
 }

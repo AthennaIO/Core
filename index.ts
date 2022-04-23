@@ -9,3 +9,4 @@
 
 export * from 'src/Ignite'
 export * from 'src/Application'
+export * from 'src/Exceptions/Exception'
