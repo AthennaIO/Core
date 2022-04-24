@@ -17,6 +17,7 @@ describe('\n IgniteTest', () => {
     new Folder(Path.tests('Stubs/routes')).loadSync().copySync(Path.pwd('routes'))
     new Folder(Path.tests('Stubs/app')).loadSync().copySync(Path.pwd('app'))
     new Folder(Path.tests('Stubs/app/Http/Exceptions')).loadSync().copySync(Path.pwd('app/Http/Exceptions'))
+    new Folder(Path.tests('Stubs/app/Console/Exceptions')).loadSync().copySync(Path.pwd('app/Console/Exceptions'))
     new File(Path.tests('Stubs/app/Http/Kernel.ts')).copySync(Path.pwd('app/Http/Kernel.ts'))
     new File(Path.tests('Stubs/app/Console/Kernel.ts')).copySync(Path.pwd('app/Console/Kernel.ts'))
   })
