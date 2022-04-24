@@ -290,6 +290,7 @@ export class Application {
 
     this.logger.success('Booting the Console Kernel')
 
+    await kernel.registerErrorHandler()
     await kernel.registerCommands()
   }
 
