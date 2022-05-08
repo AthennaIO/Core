@@ -21,7 +21,7 @@ export class Exception extends AbstractException {
   constructor(
     message = 'Internal server exception.',
     statusCode = 500,
-    code = 'INTERNAL_SERVER_ERROR',
+    code = 'E_RUNTIME',
     help,
   ) {
     super(message, statusCode, code, help)
