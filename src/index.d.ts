@@ -1,4 +1,22 @@
 import { Logger } from '@athenna/logger'
+import { Exception as AbstractException } from '@secjs/utils'
+
+export class Exception extends AbstractException {
+  /**
+   * Creates a new instance of Exception.
+   *
+   * @param {string} [message]
+   * @param {number} [statusCode]
+   * @param {string} [code]
+   * @param {string} [help]
+   */
+  constructor(
+    message?: string,
+    statusCode?: number,
+    code?: string,
+    help?: string,
+  )
+}
 
 export class Ignite {
   /**
