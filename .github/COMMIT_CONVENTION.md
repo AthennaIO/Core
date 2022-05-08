@@ -1,16 +1,13 @@
 ## Git Commit Message Convention
 
-Using conventional commit messages, we can automate the process of generating the CHANGELOG file. All commits messages
-will automatically be validated against the following regex.
+Using conventional commit messages, we can automate the process of generating the CHANGELOG file. All commits messages will automatically be validated against the following regex.
 
 ``` js
 /^(revert: )?(feat|fix|docs|style|refactor|perf|test|workflow|ci|chore|types|build|improvement)((.+))?: .{1,50}/
 ```
 
 ## Commit Message Format
-
-A commit message consists of a **header**, **body** and **footer**. The header has a **type**, **scope** and **
-subject**:
+A commit message consists of a **header**, **body** and **footer**. The header has a **type**, **scope** and **subject**:
 
 > The **scope** is optional
 
@@ -27,7 +24,6 @@ Prefix makes it easier to append a path to a group of routes
 5. The optional **footer** can be added after the body, followed by a blank line.
 
 ## Types
-
 Only one type can be used at a time and only following types are allowed.
 
 - feat
@@ -43,21 +39,15 @@ Only one type can be used at a time and only following types are allowed.
 - types
 - build
 
-If a type is `feat` or `fix`, then the commit will appear in the CHANGELOG.md file. However if there is any BREAKING
-CHANGE, the commit will always appear in the changelog.
+If a type is `feat` or `fix`, then the commit will appear in the CHANGELOG.md file. However if there is any BREAKING CHANGE, the commit will always appear in the changelog.
 
 ### Revert
-
-If the commit reverts a previous commit, it should begin with `revert:`, followed by the header of the reverted commit.
-In the body it should say: `This reverts commit <hash>`., where the hash is the SHA of the commit being reverted.
+If the commit reverts a previous commit, it should begin with `revert:`, followed by the header of the reverted commit. In the body it should say: `This reverts commit <hash>`., where the hash is the SHA of the commit being reverted.
 
 ## Scope
-
-The scope could be anything specifying place of the commit change. For example: `router`, `view`, `querybuilder`
-, `database`, `model` and so on.
+The scope could be anything specifying place of the commit change. For example: `router`, `view`, `querybuilder`, `database`, `model` and so on.
 
 ## Subject
-
 The subject contains succinct description of the change:
 
 - use the imperative, present tense: "change" not "changed" nor "changes".
@@ -66,13 +56,12 @@ The subject contains succinct description of the change:
 
 ## Body
 
-Just as in the **subject**, use the imperative, present tense: "change" not "changed" nor "changes". The body should
-include the motivation for the change and contrast this with previous behavior.
+Just as in the **subject**, use the imperative, present tense: "change" not "changed" nor "changes".
+The body should include the motivation for the change and contrast this with previous behavior.
 
 ## Footer
 
-The footer should contain any information about **Breaking Changes** and is also the place to reference GitHub issues
-that this commit **Closes**.
+The footer should contain any information about **Breaking Changes** and is also the place to
+reference GitHub issues that this commit **Closes**.
 
-**Breaking Changes** should start with the word `BREAKING CHANGE:` with a space or two newlines. The rest of the commit
-message is then used for this.
+**Breaking Changes** should start with the word `BREAKING CHANGE:` with a space or two newlines. The rest of the commit message is then used for this.

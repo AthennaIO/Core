@@ -7,6 +7,14 @@
  * file that was distributed with this source code.
  */
 
-export * from 'src/Ignite'
-export * from 'src/Application'
-export * from 'src/Exceptions/Exception'
+export class Bootstrap {
+  /**
+   * Executes the application.
+   *
+   * @param {string[]} args
+   * @return {string}
+   */
+  static main(...args) {
+    return `Bootstrap: ${args.join(' ')}`
+  }
+}

@@ -20,8 +20,6 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-      - name: Transpile typescript to javascript
-        run: npm run build
       - name: Automatic GitHub Release
         uses: justincy/github-action-npm-release@2.0.1
         id: release

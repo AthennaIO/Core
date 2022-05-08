@@ -1,22 +1,5 @@
-<!-- CLICK "Preview" FOR INSTRUCTIONS IN A MORE READABLE FORMAT -->
+## 👉 [Please follow one of these issue templates](https://github.com/AthennaIO/Core/issues/new/choose) 👈
 
-## Prerequisites
+<!-- Love Athenna? Please consider supporting our collective: 👉  https://opencollective.com/athenna/donate -->
 
-- Ensure the issue isn't already reported.
-- Ensure you are reporting the bug in the correct repository.
-
-*Delete the above section and the instructions in the sections below before submitting*
-
-## Description
-
-If this is a feature request, explain why it should be added. Specific use-cases and problems that it solve are best.
-
-For bug reports, please provide as much *relevant* info as possible.
-
-## Package version
-
-<!-- YOUR ANSWER -->
-
-## Error Message & Stack Trace
-
-## Relevant Information
+Note: to keep the backlog clean and actionable, issues may be immediately closed if they do not follow one of the above issue templates.
