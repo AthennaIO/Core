@@ -29,7 +29,8 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "exports": {
-    ".": "./src/index.js"
+    ".": "./src/index.js",
+    "./providers/ServiceProvider": "./src/Providers/ServiceProvider.js"
   },
   "imports": {
     "#src/*": "./src/*.js",
