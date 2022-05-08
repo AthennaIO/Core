@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -37,7 +37,7 @@
     "#tests/*": "./tests/*.js"
   },
   "dependencies": {
-    "@athenna/artisan": "1.1.6",
+    "@athenna/artisan": "1.1.7",
     "@athenna/config": "1.1.0",
     "@athenna/http": "1.3.7",
     "@athenna/ioc": "1.1.8",
