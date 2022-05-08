@@ -13,18 +13,11 @@ import { ConsoleExceptionHandler } from '@athenna/artisan'
 
 export class Handler extends ConsoleExceptionHandler {
   /**
-   * Set if error logs will come with stack.
-   *
-   * @protected
-   */
-  protected addStack = false
-
-  /**
    * The global exception handler of all Artisan commands.
    *
-   * @param error
+   * @param {any} error
    */
-  public async handle(error): Promise<void> {
+  async handle(error) {
     return super.handle(error)
   }
 }

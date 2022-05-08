@@ -9,15 +9,15 @@
 
 import { Exception } from '@secjs/utils'
 
-export class NotBootedException extends Exception {
-  public constructor(resource: string) {
-    const content = `The resource "${resource}" has not been booted.`
+export class NullApplicationException extends Exception {
+  constructor() {
+    const content = 'The application is null inside this class instance.'
 
     super(
       content,
       500,
-      'NOT_BOOTED_ERROR',
-      `Try calling "boot${resource}" method to boot this resource`,
+      'E_NULL_APPLICATION',
+      `Try calling ({yellow} "Ignite.fire") method to create the instance of the application class.`,
     )
   }
 }

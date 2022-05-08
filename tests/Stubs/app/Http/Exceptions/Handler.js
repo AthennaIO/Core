@@ -12,16 +12,16 @@ import { HttpExceptionHandler } from '@athenna/http'
 */
 
 export class Handler extends HttpExceptionHandler {
-  public constructor() {
+  constructor() {
     super()
   }
 
   /**
    * The global exception handler of all HTTP requests.
    *
-   * @param ctx
+   * @param {import('@athenna/http').ErrorContextContract} ctx
    */
-  public async handle(ctx): Promise<void> {
+  async handle(ctx) {
     return super.handle(ctx)
   }
 }

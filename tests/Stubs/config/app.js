@@ -1,4 +1,5 @@
-import { name, version } from '../package.json'
+import { Log } from '@athenna/logger'
+import { Server } from '@athenna/http'
 
 export default {
   /*
@@ -10,7 +11,7 @@ export default {
   |
   */
 
-  environment: process.env.NODE_ENV || 'production',
+  environment: process.env.NODE_ENV || 'test',
 
   /*
   |--------------------------------------------------------------------------
@@ -35,7 +36,7 @@ export default {
   |
   */
 
-  name: Env('APP_NAME', 'Athenna') || name,
+  name: Env('APP_NAME', 'Athenna') || 'Athenna',
 
   /*
   |--------------------------------------------------------------------------
@@ -48,7 +49,7 @@ export default {
   |
   */
 
-  version: version,
+  version: '1.0.0',
 
   /*
   |--------------------------------------------------------------------------
@@ -114,6 +115,22 @@ export default {
 
   /*
   |--------------------------------------------------------------------------
+  | Graceful shutdown callback
+  |--------------------------------------------------------------------------
+  |
+  | Default graceful shutdown callback configured to listen to SIGINT and
+  | SIGTERM events.
+  |
+  */
+
+  gracefulShutdown: async () => {
+    Log.warn('Athenna application gracefully shutting down.')
+
+    await Server.close()
+  },
+
+  /*
+  |--------------------------------------------------------------------------
   | Application providers
   |--------------------------------------------------------------------------
   |
@@ -124,11 +141,11 @@ export default {
   */
 
   providers: [
-    import('@athenna/artisan/src/Providers/ArtisanProvider'),
-    import('@athenna/artisan/src/Providers/CommandProvider'),
-    import('@athenna/http/src/Providers/HttpServerProvider'),
-    import('@athenna/http/src/Providers/HttpRouteProvider'),
-    import('@athenna/logger/src/Providers/LoggerProvider'),
+    import('#src/Providers/ServiceProvider'),
+    import('@athenna/artisan/providers/ArtisanProvider'),
+    import('@athenna/http/providers/HttpServerProvider'),
+    import('@athenna/http/providers/HttpRouteProvider'),
+    import('@athenna/logger/providers/LoggerProvider'),
   ],
 
   /*
@@ -142,5 +159,5 @@ export default {
   |
   */
 
-  preloads: [],
+  preloads: ['../tests/Stubs/preload.js'],
 }

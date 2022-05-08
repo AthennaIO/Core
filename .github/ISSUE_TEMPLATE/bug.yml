@@ -1,0 +1,96 @@
+name: Bug Report 🪲
+description: Create a bug report to help us improve.
+title: '[Bug]: '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Please follow these steps first:
+  - type: markdown
+    attributes:
+      value: |
+        ## Troubleshoot
+        If Athenna is not behaving the way you expect, we'd ask you to look at the [documentation](https://athenna.io/docs/getting-started) and search the issue tracker for evidence supporting your expectation. Please make reasonable efforts to troubleshoot and rule out issues with your code, the configuration, or any 3rd party libraries you might be using.
+  - type: markdown
+    attributes:
+      value: |
+        ## Ask for help through appropriate channels
+        If you feel unsure about the cause of the problem, consider asking for help on for example [StackOverflow](https://stackoverflow.com/questions/ask) or our [Discord](https://discord.gg/mZyBkA936X) before posting a bug report. The issue tracker is not a help forum.
+  - type: markdown
+    attributes:
+      value: |
+        ## Make a minimal reproduction
+        To file the report, you will need a GitHub repository with a minimal (but complete) example and simple/clear steps on how to reproduce the bug.
+
+        The simpler you can make it, the more likely we are to successfully verify and fix the bug.
+  - type: markdown
+    attributes:
+      value: |
+        :bangbang: &nbsp; Bug reports without a minimal reproduction will be rejected. :bangbang:
+
+        ---
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: |
+        The version you are using.
+        Is it the [latest](https://github.com/AthennaIO/Core/releases)? Test and see if the bug has already been fixed.
+      placeholder: ex. 1.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Please link to a repository with a minimal reproduction and describe accurately how we can reproduce/verify the bug.
+      placeholder: |
+        Example steps (replace with your own):
+        1. Clone my repository at: https://github.com/<myuser>/example
+        2. npm run install
+        3. npm run start (You should see the error come up)
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: A description of what you expect to happen.
+      placeholder: I expect to see X or Y
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Actual behavior
+      description: A clear and concise description of the unexpected behavior.
+      placeholder: A bug happened!
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Anything else that might be relevant
+    validations:
+      required: false
+  - type: textarea
+    id: envinfo
+    attributes:
+      label: Environment
+      description: |
+        Please paste the output of running `npx envinfo --system --binaries`.
+        This will be automatically formatted as a code block, so no need for backticks.
+      placeholder: |
+        System:
+          OS: macOS 12.3.1
+          CPU: (8) arm64 Apple M1 Pro
+          Memory: 130.23 MB / 16.00 GB
+          Shell: 5.8 - /opt/homebrew/bin/zsh
+        Binaries:
+          Node: 16.13.1 - ~/.nvm/versions/node/v16.13.1/bin/node
+          npm: 8.1.2 - ~/.nvm/versions/node/v16.13.1/bin/npm
+      render: Shell
+    validations:
+      required: true
