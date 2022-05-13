@@ -8,9 +8,9 @@
  */
 
 import { Exec, Folder, Path } from '@secjs/utils'
-import { ServiceProvider as ContainerServiceProvider } from '@athenna/ioc'
+import { ServiceProvider as IocServiceProvider } from '@athenna/ioc'
 
-export class ServiceProvider extends ContainerServiceProvider {
+export class ServiceProvider extends IocServiceProvider {
   /**
    * Bootstrap any application services.
    *

@@ -28,6 +28,8 @@ import { NullApplicationException } from '#src/Exceptions/NullApplicationExcepti
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
+export * from './Exceptions/Exception.js'
+
 export class Ignite {
   /**
    * Simple logger for Ignite class. Ignite creates a new
