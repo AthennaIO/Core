@@ -93,8 +93,6 @@ export class Ignite {
      */
     await Config.load(Path.config())
 
-    this.#clearConsole()
-
     this.#logger = Ignite.getLogger()
 
     const providers = await this.#getProviders()
@@ -162,26 +160,6 @@ export class Ignite {
     }
 
     EnvHelper.resolveFile()
-  }
-
-  /**
-   * Clear the console if isn't in debug mode and NODE_ENV is
-   * not set to testing environment.
-   *
-   * @private
-   */
-  #clearConsole() {
-    const isNotDebugModeOrTesting =
-      !Env('APP_DEBUG') &&
-      (Env('NODE_ENV') === 'test' ||
-        Env('NODE_ENV') === 'testing' ||
-        Env('BOOT_LOGS') === 'false')
-
-    if (isNotDebugModeOrTesting) {
-      return
-    }
-
-    console.clear()
   }
 
   /**
