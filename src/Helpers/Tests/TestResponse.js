@@ -1,65 +1,23 @@
-import { Logger } from '@athenna/logger'
-import { Exception as AbstractException } from '@secjs/utils'
-
-export class Exception extends AbstractException {
-  /**
-   * Creates a new instance of Exception.
-   *
-   * @param {string} [message]
-   * @param {number} [statusCode]
-   * @param {string} [code]
-   * @param {string} [help]
-   */
-  constructor(
-    message?: string,
-    statusCode?: number,
-    code?: string,
-    help?: string,
-  )
-}
-
-export class Ignite {
-  /**
-   * Mocking the Logger when client doesn't want to show it.
-   *
-   * @return {Logger}
-   */
-  static getLogger(): Logger
-
-  fire(): Promise<Application>
-
-  /**
-   * Get the instance of the application inside of Ignite class.
-   *
-   * @return {Application}
-   */
-  getApplication(): Application
-}
-
-export class Application {
-  /**
-   * Boot a new Artisan inside this Application instance.
-   *
-   * @return {Promise<import('@athenna/artisan').ArtisanImpl>}
-   */
-  bootArtisan(): Promise<import('@athenna/artisan').ArtisanImpl>
-
-  /**
-   * Boot a new HttpServer inside this Application instance.
-   *
-   * @return {Promise<import('@athenna/http').Http>}
-   */
-  bootHttpServer(): Promise<import('@athenna/http').Http>
-
-  /**
-   * Shutdown the HttpServer inside this Application instance.
-   *
-   * @return {Promise<void>}
-   */
-  shutdownHttpServer(): Promise<void>
-}
-
 export class TestResponse {
+  /**
+   * @type {import('@japa/assert').Assert}
+   */
+  #assert
+
+  /**
+   * @type {import('light-my-request').Response}
+   */
+  #response
+
+  /**
+   * @param {import('@japa/assert').Assert} assert
+   * @param {import('light-my-request').Response} response
+   */
+  constructor(assert, response) {
+    this.#assert = assert
+    this.#response = response
+  }
+
   /**
    * Assert the status code of the response.
    *
@@ -67,7 +25,9 @@ export class TestResponse {
    * @example
    *   response.assertStatusCode(200)
    */
-  assertStatusCode(number: number): void
+  assertStatusCode(number) {
+    this.#assert.deepEqual(this.#response.statusCode, number)
+  }
 
   /**
    * Assert the status code is not the same of the response.
@@ -76,7 +36,9 @@ export class TestResponse {
    * @example
    *   response.assertIsNotStatusCode(200)
    */
-  assertIsNotStatusCode(number: number): void
+  assertIsNotStatusCode(number) {
+    this.#assert.notDeepEqual(this.#response.statusCode, number)
+  }
 
   /**
    * Assert body (array or object) to contain a subset of the expected value.
@@ -91,7 +53,11 @@ export class TestResponse {
    *
    *   response.assertBodyContains([{ id: 1 }, { id: 2 }]) // passes
    */
-  assertBodyContains(values: any | any[]): void
+  assertBodyContains(values) {
+    const body = this.#response.json()
+
+    this.#assert.containsSubset(body, values)
+  }
 
   /**
    * Assert body (array or object) to not contain a subset of the expected value.
@@ -106,7 +72,11 @@ export class TestResponse {
    *
    *   response.assertBodyNotContains([{ id: 3 }]) // passes
    */
-  assertBodyNotContains(values: any | any[]): void
+  assertBodyNotContains(values) {
+    const body = this.#response.json()
+
+    this.#assert.notContainsSubset(body, values)
+  }
 
   /**
    * Assert body to contain a key.
@@ -117,7 +87,11 @@ export class TestResponse {
    *
    *   response.assertBodyContainsKey('id') // passes
    */
-  assertBodyContainsKey(key: string): void
+  assertBodyContainsKey(key) {
+    const body = this.#response.json()
+
+    this.#assert.property(body, key)
+  }
 
   /**
    * Assert body to not contain a key.
@@ -132,7 +106,11 @@ export class TestResponse {
    *
    *   response.assertBodyNotContainsKey('createdAt') // passes
    */
-  assertBodyNotContainsKey(key: string): void
+  assertBodyNotContainsKey(key) {
+    const body = this.#response.json()
+
+    this.#assert.notProperty(body, key)
+  }
 
   /**
    * Assert body to contain all keys.
@@ -143,7 +121,11 @@ export class TestResponse {
    *
    *   response.assertBodyContainsAllKeys(['id', 'post']) // passes
    */
-  assertBodyContainsAllKeys(keys: string[]): void
+  assertBodyContainsAllKeys(keys) {
+    const body = this.#response.json()
+
+    this.#assert.properties(body, keys)
+  }
 
   /**
    * Assert body to not contain all keys.
@@ -158,7 +140,11 @@ export class TestResponse {
    *
    *   response.assertBodyNotContainsAllKeys(['createdAt']) // passes
    */
-  assertBodyNotContainsAllKey(keys: string[]): void
+  assertBodyNotContainsAllKey(keys) {
+    const body = this.#response.json()
+
+    this.#assert.notAllProperties(body, keys)
+  }
 
   /**
    * Assert body (array or object) to be deep equal to the expected value.
@@ -173,7 +159,11 @@ export class TestResponse {
    *
    *   response.assertBodyDeepEqual([{ id: 1, name: 'post 1' }, { id: 2, name: 'post 2'}]) // passes
    */
-  assertBodyDeepEqual(values: any | any[]): void
+  assertBodyDeepEqual(values) {
+    const body = this.#response.json()
+
+    this.#assert.deepEqual(body, values)
+  }
 
   /**
    * Assert body (array or object) to be not deep equal to the expected value.
@@ -188,7 +178,11 @@ export class TestResponse {
    *
    *   response.assertBodyNotDeepEqual([{ id: 1, name: 'post 1' }, { id: 2, name: 'post 2'}]) // fails
    */
-  assertBodyNotDeepEqual(values: any | any[]): void
+  assertBodyNotDeepEqual(values) {
+    const body = this.#response.json()
+
+    this.#assert.notDeepEqual(body, values)
+  }
 
   /**
    * Assert body to be an array.
@@ -202,7 +196,11 @@ export class TestResponse {
    *
    *   response.assertBodyIsArray() // passes
    */
-  assertBodyIsArray(): void
+  assertBodyIsArray() {
+    const body = this.#response.json()
+
+    this.#assert.isArray(body)
+  }
 
   /**
    * Assert body to not be an array.
@@ -216,7 +214,11 @@ export class TestResponse {
    *
    *   response.assertBodyIsNotArray() // fails
    */
-  assertBodyIsNotArray(): void
+  assertBodyIsNotArray() {
+    const body = this.#response.json()
+
+    this.#assert.isNotArray(body)
+  }
 
   /**
    * Assert body to be an object.
@@ -230,7 +232,11 @@ export class TestResponse {
    *
    *   response.assertBodyIsObject() // fails
    */
-  assertBodyIsObject(): void
+  assertBodyIsObject() {
+    const body = this.#response.json()
+
+    this.#assert.isObject(body)
+  }
 
   /**
    * Assert body to not be an object.
@@ -244,7 +250,11 @@ export class TestResponse {
    *
    *   response.assertBodyIsObject() // passes
    */
-  assertBodyIsNotObject(): void
+  assertBodyIsNotObject() {
+    const body = this.#response.json()
+
+    this.#assert.isObject(body)
+  }
 
   /**
    * Assert header (array or object) to contain a subset of the expected value.
@@ -259,7 +269,11 @@ export class TestResponse {
    *
    *   response.assertHeaderContains([{ id: 1 }, { id: 2 }]) // passes
    */
-  assertHeaderContains(values: any | any[]): void
+  assertHeaderContains(values) {
+    const headers = this.#response.headers
+
+    this.#assert.containsSubset(headers, values)
+  }
 
   /**
    * Assert header (array or object) to not contain a subset of the expected value.
@@ -274,7 +288,11 @@ export class TestResponse {
    *
    *   response.assertHeaderContains([{ id: 1 }, { id: 2 }]) // passes
    */
-  assertHeaderNotContains(values: any | any[]): void
+  assertHeaderNotContains(values) {
+    const headers = this.#response.headers
+
+    this.#assert.notContainsSubset(headers, values)
+  }
 
   /**
    * Assert header (array or object) to be deep equal to the expected value.
@@ -289,7 +307,11 @@ export class TestResponse {
    *
    *   response.assertHeaderDeepEqual([{ id: 1, name: 'post 1' }, { id: 2, name: 'post 2'}]) // passes
    */
-  assertHeaderDeepEqual(values: any | any[]): void
+  assertHeaderDeepEqual(values) {
+    const header = this.#response.headers
+
+    this.#assert.deepEqual(header, values)
+  }
 
   /**
    * Assert header (array or object) to be not deep equal to the expected value.
@@ -304,7 +326,11 @@ export class TestResponse {
    *
    *   response.assertHeaderNotDeepEqual([{ id: 1, name: 'post 1' }, { id: 2, name: 'post 2'}]) // fails
    */
-  assertHeaderNotDeepEqual(values: any | any[]): void
+  assertHeaderNotDeepEqual(values) {
+    const headers = this.#response.headers
+
+    this.#assert.notDeepEqual(headers, values)
+  }
 
   /**
    * Assert header to contain a key.
@@ -315,7 +341,11 @@ export class TestResponse {
    *
    *   response.assertHeaderContainsKey('id') // passes
    */
-  assertHeaderContainsKey(key: string): void
+  assertHeaderContainsKey(key) {
+    const headers = this.#response.headers
+
+    this.#assert.property(headers, key)
+  }
 
   /**
    * Assert header to not contain a key.
@@ -330,76 +360,9 @@ export class TestResponse {
    *
    *   response.assertHeaderNotContainsKey('createdAt') // passes
    */
-  assertHeaderNotContainsKey(key: string): void
-}
+  assertHeaderNotContainsKey(key) {
+    const headers = this.#response.headers
 
-export class TestRequest {
-  /**
-   * Makes a request with GET http method.
-   *
-   * @param {string} url
-   * @param {import('fastify').InjectOptions} options
-   * @return {Promise<TestResponse>}
-   */
-  get(url: string, options?: any): Promise<TestResponse>
-
-  /**
-   * Makes a request with HEAD http method.
-   *
-   * @param {string} url
-   * @param {import('fastify').InjectOptions} options
-   * @return {Promise<TestResponse>}
-   */
-  head(url: string, options?: any): Promise<TestResponse>
-
-  /**
-   * Makes a request with OPTIONS http method.
-   *
-   * @param {string} url
-   * @param {import('fastify').InjectOptions} options
-   * @return {Promise<TestResponse>}
-   */
-  options(url: string, options?: any): Promise<TestResponse>
-
-  /**
-   * Makes a request with POST http method.
-   *
-   * @param {string} url
-   * @param {import('fastify').InjectOptions} options
-   * @return {Promise<TestResponse>}
-   */
-  post(url: string, options?: any): Promise<TestResponse>
-
-  /**
-   * Makes a request with PUT http method.
-   *
-   * @param {string} url
-   * @param {import('fastify').InjectOptions} options
-   * @return {Promise<TestResponse>}
-   */
-  put(url: string, options?: any): Promise<TestResponse>
-
-  /**
-   * Makes a request with PATCH http method.
-   *
-   * @param {string} url
-   * @param {import('fastify').InjectOptions} options
-   * @return {Promise<TestResponse>}
-   */
-  patch(url: string, options?: any): Promise<TestResponse>
-
-  /**
-   * Makes a request with DELETE http method.
-   *
-   * @param {string} url
-   * @param {import('fastify').InjectOptions} options
-   * @return {Promise<TestResponse>}
-   */
-  delete(url: string, options?: any): Promise<TestResponse>
-}
-
-export class TestSuite {
-  static unitSuite(suite: any): void
-
-  static end2EndSuite(suite: any): void
+    this.#assert.notProperty(headers, key)
+  }
 }
