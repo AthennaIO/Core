@@ -7,15 +7,6 @@
  * file that was distributed with this source code.
  */
 
-/**
- * @athenna/core
- *
- * (c) João Lenon <lenon@athenna.io>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 import { Ioc } from '@athenna/ioc'
 import { Logger } from '@athenna/logger'
 import { Route, Server } from '@athenna/http'
@@ -29,6 +20,9 @@ import { NullApplicationException } from '#src/Exceptions/NullApplicationExcepti
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export * from './Exceptions/Exception.js'
+export * from './Helpers/Tests/TestSuite.js'
+export * from './Helpers/Tests/TestRequest.js'
+export * from './Helpers/Tests/TestResponse.js'
 
 export class Ignite {
   /**
