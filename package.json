@@ -73,6 +73,9 @@
     "include": [
       "src/**/*.js"
     ],
+    "exclude": [
+      "src/Helpers/Tests/*.js"
+    ],
     "reporter": [
       "text-summary",
       "html"
