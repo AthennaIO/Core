@@ -14,7 +14,7 @@ export class TestSuite {
     })
   }
 
-  static end2EndSuite(suite) {
+  static httpEnd2EndSuite(suite) {
     suite.setup(async () => {
       const application = await new Ignite().fire()
 
@@ -24,6 +24,18 @@ export class TestSuite {
       TestContext.macro('application', application)
 
       return async () => await application.shutdownHttpServer()
+    })
+  }
+
+  static cliEnd2EndSuite(suite) {
+    suite.setup(async () => {
+      const application = await new Ignite().fire()
+
+      await application.bootArtisan()
+
+      TestContext.macro('application', application)
+
+      return async () => {}
     })
   }
 }
