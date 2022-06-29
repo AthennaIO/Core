@@ -1,4 +1,5 @@
 import { Logger } from '@athenna/logger'
+import { InjectOptions } from 'fastify'
 import { Exception as AbstractException } from '@secjs/utils'
 
 export class Exception extends AbstractException {
@@ -341,7 +342,7 @@ export class TestRequest {
    * @param {import('fastify').InjectOptions} options
    * @return {Promise<TestResponse>}
    */
-  get(url: string, options?: any): Promise<TestResponse>
+  get(url: string, options?: InjectOptions): Promise<TestResponse>
 
   /**
    * Makes a request with HEAD http method.
@@ -350,7 +351,7 @@ export class TestRequest {
    * @param {import('fastify').InjectOptions} options
    * @return {Promise<TestResponse>}
    */
-  head(url: string, options?: any): Promise<TestResponse>
+  head(url: string, options?: InjectOptions): Promise<TestResponse>
 
   /**
    * Makes a request with OPTIONS http method.
@@ -359,7 +360,7 @@ export class TestRequest {
    * @param {import('fastify').InjectOptions} options
    * @return {Promise<TestResponse>}
    */
-  options(url: string, options?: any): Promise<TestResponse>
+  options(url: string, options?: InjectOptions): Promise<TestResponse>
 
   /**
    * Makes a request with POST http method.
@@ -368,7 +369,7 @@ export class TestRequest {
    * @param {import('fastify').InjectOptions} options
    * @return {Promise<TestResponse>}
    */
-  post(url: string, options?: any): Promise<TestResponse>
+  post(url: string, options?: InjectOptions): Promise<TestResponse>
 
   /**
    * Makes a request with PUT http method.
@@ -377,7 +378,7 @@ export class TestRequest {
    * @param {import('fastify').InjectOptions} options
    * @return {Promise<TestResponse>}
    */
-  put(url: string, options?: any): Promise<TestResponse>
+  put(url: string, options?: InjectOptions): Promise<TestResponse>
 
   /**
    * Makes a request with PATCH http method.
@@ -386,7 +387,7 @@ export class TestRequest {
    * @param {import('fastify').InjectOptions} options
    * @return {Promise<TestResponse>}
    */
-  patch(url: string, options?: any): Promise<TestResponse>
+  patch(url: string, options?: InjectOptions): Promise<TestResponse>
 
   /**
    * Makes a request with DELETE http method.
@@ -395,11 +396,13 @@ export class TestRequest {
    * @param {import('fastify').InjectOptions} options
    * @return {Promise<TestResponse>}
    */
-  delete(url: string, options?: any): Promise<TestResponse>
+  delete(url: string, options?: InjectOptions): Promise<TestResponse>
 }
 
 export class TestSuite {
   static unitSuite(suite: any): void
 
-  static end2EndSuite(suite: any): void
+  static cliEnd2EndSuite(suite: any): void
+
+  static httpEnd2EndSuite(suite: any): void
 }
