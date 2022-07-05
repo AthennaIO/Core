@@ -15,5 +15,5 @@ export class Kernel extends ConsoleKernel {
    *
    * @return void
    */
-  commands = [...ArtisanLoader.loadHttp()]
+  commands = [...ArtisanLoader.loadCommands()]
 }
