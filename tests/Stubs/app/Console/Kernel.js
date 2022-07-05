@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { HttpCommandsLoader } from '@athenna/http'
 import { ArtisanLoader, ConsoleKernel } from '@athenna/artisan'
 
 export class Kernel extends ConsoleKernel {
@@ -15,5 +16,5 @@ export class Kernel extends ConsoleKernel {
    *
    * @return void
    */
-  commands = [...ArtisanLoader.loadCommands()]
+  commands = [...ArtisanLoader.loadCommands(), ...HttpCommandsLoader.loadCommands()]
 }
