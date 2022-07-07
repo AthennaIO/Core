@@ -10,14 +10,11 @@
 import { Ioc } from '@athenna/ioc'
 import { Logger } from '@athenna/logger'
 import { Route, Server } from '@athenna/http'
-import { Exec, File, Path } from '@secjs/utils'
-import { fileURLToPath, pathToFileURL } from 'node:url'
-import { dirname, normalize, resolve } from 'node:path'
+import { normalize, resolve } from 'node:path'
+import { File, Module, Path } from '@secjs/utils'
 import { Config, Env, EnvHelper } from '@athenna/config'
 
 import { NullApplicationException } from '#src/Exceptions/NullApplicationException'
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export * from './Exceptions/Exception.js'
 export * from './Helpers/Tests/TestSuite.js'
@@ -56,7 +53,9 @@ export class Ignite {
      * Now process.chdir is in the application root.
      */
     if (!process.env.CORE_TESTING) {
-      process.chdir(resolve(__dirname, '..', '..', '..', '..'))
+      process.chdir(
+        resolve(Module.createDirname(import.meta.url), '..', '..', '..', '..'),
+      )
     }
 
     this.#resolveNodeEnv()
@@ -164,13 +163,19 @@ export class Ignite {
    * @return {Promise<any[]>}
    */
   async #getProviders() {
-    const providers = await Promise.all(
-      Config.get('app.providers').map(p => Exec.getModule(p)),
-    )
+    const promises = Config.get('app.providers').map(module => {
+      return Module.get(module).then(provider => {
+        if (!this.#canBeBootstrapped(provider)) {
+          return null
+        }
 
-    providers.forEach(p => this.#logger.success(`Registering ${p.name}`))
+        this.#logger.success(`Registering ${provider.name}`)
 
-    return providers
+        return provider
+      })
+    })
+
+    return (await Promise.all(promises)).filter(provider => provider)
   }
 
   /**
@@ -231,6 +236,28 @@ export class Ignite {
     })
 
     await Promise.all(promises)
+  }
+
+  /**
+   * Verify if the provider can be bootstrapped.
+   *
+   * @param {import('@athenna/ioc').ServiceProvider} Provider
+   * @return {boolean}
+   */
+  #canBeBootstrapped(Provider) {
+    const provider = new Provider()
+
+    if (provider.bootstrapIn[0] === '*') {
+      return true
+    }
+
+    if (!process.env.ATHENNA_APPLICATIONS) {
+      return true
+    }
+
+    const apps = process.env.ATHENNA_APPLICATIONS.split(',')
+
+    return apps.some(app => provider.bootstrapIn.indexOf(app) >= 0)
   }
 }
 
@@ -353,9 +380,7 @@ export class Application {
    * @private
    */
   async #resolveHttpKernel() {
-    const Kernel = await Exec.getModule(
-      import(pathToFileURL(Path.http('Kernel.js')).href),
-    )
+    const Kernel = await Module.getFrom(Path.http('Kernel.js'))
 
     const kernel = new Kernel()
 
@@ -375,9 +400,7 @@ export class Application {
    * @private
    */
   async #resolveConsoleKernel() {
-    const Kernel = await Exec.getModule(
-      import(pathToFileURL(Path.console('Kernel.js')).href),
-    )
+    const Kernel = await Module.getFrom(Path.console('Kernel.js'))
 
     const kernel = new Kernel()
 
@@ -385,6 +408,7 @@ export class Application {
 
     await kernel.registerErrorHandler()
     await kernel.registerCommands()
+    await kernel.registerCustomTemplates()
   }
 
   /**

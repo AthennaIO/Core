@@ -29,6 +29,7 @@ test.group('IgniteTest', group => {
     await Folder.safeRemove(Path.routes())
     await Folder.safeRemove(Path.providers())
     await File.safeRemove(Path.pwd('.env.test'))
+    ioc.reconstruct()
   })
 
   test('should throw null application exception when application is not fired', async ({ assert }) => {
@@ -46,8 +47,12 @@ test.group('IgniteTest', group => {
   })
 
   test('should be able to ignite an Athenna http application', async ({ assert }) => {
+    process.env.ATHENNA_APPLICATIONS = 'http'
+
     const application = await new Ignite().fire()
     const httpServer = await application.bootHttpServer()
+
+    assert.isFalse(ioc.hasDependency('Athenna/Artisan/Test'))
 
     assert.equal(Env('APP_NAME'), 'Athenna')
     assert.equal(Env('APP_DOMAIN'), 'http://localhost:1335')
@@ -72,8 +77,12 @@ test.group('IgniteTest', group => {
   })
 
   test('should be able to ignite an Athenna artisan application', async ({ assert }) => {
+    process.env.ATHENNA_APPLICATIONS = 'artisan'
+
     const application = await new Ignite().fire()
     const artisan = await application.bootArtisan()
+
+    assert.isTrue(ioc.hasDependency('Athenna/Artisan/Test'))
 
     assert.equal(Env('APP_NAME'), 'Athenna')
     assert.equal(Env('APP_DOMAIN'), 'http://localhost:1335')
