@@ -82,5 +82,5 @@ test.group('IgniteTest', group => {
     assert.equal(Config.get('http.domain'), 'http://localhost:1335')
 
     await artisan.call('make:controller TestController')
-  })
+  }).pin()
 })
