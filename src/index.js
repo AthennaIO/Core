@@ -175,7 +175,7 @@ export class Ignite {
       })
     })
 
-    return Promise.all(promises)
+    return (await Promise.all(promises)).filter(provider => provider)
   }
 
   /**
