@@ -38,6 +38,26 @@ test.group('IgniteTest', group => {
     assert.throws(useCase, NullApplicationException)
   })
 
+  test('should be able to handle application errors on bootstrap', async ({ assert }) => {
+    process.env.THROW_ERROR_PROVIDER = 'true'
+
+    const ignite = new Ignite()
+
+    await ignite.fire()
+
+    process.env.THROW_ERROR_PROVIDER = null
+  })
+
+  test('should be able to handle application exceptions on bootstrap', async ({ assert }) => {
+    process.env.THROW_EXCEPTION_PROVIDER = 'true'
+
+    const ignite = new Ignite()
+
+    await ignite.fire()
+
+    process.env.THROW_EXCEPTION_PROVIDER = null
+  })
+
   test('should be able to get the application from ignite class', async ({ assert }) => {
     const ignite = new Ignite()
 
