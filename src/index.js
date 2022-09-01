@@ -11,7 +11,7 @@ import { Ioc } from '@athenna/ioc'
 import { Logger } from '@athenna/logger'
 import { Route, Server } from '@athenna/http'
 import { normalize, resolve } from 'node:path'
-import { File, Module, Path } from '@secjs/utils'
+import { Exception, File, Module, Path } from '@secjs/utils'
 import { Config, Env, EnvHelper } from '@athenna/config'
 
 import { NullApplicationException } from '#src/Exceptions/NullApplicationException'
@@ -78,21 +78,39 @@ export class Ignite {
   }
 
   async fire() {
-    /**
-     * Load all config files of config folder
-     */
-    await Config.load(Path.config())
+    try {
+      /**
+       * Load all config files of config folder
+       */
+      await Config.load(Path.config())
 
-    this.#logger = Ignite.getLogger()
+      this.#logger = Ignite.getLogger()
 
-    const providers = await this.#getProviders()
+      const providers = await this.#getProviders()
 
-    await this.#registerProviders(providers)
-    await this.#bootProviders(providers)
+      await this.#registerProviders(providers)
+      await this.#bootProviders(providers)
 
-    await this.#preloadFiles()
+      await this.#preloadFiles()
 
-    return this.#createApplication()
+      return this.#createApplication()
+    } catch (error) {
+      const logger = new Logger()
+
+      if (error.prettify) {
+        const prettyError = await error.prettify()
+
+        logger.channel('exception').error(prettyError.concat('\n'))
+      } else {
+        const exception = new Exception(error.message, 0, error.name)
+
+        exception.stack = error.stack
+
+        const prettyError = await exception.prettify()
+
+        logger.channel('exception').error(prettyError.concat('\n'))
+      }
+    }
   }
 
   /**
