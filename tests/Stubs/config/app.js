@@ -142,6 +142,7 @@ export default {
 
   providers: [
     import('#src/Providers/ServiceProvider'),
+    import('#src/Providers/RepositoryProvider'),
     import('#tests/Stubs/providers/ThrowErrorProvider'),
     import('#tests/Stubs/providers/OnlyArtisanProvider'),
     import('@athenna/artisan/providers/ArtisanProvider'),
