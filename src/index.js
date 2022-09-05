@@ -423,7 +423,7 @@ export class Application {
 
     await kernel.registerErrorHandler()
     await kernel.registerCommands()
-    await kernel.registerCustomTemplates()
+    await kernel.registerTemplates()
   }
 
   /**

@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "1.7.8",
+  "version": "1.7.9",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -30,16 +30,17 @@
   "types": "./src/index.d.ts",
   "exports": {
     ".": "./src/index.js",
-    "./providers/ServiceProvider": "./src/Providers/ServiceProvider.js"
+    "./providers/ServiceProvider": "./src/Providers/ServiceProvider.js",
+    "./providers/RepositoryProvider": "./src/Providers/RepositoryProvider.js"
   },
   "imports": {
     "#src/*": "./src/*.js",
     "#tests/*": "./tests/*.js"
   },
   "dependencies": {
-    "@athenna/artisan": "1.3.9",
+    "@athenna/artisan": "1.4.3",
     "@athenna/config": "1.1.3",
-    "@athenna/http": "1.5.7",
+    "@athenna/http": "1.5.8",
     "@athenna/ioc": "1.2.3",
     "@athenna/logger": "1.2.8",
     "@secjs/utils": "1.9.7"
