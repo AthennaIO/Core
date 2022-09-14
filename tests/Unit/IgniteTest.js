@@ -20,6 +20,7 @@ test.group('IgniteTest', group => {
     await new Folder(Path.stubs('config')).copy(Path.config())
     await new Folder(Path.stubs('routes')).copy(Path.routes())
     await new Folder(Path.stubs('providers')).copy(Path.providers())
+    await new File(Path.stubs('.env')).copy(Path.pwd('.env'))
     await new File(Path.stubs('.env.test')).copy(Path.pwd('.env.test'))
   })
 
@@ -28,6 +29,7 @@ test.group('IgniteTest', group => {
     await Folder.safeRemove(Path.config())
     await Folder.safeRemove(Path.routes())
     await Folder.safeRemove(Path.providers())
+    await File.safeRemove(Path.pwd('.env'))
     await File.safeRemove(Path.pwd('.env.test'))
     ioc.reconstruct()
   })
