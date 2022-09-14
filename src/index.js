@@ -148,23 +148,13 @@ export class Ignite {
    */
   #resolveNodeEnv() {
     if (!process.env.NODE_ENV) {
-      let env = new File(Path.config('app.js'))
-        .loadSync()
-        .getContentSync()
-        .toString()
-        .split('environment:')[1]
-        .split(',')[0]
-        .trim()
+      EnvHelper.resolveFile()
 
-      if (env.includes('process.env.NODE_ENV')) {
-        env = env
-          .split('process.env.NODE_ENV')[1]
-          .replace(/'|"/g, '')
-          .replace(/\|/g, '')
-          .trim()
-      }
+      process.env.OVERRIDE_ENV = 'true'
 
-      process.env.NODE_ENV = env
+      EnvHelper.resolveFile()
+
+      return
     }
 
     EnvHelper.resolveFile()
