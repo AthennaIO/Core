@@ -25,14 +25,10 @@ export default {
     application: {
       driver: 'console',
       formatter: 'simple',
-      streamType: 'stdout',
-      formatterConfig: {},
     },
     console: {
       driver: 'console',
       formatter: 'cli',
-      streamType: 'stdout',
-      formatterConfig: {},
     },
     exception: {
       driver: 'console',

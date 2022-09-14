@@ -11,7 +11,7 @@ export default {
   |
   */
 
-  environment: process.env.NODE_ENV || 'test',
+  environment: Env('NODE_ENV', 'test'),
 
   /*
   |--------------------------------------------------------------------------

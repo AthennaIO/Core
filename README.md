@@ -23,12 +23,23 @@
 
 ## Links
 
-> For project documentation [click here](https://athenna.io). If something is not clear in the documentation please open an issue in the [documentation repository](https://github.com/athennaio/docs)
+> For project documentation [click here](https://athenna.io). If something is not clear in the documentation please open
+> an issue in the [documentation repository](https://github.com/athennaio/docs)
 
 ## Contributing
 
-> If you want to contribute to this project, first read the [CONTRIBUTING.MD](https://github.com/AthennaIO/Core/blob/develop/CONTRIBUTING.md) file. It will be a pleasure to receive your help.
+> If you want to contribute to this project, first read
+> the [CONTRIBUTING.MD](https://github.com/AthennaIO/Core/blob/develop/CONTRIBUTING.md) file. It will be a pleasure to
+> receive your help.
 
 ---
 
-Made with 🖤 by [Athenna Team](https://github.com/AthennaIO) :wave:
+<p align='center'>
+  With 💜 by <a href='https://github.com/AthennaIO'>Athenna community</a>
+</p>
+
+<p align='center'>
+  <a href='https://github.com/AthennaIO/Core/graphs/contributors'>
+    <img src='https://contrib.rocks/image?repo=AthennaIO/Core'/>
+  </a>
+</p>
