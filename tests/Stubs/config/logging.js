@@ -30,15 +30,20 @@ export default {
       driver: 'console',
       formatter: 'cli',
     },
+    discard: {
+      driver: 'null',
+    },
     exception: {
       driver: 'console',
+      streamType: 'stderr',
+
       formatter: 'none',
-      streamType: 'stdout',
     },
     request: {
       driver: 'console',
-      formatter: 'request',
       streamType: 'stdout',
+
+      formatter: 'request',
       formatterConfig: {
         asJson: false,
       },

@@ -7,12 +7,13 @@
  * file that was distributed with this source code.
  */
 
+import { normalize, resolve } from 'node:path'
+
 import { Ioc } from '@athenna/ioc'
 import { Logger } from '@athenna/logger'
 import { Route, Server } from '@athenna/http'
-import { normalize, resolve } from 'node:path'
-import { Exception, File, Module, Path } from '@secjs/utils'
 import { Config, Env, EnvHelper } from '@athenna/config'
+import { Exception, File, Module, Path } from '@secjs/utils'
 
 import { NullApplicationException } from '#src/Exceptions/NullApplicationException'
 
@@ -64,17 +65,11 @@ export class Ignite {
    * @return {Logger}
    */
   static getLogger() {
+    const logger = new Logger()
+
     return Env('NODE_ENV') === 'test' || Env('BOOT_LOGS') === 'false'
-      ? {
-          channel: (_channel, _runtimeConfig) => {},
-          log: (_message, _options = {}) => {},
-          info: (_message, _options = {}) => {},
-          warn: (_message, _options = {}) => {},
-          error: (_message, _options = {}) => {},
-          debug: (_message, _options = {}) => {},
-          success: (_message, _options = {}) => {},
-        }
-      : new Logger()
+      ? logger.channel('discard')
+      : logger.channel('application')
   }
 
   async fire() {
@@ -95,20 +90,14 @@ export class Ignite {
 
       return this.#createApplication()
     } catch (error) {
-      const logger = new Logger()
-
       if (error.prettify) {
-        const prettyError = await error.prettify()
-
-        logger.channel('exception').error(prettyError.concat('\n'))
+        throw await error.prettify()
       } else {
         const exception = new Exception(error.message, 0, error.name)
 
         exception.stack = error.stack
 
-        const prettyError = await exception.prettify()
-
-        logger.channel('exception').error(prettyError.concat('\n'))
+        throw await exception.prettify()
       }
     }
   }
