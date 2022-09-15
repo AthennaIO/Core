@@ -45,7 +45,7 @@ test.group('IgniteTest', group => {
 
     const ignite = new Ignite()
 
-    await ignite.fire()
+    await assert.rejects(() => ignite.fire())
 
     process.env.THROW_ERROR_PROVIDER = null
   })
@@ -55,7 +55,7 @@ test.group('IgniteTest', group => {
 
     const ignite = new Ignite()
 
-    await ignite.fire()
+    await assert.rejects(() => ignite.fire())
 
     process.env.THROW_EXCEPTION_PROVIDER = null
   })
