@@ -13,6 +13,8 @@ import { specReporter } from '@japa/spec-reporter'
 import { runFailedTests } from '@japa/run-failed-tests'
 import { configure, processCliArgs, run } from '@japa/runner'
 
+process.exit = () => null
+
 /*
 |--------------------------------------------------------------------------
 | Configure tests
