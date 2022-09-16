@@ -91,13 +91,21 @@ export class Ignite {
       return this.#createApplication()
     } catch (error) {
       if (error.prettify) {
-        throw await error.prettify()
+        const prettyError = await error.prettify()
+
+        this.#logger.error(prettyError)
+
+        process.exit()
       } else {
         const exception = new Exception(error.message, 0, error.name)
 
         exception.stack = error.stack
 
-        throw await exception.prettify()
+        const prettyException = await exception.prettify()
+
+        this.#logger.error(prettyException)
+
+        process.exit()
       }
     }
   }
