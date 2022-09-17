@@ -114,4 +114,19 @@ test.group('IgniteTest', group => {
 
     await artisan.call('make:controller TestController')
   })
+
+  test('should be able to ignite an Athenna REPL application', async ({ assert }) => {
+    process.env.ATHENNA_APPLICATIONS = 'repl'
+
+    const application = await new Ignite().fire()
+    const repl = await application.bootREPL()
+
+    assert.equal(Env('APP_NAME'), 'Athenna')
+    assert.equal(Env('APP_DOMAIN'), 'http://localhost:1335')
+
+    assert.equal(Config.get('app.name'), 'Athenna')
+    assert.equal(Config.get('http.domain'), 'http://localhost:1335')
+
+    await repl.close()
+  })
 })

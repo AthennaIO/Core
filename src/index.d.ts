@@ -18,6 +18,22 @@ export class Exception extends AbstractException {
   )
 }
 
+export class CoreLoader {
+  /**
+   * Return all commands from artisan console application.
+   *
+   * @return {any[]}
+   */
+  static loadCommands(): any[]
+
+  /**
+   * Return all templates from artisan console application.
+   *
+   * @return {any[]}
+   */
+  static loadTemplates(): any[]
+}
+
 export class Ignite {
   /**
    * Mocking the Logger when client doesn't want to show it.
@@ -37,6 +53,13 @@ export class Ignite {
 }
 
 export class Application {
+  /**
+   * Boot a new REPL inside this Application instance.
+   *
+   * @return {Promise<import('node:repl').REPLServer>}
+   */
+  bootREPL(): Promise<import('node:repl').REPLServer>
+
   /**
    * Boot a new Artisan inside this Application instance.
    *
