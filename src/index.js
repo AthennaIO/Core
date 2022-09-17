@@ -7,6 +7,9 @@
  * file that was distributed with this source code.
  */
 
+import figlet from 'figlet'
+import chalkRainbow from 'chalk-rainbow'
+
 import { start } from 'node:repl'
 import { normalize, resolve } from 'node:path'
 
@@ -311,10 +314,8 @@ export class Application {
    * @return {Promise<import('node:repl').REPLServer>}
    */
   async bootREPL() {
-    await this.#resolveConsoleKernel()
-    await this.#resolveHttpKernel()
-
     const colors = {
+      pure: ColorHelper.chalk,
       red: ColorHelper.chalk.red,
       gray: ColorHelper.chalk.gray,
       green: ColorHelper.chalk.green,
@@ -331,21 +332,116 @@ export class Application {
       yellow: m => process.stdout.write(colors.yellow(m + '\n')),
     }
 
-    log.purple('\nWelcome to Athenna REPL!\n')
+    log.write(chalkRainbow(figlet.textSync('REPL\n')))
 
     log.gray('To import your modules use dynamic imports:\n')
-    log.gray("const { Artisan } = await import('@athenna/artisan')")
-    log.gray("const { User } = await import('#app/Models/User')")
-    log.gray("const string = await import('#app/Helpers/string')\n")
+    log.gray("{ Log } = await import('@athenna/logger')")
+    log.gray("{ User } = await import('#app/Models/User')\n")
+    log.gray("const stringHelper = await import('#app/Helpers/string')")
 
-    log.write(`${colors.yellow('To exit write:')} .exit`)
     log.write(
-      `${colors.yellow(
-        'To remove a definition from REPL context:',
-      )} .clear ${colors.gray('(propertyName)')}\n`,
+      `${colors.yellow.bold('To see all commands available type:')} .help\n`,
     )
 
-    return start(colors.purple.bold('Athenna ') + ColorHelper.green.bold('❯ '))
+    const repl = start(
+      colors.purple.bold('Athenna ') + ColorHelper.green.bold('❯ '),
+    )
+
+    repl.defineCommand('ls', {
+      help: 'List all Athenna preloaded methods/properties in REPL context.',
+      action(property) {
+        this.clearBufferedCommand()
+
+        const INTERNAL_PROPS = [
+          'global',
+          'clearInterval',
+          'clearTimeout',
+          'setInterval',
+          'setTimeout',
+          'queueMicrotask',
+          'performance',
+          'nodeTiming',
+          'clearImmediate',
+          'setImmediate',
+          '__extends',
+          '__assign',
+          '__rest',
+          '__decorate',
+          '__param',
+          '__metadata',
+          '__awaiter',
+          '__generator',
+          '__exportStar',
+          '__createBinding',
+          '__values',
+          '__read',
+          '__spread',
+          '__spreadArrays',
+          '__spreadArray',
+          '__await',
+          '__asyncGenerator',
+          '__asyncDelegator',
+          '__asyncValues',
+          '__makeTemplateObject',
+          '__importStar',
+          '__importDefault',
+          '__classPrivateFieldGet',
+          '__classPrivateFieldSet',
+          '__classPrivateFieldIn',
+        ]
+
+        log.write('')
+        Object.keys(repl.context).forEach(key => {
+          if (INTERNAL_PROPS.includes(key)) {
+            return
+          }
+
+          log.yellow(key)
+        })
+        log.write('')
+
+        this.displayPrompt()
+      },
+    })
+
+    repl.defineCommand('clean', {
+      help: `Clean any property of REPL global context. Example: .clean ${colors.gray(
+        '(propertyName)',
+      )}\n`,
+      action(property) {
+        this.clearBufferedCommand()
+
+        log.write('')
+
+        if (!property) {
+          log.red('You have not provided any property to remove.')
+          log.write(`Try like this: .clean ${colors.gray('(propertyName)')}\n`)
+
+          return this.displayPrompt()
+        }
+
+        if (!repl.context[property]) {
+          log.red(
+            `The property "${property}" doesnt exist inside REPL global context.`,
+          )
+          log.red(
+            'Use the ".ls" command to check the properties available in REPL global context.',
+          )
+
+          return this.displayPrompt()
+        }
+
+        delete repl.context[property]
+
+        log.green(
+          `Property "${property}" successfully removed from REPL context.\n`,
+        )
+
+        this.displayPrompt()
+      },
+    })
+
+    return repl
   }
 
   /**
