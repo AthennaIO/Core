@@ -407,7 +407,7 @@ export class Application {
     repl.defineCommand('clean', {
       help: `Clean any property of REPL global context. Example: .clean ${colors.gray(
         '(propertyName)',
-      )}\n`,
+      )}`,
       action(property) {
         this.clearBufferedCommand()
 
