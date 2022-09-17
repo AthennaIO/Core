@@ -336,8 +336,8 @@ export class Application {
 
     log.gray('To import your modules use dynamic imports:\n')
     log.gray("{ Log } = await import('@athenna/logger')")
-    log.gray("{ User } = await import('#app/Models/User')\n")
-    log.gray("const stringHelper = await import('#app/Helpers/string')")
+    log.gray("{ User } = await import('#app/Models/User')")
+    log.gray("const stringHelper = await import('#app/Helpers/string')\n")
 
     log.write(
       `${colors.yellow.bold('To see all commands available type:')} .help\n`,
