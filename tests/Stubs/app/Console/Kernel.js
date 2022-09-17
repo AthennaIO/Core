@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { Folder, Path } from '@secjs/utils'
-import { HttpCommandsLoader } from '@athenna/http'
+import { CoreLoader } from '#src/index'
+import { HttpLoader } from '@athenna/http'
 import { ArtisanLoader, ConsoleKernel } from '@athenna/artisan'
 
 export class Kernel extends ConsoleKernel {
@@ -18,15 +18,15 @@ export class Kernel extends ConsoleKernel {
    * @return {any[]}
    */
   get commands() {
-    return [...ArtisanLoader.loadCommands(), ...HttpCommandsLoader.loadCommands()]
+    return [...ArtisanLoader.loadCommands(), ...HttpLoader.loadCommands(), ...CoreLoader.loadCommands()]
   }
 
   /**
    * Register custom templates files.
    *
-   * @return {import('@secjs/utils').File[] | Promise<any[]>}
+   * @return {any[]}
    */
   get templates() {
-    return [...new Folder(Path.nodeModules('@athenna/http/templates')).loadSync().files]
+    return [...HttpLoader.loadTemplates(), ...ArtisanLoader.loadTemplates()]
   }
 }

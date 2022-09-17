@@ -7,16 +7,18 @@
  * file that was distributed with this source code.
  */
 
+import { start } from 'node:repl'
 import { normalize, resolve } from 'node:path'
 
 import { Ioc } from '@athenna/ioc'
-import { Logger } from '@athenna/logger'
 import { Route, Server } from '@athenna/http'
+import { ColorHelper, Logger } from '@athenna/logger'
 import { Config, Env, EnvHelper } from '@athenna/config'
 import { Exception, File, Module, Path } from '@secjs/utils'
 
 import { NullApplicationException } from '#src/Exceptions/NullApplicationException'
 
+export * from './Helpers/CoreLoader.js'
 export * from './Exceptions/Exception.js'
 
 export class Ignite {
@@ -93,7 +95,11 @@ export class Ignite {
       if (error.prettify) {
         const prettyError = await error.prettify()
 
-        this.#logger.error(prettyError)
+        if (!this.#logger) {
+          console.log(prettyError)
+        } else {
+          this.#logger.error(prettyError)
+        }
 
         process.exit()
       } else {
@@ -103,7 +109,11 @@ export class Ignite {
 
         const prettyException = await exception.prettify()
 
-        this.#logger.error(prettyException)
+        if (!this.#logger) {
+          console.log(prettyException)
+        } else {
+          this.#logger.error(prettyException)
+        }
 
         process.exit()
       }
@@ -294,6 +304,49 @@ export class Application {
 
   // TODO
   // async shutdownWorker() {}
+
+  /**
+   * Boot a new REPL inside this Application instance.
+   *
+   * @return {Promise<import('node:repl').REPLServer>}
+   */
+  async bootREPL() {
+    await this.#resolveConsoleKernel()
+    await this.#resolveHttpKernel()
+
+    const colors = {
+      red: ColorHelper.chalk.red,
+      gray: ColorHelper.chalk.gray,
+      green: ColorHelper.chalk.green,
+      purple: ColorHelper.purple,
+      yellow: ColorHelper.chalk.yellow,
+    }
+
+    const log = {
+      write: m => process.stdout.write(m + '\n'),
+      red: m => process.stdout.write(colors.red(m + '\n')),
+      gray: m => process.stdout.write(colors.gray(m + '\n')),
+      green: m => process.stdout.write(colors.green(m + '\n')),
+      purple: m => process.stdout.write(colors.purple(m + '\n')),
+      yellow: m => process.stdout.write(colors.yellow(m + '\n')),
+    }
+
+    log.purple('\nWelcome to Athenna REPL!\n')
+
+    log.gray('To import your modules use dynamic imports:\n')
+    log.gray("const { Artisan } = await import('@athenna/artisan')")
+    log.gray("const { User } = await import('#app/Models/User')")
+    log.gray("const string = await import('#app/Helpers/string')\n")
+
+    log.write(`${colors.yellow('To exit write:')} .exit`)
+    log.write(
+      `${colors.yellow(
+        'To remove a definition from REPL context:',
+      )} .clear ${colors.gray('(propertyName)')}\n`,
+    )
+
+    return start(colors.purple.bold('Athenna ') + ColorHelper.green.bold('❯ '))
+  }
 
   /**
    * Boot a new Artisan inside this Application instance.

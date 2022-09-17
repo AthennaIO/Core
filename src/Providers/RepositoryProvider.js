@@ -1,5 +1,5 @@
 /**
- * @athenna/http
+ * @athenna/core
  *
  * (c) João Lenon <lenon@athenna.io>
  *
