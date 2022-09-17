@@ -41,6 +41,10 @@ export class Repl extends Command {
 
     const application = await new Ignite().fire()
 
+    if (ioc.hasDependency('Athenna/Core/Database')) {
+      await ioc.use('Athenna/Core/Database').connect()
+    }
+
     await application.bootREPL()
   }
 }
