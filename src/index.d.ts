@@ -1,5 +1,19 @@
 import { Logger } from '@athenna/logger'
-import { Exception as AbstractException } from '@secjs/utils'
+import { Collection, Exception as AbstractException } from '@secjs/utils'
+
+declare global {
+  interface Array<T> {
+    toResource(criterias?: any): T[]
+
+    toCollection(): Collection
+  }
+}
+
+declare module '@secjs/utils' {
+  export interface Collection<Item = any> {
+    toResource(): Item[]
+  }
+}
 
 export class Exception extends AbstractException {
   /**

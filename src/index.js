@@ -17,12 +17,26 @@ import { Ioc } from '@athenna/ioc'
 import { Route, Server } from '@athenna/http'
 import { ColorHelper, Logger } from '@athenna/logger'
 import { Config, Env, EnvHelper } from '@athenna/config'
-import { Exception, File, Module, Path } from '@secjs/utils'
+import { Collection, Exception, File, Module, Path } from '@secjs/utils'
 
 import { NullApplicationException } from '#src/Exceptions/NullApplicationException'
 
 export * from './Helpers/CoreLoader.js'
 export * from './Exceptions/Exception.js'
+
+// eslint-disable-next-line no-extend-native
+Array.prototype.toResource = function (criterias = {}) {
+  return this.map(model => model.toResource(criterias))
+}
+
+// eslint-disable-next-line no-extend-native
+Array.prototype.toCollection = function () {
+  return new Collection(this)
+}
+
+Collection.prototype.toResource = function (criterias = {}) {
+  return this.all().map(model => model.toResource(criterias))
+}
 
 export class Ignite {
   /**
