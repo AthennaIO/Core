@@ -9,7 +9,7 @@
 
 import { test } from '@japa/runner'
 import { Config, Env } from '@athenna/config'
-import { File, Folder, Path } from '@secjs/utils'
+import { File, Folder, Path } from '@athenna/common'
 
 import { Application, Ignite } from '#src/index'
 import { NullApplicationException } from '#src/Exceptions/NullApplicationException'

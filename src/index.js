@@ -17,7 +17,7 @@ import { Ioc } from '@athenna/ioc'
 import { Route, Server } from '@athenna/http'
 import { ColorHelper, Logger } from '@athenna/logger'
 import { Config, Env, EnvHelper } from '@athenna/config'
-import { Exception, File, Module, Path } from '@secjs/utils'
+import { Exception, File, Module, Path } from '@athenna/common'
 
 import { NullApplicationException } from '#src/Exceptions/NullApplicationException'
 
@@ -82,7 +82,7 @@ export class Ignite {
       /**
        * Load all config files of config folder
        */
-      await Config.load(Path.config())
+      await Config.loadAll(Path.config())
 
       this.#logger = Ignite.getLogger()
 
