@@ -1,4 +1,4 @@
-import { Exception } from '@secjs/utils'
+import { Exception } from '@athenna/common'
 
 export class PrettyException extends Exception {
   /**

@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { Module, Path } from '@secjs/utils'
+import { Module, Path } from '@athenna/common'
 import { ServiceProvider } from '@athenna/ioc'
 
 export class RepositoryProvider extends ServiceProvider {

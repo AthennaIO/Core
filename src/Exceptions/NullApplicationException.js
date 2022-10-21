@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { Exception } from '@secjs/utils'
+import { Exception } from '@athenna/common'
 
 export class NullApplicationException extends Exception {
   constructor() {

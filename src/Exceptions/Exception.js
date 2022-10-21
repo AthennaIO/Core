@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { Exception as AbstractException } from '@secjs/utils'
+import { Exception as AbstractException } from '@athenna/common'
 
 export class Exception extends AbstractException {
   /**

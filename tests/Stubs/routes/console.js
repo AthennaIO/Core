@@ -1,4 +1,4 @@
-import { File, Path } from '@secjs/utils'
+import { File, Path } from '@athenna/common'
 import { Artisan } from '@athenna/artisan'
 
 Artisan.command('make:hello <name>', async function (name) {
