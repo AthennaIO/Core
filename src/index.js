@@ -22,7 +22,6 @@ import { Exception, File, Module, Path } from '@athenna/common'
 import { NullApplicationException } from '#src/Exceptions/NullApplicationException'
 
 export * from './Helpers/CoreLoader.js'
-export * from './Exceptions/Exception.js'
 
 export class Ignite {
   /**
