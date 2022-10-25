@@ -346,6 +346,8 @@ export class Application {
       colors.purple.bold('Athenna ') + ColorHelper.green.bold('❯ '),
     )
 
+    this.#registerGracefulShutdown(repl)
+
     repl.defineCommand('ls', {
       help: 'List all Athenna preloaded methods/properties in REPL context.',
       action(property) {
@@ -461,6 +463,8 @@ export class Application {
      */
     await this.#preloadFile(Path.routes('console.js'))
 
+    this.#registerGracefulShutdown(process)
+
     return artisan
   }
 
@@ -484,14 +488,14 @@ export class Application {
      */
     await this.#preloadFile(Path.routes('http.js'))
 
-    this.#registerGracefulShutdown()
-
     Route.register()
 
     const port = Config.get('http.port')
     const host = Config.get('http.host')
 
     await Server.listen(port, host)
+
+    this.#registerGracefulShutdown(process)
 
     this.#logger.success(`Http server started on http://${host}:${port}`)
 
@@ -566,11 +570,33 @@ export class Application {
    *
    * @private
    */
-  #registerGracefulShutdown() {
-    if (!Config.get('app.gracefulShutdown')) {
+  #registerGracefulShutdown(process) {
+    const signals = Config.get('app.gracefulShutdown')
+
+    if (!signals) {
       return
     }
 
-    process.on('SIGTERM', Config.get('app.gracefulShutdown'))
+    const registeredSignals = []
+
+    Object.keys(signals).forEach(key => {
+      if (!signals[key]) {
+        return
+      }
+
+      process.on(key, signals[key])
+
+      registeredSignals.push(key)
+    })
+
+    if (!registeredSignals.length) {
+      return
+    }
+
+    this.#logger.success(
+      `Registering graceful shutdown for signals: ${registeredSignals.join(
+        ', ',
+      )}`,
+    )
   }
 }

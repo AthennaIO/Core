@@ -118,15 +118,24 @@ export default {
   | Graceful shutdown callback
   |--------------------------------------------------------------------------
   |
-  | Default graceful shutdown callback configured to listen to SIGINT and
-  | SIGTERM events.
+  | Configure all the defaults graceful shutdown callbacks to listen to Node.js
+  | SIG events.
   |
   */
 
-  gracefulShutdown: async () => {
-    Log.warn('Athenna application gracefully shutting down.')
+  gracefulShutdown: {
+    SIGINT: async () => {
+      await Server.close()
 
-    await Server.close()
+      process.exit()
+    },
+    SIGTERM: async signal => {
+      Log.warn('Athenna application gracefully shutting down.')
+
+      await Server.close()
+
+      process.kill(process.pid, signal)
+    },
   },
 
   /*
