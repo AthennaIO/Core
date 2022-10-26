@@ -8,7 +8,7 @@
  */
 
 import { Config } from '@athenna/config'
-import { Module } from '@athenna/common'
+import { Is, Module } from '@athenna/common'
 import { LoggerHelper } from '#src/Helpers/LoggerHelper'
 import { Logger } from '@athenna/logger'
 
@@ -116,7 +116,13 @@ export class ProviderHelper {
     const provider = new Provider()
     let logger = LoggerHelper.get()
 
-    if (method === 'shutdown' && Env('SHUTDOWN_LOGS') !== false) {
+    let shutdownLogsEnv = Env('SHUTDOWN_LOGS')
+
+    if (Is.String(shutdownLogsEnv)) {
+      shutdownLogsEnv = shutdownLogsEnv === 'true'
+    }
+
+    if (method === 'shutdown' && shutdownLogsEnv !== false) {
       logger = new Logger().channel('application')
     }
 
