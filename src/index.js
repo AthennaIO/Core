@@ -85,6 +85,8 @@ export class Ignite {
       await ProviderHelper.registerAll()
       await ProviderHelper.bootAll()
 
+      this.#logger.success('Providers successfully bootstrapped')
+
       await this.#preloadFiles()
 
       return this.#createApplication()
@@ -416,6 +418,10 @@ export class Application {
    * @private
    */
   #registerGracefulShutdown(process) {
+    if (Env('GRACEFUL_SHUTDOWN_CONFIGURED', false)) {
+      return
+    }
+
     const signals = Config.get('app.gracefulShutdown')
 
     if (!signals) {
@@ -438,10 +444,10 @@ export class Application {
       return
     }
 
+    process.env.GRACEFUL_SHUTDOWN_CONFIGURED = 'true'
+
     this.#logger.success(
-      `Graceful shutdown registered for signals: ${registeredSignals.join(
-        ', ',
-      )}`,
+      `Graceful shutdown for signals: ${registeredSignals.join(', ')}`,
     )
   }
 }

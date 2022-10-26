@@ -46,10 +46,10 @@ export class ProviderHelper {
    *
    * @return {Promise<void>}
    */
-  static async bootAll(log = true) {
+  static async bootAll() {
     const providers = await this.getAllBootable()
 
-    const promises = providers.map(P => this.#runProvider('boot', log, P))
+    const promises = providers.map(P => this.#runProvider('boot', false, P))
 
     await Promise.all(promises)
   }
@@ -59,10 +59,10 @@ export class ProviderHelper {
    *
    * @return {Promise<void>}
    */
-  static async registerAll(log = true) {
+  static async registerAll() {
     const providers = await this.getAllBootable()
 
-    const promises = providers.map(P => this.#runProvider('register', log, P))
+    const promises = providers.map(P => this.#runProvider('register', false, P))
 
     await Promise.all(promises)
   }
