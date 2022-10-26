@@ -1,5 +1,5 @@
 import { Log } from '@athenna/logger'
-import { Server } from '@athenna/http'
+import { ProviderHelper } from '#src/Helpers/ProviderHelper'
 
 export default {
   /*
@@ -118,15 +118,24 @@ export default {
   | Graceful shutdown callback
   |--------------------------------------------------------------------------
   |
-  | Default graceful shutdown callback configured to listen to SIGINT and
-  | SIGTERM events.
+  | Configure all the defaults graceful shutdown callbacks to listen to Node.js
+  | SIG events.
   |
   */
 
-  gracefulShutdown: async () => {
-    Log.warn('Athenna application gracefully shutting down.')
+  gracefulShutdown: {
+    SIGINT: async () => {
+      await ProviderHelper.shutdownAll()
 
-    await Server.close()
+      process.exit()
+    },
+    SIGTERM: async signal => {
+      Log.warn('Athenna application gracefully shutting down.')
+
+      await ProviderHelper.shutdownAll()
+
+      process.kill(process.pid, signal)
+    },
   },
 
   /*

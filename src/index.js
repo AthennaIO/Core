@@ -14,14 +14,18 @@ import { start } from 'node:repl'
 import { normalize, resolve } from 'node:path'
 
 import { Ioc } from '@athenna/ioc'
+import { ColorHelper } from '@athenna/logger'
 import { Route, Server } from '@athenna/http'
-import { ColorHelper, Logger } from '@athenna/logger'
-import { Config, Env, EnvHelper } from '@athenna/config'
+import { Config, EnvHelper } from '@athenna/config'
 import { Exception, File, Module, Path } from '@athenna/common'
 
+import { LoggerHelper } from '#src/Helpers/LoggerHelper'
+import { ProviderHelper } from '#src/Helpers/ProviderHelper'
+import { INTERNAL_REPL_PROPS } from '#src/Constants/InternalReplProps'
 import { NullApplicationException } from '#src/Exceptions/NullApplicationException'
 
 export * from './Helpers/CoreLoader.js'
+export * from './Helpers/ProviderHelper.js'
 
 export class Ignite {
   /**
@@ -64,18 +68,11 @@ export class Ignite {
   }
 
   /**
-   * Mocking the Logger when client doesn't want to show it.
+   * Fire the application loading configuration files, registering
+   * providers and preloading files. Everything in order.
    *
-   * @return {Logger}
+   * @return {Promise<Application>}
    */
-  static getLogger() {
-    const logger = new Logger()
-
-    return Env('NODE_ENV') === 'test' || Env('BOOT_LOGS') === 'false'
-      ? logger.channel('discard')
-      : logger.channel('application')
-  }
-
   async fire() {
     try {
       /**
@@ -83,12 +80,10 @@ export class Ignite {
        */
       await Config.loadAll(Path.config())
 
-      this.#logger = Ignite.getLogger()
+      this.#logger = LoggerHelper.get()
 
-      const providers = await this.#getProviders()
-
-      await this.#registerProviders(providers)
-      await this.#bootProviders(providers)
+      await ProviderHelper.registerAll()
+      await ProviderHelper.bootAll()
 
       await this.#preloadFiles()
 
@@ -170,67 +165,6 @@ export class Ignite {
   }
 
   /**
-   * Get all the providers from config/app file with export normalized.
-   *
-   * export default, export, module.exports, etc.
-   *
-   * @return {Promise<any[]>}
-   */
-  async #getProviders() {
-    const promises = Config.get('app.providers').map(module => {
-      return Module.get(module).then(provider => {
-        if (!this.#canBeBootstrapped(provider)) {
-          return null
-        }
-
-        this.#logger.success(`Registering ${provider.name}`)
-
-        return provider
-      })
-    })
-
-    return (await Promise.all(promises)).filter(provider => provider)
-  }
-
-  /**
-   * Boot all the providers calling the boot method
-   * and reading the register attributes inside providers.
-   *
-   * @param {any[]} providers
-   * @return {Promise<void>}
-   */
-  async #bootProviders(providers) {
-    const promises = providers.map(Provider => {
-      const provider = new Provider()
-
-      provider.registerAttributes()
-
-      return provider.boot()
-    })
-
-    await Promise.all(promises)
-  }
-
-  /**
-   * Register all the providers calling the register method
-   * and reading the register attributes inside providers.
-   *
-   * @params {any[]} providers
-   * @return {Promise<void>}
-   */
-  async #registerProviders(providers) {
-    const promises = providers.map(Provider => {
-      const provider = new Provider()
-
-      provider.registerAttributes()
-
-      return provider.register()
-    })
-
-    await Promise.all(promises)
-  }
-
-  /**
    * Preload all the files configured inside config/app
    * file.
    *
@@ -251,35 +185,11 @@ export class Ignite {
 
     await Promise.all(promises)
   }
-
-  /**
-   * Verify if the provider can be bootstrapped.
-   *
-   * @param {import('@athenna/ioc').ServiceProvider} Provider
-   * @return {boolean}
-   */
-  #canBeBootstrapped(Provider) {
-    const provider = new Provider()
-
-    if (provider.bootstrapIn[0] === '*') {
-      return true
-    }
-
-    if (!process.env.ATHENNA_APPLICATIONS) {
-      return true
-    }
-
-    const apps = process.env.ATHENNA_APPLICATIONS.split(',')
-
-    return apps.some(app => provider.bootstrapIn.indexOf(app) >= 0)
-  }
 }
 
 export class Application {
   /**
-   * Simple logger for Application class. Application creates
-   * a new instance of Logger because providers are not
-   * registered yet.
+   * Simple mocked logger.
    *
    * @type {Logger}
    */
@@ -298,14 +208,11 @@ export class Application {
    */
   constructor() {
     this.#container = new Ioc()
-    this.#logger = Ignite.getLogger()
+    this.#logger = LoggerHelper.get()
   }
 
   // TODO
   // async bootWorker() {}
-
-  // TODO
-  // async shutdownWorker() {}
 
   /**
    * Boot a new REPL inside this Application instance.
@@ -313,23 +220,8 @@ export class Application {
    * @return {Promise<import('node:repl').REPLServer>}
    */
   async bootREPL() {
-    const colors = {
-      pure: ColorHelper.chalk,
-      red: ColorHelper.chalk.red,
-      gray: ColorHelper.chalk.gray,
-      green: ColorHelper.chalk.green,
-      purple: ColorHelper.purple,
-      yellow: ColorHelper.chalk.yellow,
-    }
-
-    const log = {
-      write: m => process.stdout.write(m + '\n'),
-      red: m => process.stdout.write(colors.red(m + '\n')),
-      gray: m => process.stdout.write(colors.gray(m + '\n')),
-      green: m => process.stdout.write(colors.green(m + '\n')),
-      purple: m => process.stdout.write(colors.purple(m + '\n')),
-      yellow: m => process.stdout.write(colors.yellow(m + '\n')),
-    }
+    const ui = LoggerHelper.replUi
+    const log = LoggerHelper.replLog
 
     log.write(chalkRainbow(figlet.textSync('REPL\n')))
 
@@ -339,59 +231,25 @@ export class Application {
     log.gray("const stringHelper = await import('#app/Helpers/string')\n")
 
     log.write(
-      `${colors.yellow.bold('To see all commands available type:')} .help\n`,
+      `${ui.yellow.bold('To see all commands available type:')} .help\n`,
     )
 
     const repl = start(
-      colors.purple.bold('Athenna ') + ColorHelper.green.bold('❯ '),
+      ui.purple.bold('Athenna ') + ColorHelper.green.bold('❯ '),
     )
+
+    repl.on('exit', () => {
+      ProviderHelper.shutdownAll().then(() => process.exit())
+    })
 
     repl.defineCommand('ls', {
       help: 'List all Athenna preloaded methods/properties in REPL context.',
       action(property) {
         this.clearBufferedCommand()
 
-        const INTERNAL_PROPS = [
-          'global',
-          'clearInterval',
-          'clearTimeout',
-          'setInterval',
-          'setTimeout',
-          'queueMicrotask',
-          'performance',
-          'nodeTiming',
-          'clearImmediate',
-          'setImmediate',
-          '__extends',
-          '__assign',
-          '__rest',
-          '__decorate',
-          '__param',
-          '__metadata',
-          '__awaiter',
-          '__generator',
-          '__exportStar',
-          '__createBinding',
-          '__values',
-          '__read',
-          '__spread',
-          '__spreadArrays',
-          '__spreadArray',
-          '__await',
-          '__asyncGenerator',
-          '__asyncDelegator',
-          '__asyncValues',
-          '__makeTemplateObject',
-          '__importStar',
-          '__importDefault',
-          '__classPrivateFieldGet',
-          '__classPrivateFieldSet',
-          '__classPrivateFieldIn',
-        ]
-
         log.write('')
         Object.keys(repl.context).forEach(key => {
-          if (INTERNAL_PROPS.includes(key)) {
+          if (INTERNAL_REPL_PROPS.includes(key)) {
             return
           }
 
@@ -404,7 +262,7 @@ export class Application {
     })
 
     repl.defineCommand('clean', {
-      help: `Clean any property of REPL global context. Example: .clean ${colors.gray(
+      help: `Clean any property of REPL global context. Example: .clean ${ui.gray(
         '(propertyName)',
       )}`,
       action(property) {
@@ -414,7 +272,7 @@ export class Application {
 
         if (!property) {
           log.red('You have not provided any property to remove.')
-          log.write(`Try like this: .clean ${colors.gray('(propertyName)')}\n`)
+          log.write(`Try like this: .clean ${ui.gray('(propertyName)')}\n`)
 
           return this.displayPrompt()
         }
@@ -461,6 +319,8 @@ export class Application {
      */
     await this.#preloadFile(Path.routes('console.js'))
 
+    this.#registerGracefulShutdown(process)
+
     return artisan
   }
 
@@ -484,8 +344,6 @@ export class Application {
      */
     await this.#preloadFile(Path.routes('http.js'))
 
-    this.#registerGracefulShutdown()
-
     Route.register()
 
     const port = Config.get('http.port')
@@ -493,20 +351,11 @@ export class Application {
 
     await Server.listen(port, host)
 
+    this.#registerGracefulShutdown(process)
+
     this.#logger.success(`Http server started on http://${host}:${port}`)
 
     return httpServer
-  }
-
-  /**
-   * Shutdown the HttpServer inside this Application instance.
-   *
-   * @return {Promise<void>}
-   */
-  async shutdownHttpServer() {
-    this.#logger.warn(`Http server shutdown, bye! :)`)
-
-    await Server.close()
   }
 
   /**
@@ -566,11 +415,33 @@ export class Application {
    *
    * @private
    */
-  #registerGracefulShutdown() {
-    if (!Config.get('app.gracefulShutdown')) {
+  #registerGracefulShutdown(process) {
+    const signals = Config.get('app.gracefulShutdown')
+
+    if (!signals) {
       return
     }
 
-    process.on('SIGTERM', Config.get('app.gracefulShutdown'))
+    const registeredSignals = []
+
+    Object.keys(signals).forEach(key => {
+      if (!signals[key]) {
+        return
+      }
+
+      process.on(key, signals[key])
+
+      registeredSignals.push(key)
+    })
+
+    if (!registeredSignals.length) {
+      return
+    }
+
+    this.#logger.success(
+      `Graceful shutdown registered for signals: ${registeredSignals.join(
+        ', ',
+      )}`,
+    )
   }
 }
