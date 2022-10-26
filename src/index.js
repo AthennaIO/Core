@@ -428,26 +428,14 @@ export class Application {
       return
     }
 
-    const registeredSignals = []
-
     Object.keys(signals).forEach(key => {
       if (!signals[key]) {
         return
       }
 
       process.on(key, signals[key])
-
-      registeredSignals.push(key)
     })
 
-    if (!registeredSignals.length) {
-      return
-    }
-
     process.env.GRACEFUL_SHUTDOWN_CONFIGURED = 'true'
-
-    this.#logger.success(
-      `Graceful shutdown for signals: ${registeredSignals.join(', ')}`,
-    )
   }
 }
