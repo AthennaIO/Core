@@ -16,6 +16,8 @@ import { NullApplicationException } from '#src/Exceptions/NullApplicationExcepti
 
 test.group('IgniteTest', group => {
   group.each.setup(async () => {
+    process.env.BOOT_LOGS = '(false)'
+    process.env.SHUTDOWN_LOGS = '(false)'
     await new Folder(Path.stubs('app')).copy(Path.app())
     await new Folder(Path.stubs('config')).copy(Path.config())
     await new Folder(Path.stubs('routes')).copy(Path.routes())
@@ -68,7 +70,7 @@ test.group('IgniteTest', group => {
     assert.instanceOf(ignite.getApplication(), Application)
   })
 
-  test('should be able to ignite an Athenna http application', async ({ assert }) => {
+  test('should be able to ignite an Athenna http application and graceful shutdown', async ({ assert }) => {
     process.env.ATHENNA_APPLICATIONS = 'http'
 
     const application = await new Ignite().fire()
@@ -95,7 +97,11 @@ test.group('IgniteTest', group => {
     assert.equal(headers['x-ratelimit-remaining'], 999)
     assert.equal(headers['x-ratelimit-reset'], 60)
 
-    await application.shutdownHttpServer()
+    /**
+     * This will call the 'gracefulShutdown' property of config/app.js.
+     * The process will not be killed since "process.exit" is mocked.
+     */
+    process.kill(process.pid, 'SIGINT')
   })
 
   test('should be able to ignite an Athenna artisan application', async ({ assert }) => {
@@ -115,7 +121,7 @@ test.group('IgniteTest', group => {
     await artisan.call('make:controller TestController')
   })
 
-  test('should be able to ignite an Athenna REPL application', async ({ assert }) => {
+  test('should be able to ignite an Athenna REPL application and graceful shutdown', async ({ assert }) => {
     process.env.ATHENNA_APPLICATIONS = 'repl'
 
     const application = await new Ignite().fire()
@@ -127,6 +133,6 @@ test.group('IgniteTest', group => {
     assert.equal(Config.get('app.name'), 'Athenna')
     assert.equal(Config.get('http.domain'), 'http://localhost:1335')
 
-    await repl.close()
+    repl.write('.exit\n')
   })
 })

@@ -1,5 +1,5 @@
 import { Log } from '@athenna/logger'
-import { Server } from '@athenna/http'
+import { ProviderHelper } from '#src/Helpers/ProviderHelper'
 
 export default {
   /*
@@ -125,14 +125,14 @@ export default {
 
   gracefulShutdown: {
     SIGINT: async () => {
-      await Server.close()
+      await ProviderHelper.shutdownAll()
 
       process.exit()
     },
     SIGTERM: async signal => {
       Log.warn('Athenna application gracefully shutting down.')
 
-      await Server.close()
+      await ProviderHelper.shutdownAll()
 
       process.kill(process.pid, signal)
     },

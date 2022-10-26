@@ -38,12 +38,12 @@
     "#tests/*": "./tests/*.js"
   },
   "dependencies": {
-    "@athenna/artisan": "1.5.6",
+    "@athenna/artisan": "1.5.7",
     "@athenna/common": "1.0.0",
     "@athenna/config": "1.1.8",
-    "@athenna/http": "1.7.3",
-    "@athenna/ioc": "1.2.7",
-    "@athenna/logger": "1.3.4"
+    "@athenna/http": "1.7.5",
+    "@athenna/ioc": "1.2.8",
+    "@athenna/logger": "1.3.5"
   },
   "devDependencies": {
     "@japa/assert": "1.3.4",
@@ -131,8 +131,7 @@
     },
     "globals": {
       "ioc": true,
-      "Env": true,
-      "Config": true
+      "Env": true
     },
     "plugins": [
       "prettier"
