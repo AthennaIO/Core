@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import { Is } from '@athenna/common'
 import { Env } from '@athenna/config'
 import { ColorHelper, Logger } from '@athenna/logger'
 
@@ -67,13 +66,7 @@ export class LoggerHelper {
   static get() {
     const logger = new Logger()
 
-    let bootLogs = Env('BOOT_LOGS')
-
-    if (Is.String(bootLogs)) {
-      bootLogs = bootLogs === 'true'
-    }
-
-    return Env('NODE_ENV') === 'test' || !bootLogs
+    return Env('NODE_ENV') === 'test' || !Env('BOOT_LOGS')
       ? logger.channel('discard')
       : logger.channel('application')
   }
