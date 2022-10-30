@@ -82,6 +82,8 @@ export class Ignite {
 
       this.#logger = LoggerHelper.get()
 
+      this.#listenToUncaughtExceptions()
+
       await ProviderHelper.registerAll()
       await ProviderHelper.bootAll()
 
@@ -130,6 +132,17 @@ export class Ignite {
     }
 
     return this.#application
+  }
+
+  /**
+   * Notify about uncaught exceptions
+   *
+   * @return {void}
+   */
+  #listenToUncaughtExceptions() {
+    process.on('uncaughtExceptionMonitor', error => {
+      this.#logger.fatal(error, '"uncaughtException" detected')
+    })
   }
 
   /**
