@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -39,12 +39,12 @@
     "#tests/*": "./tests/*.js"
   },
   "dependencies": {
-    "@athenna/artisan": "1.6.0",
+    "@athenna/artisan": "1.6.3",
     "@athenna/common": "1.0.2",
-    "@athenna/config": "1.2.1",
-    "@athenna/http": "1.8.3",
-    "@athenna/ioc": "1.3.0",
-    "@athenna/logger": "1.3.8"
+    "@athenna/config": "1.2.2",
+    "@athenna/http": "1.8.5",
+    "@athenna/ioc": "1.3.1",
+    "@athenna/logger": "1.4.0"
   },
   "devDependencies": {
     "@japa/assert": "1.3.4",
@@ -125,6 +125,9 @@
       }
     ]
   },
+  "eslintIgnore": [
+    "tests/Stubs/badConfig.js"
+  ],
   "eslintConfig": {
     "env": {
       "es2021": true,
