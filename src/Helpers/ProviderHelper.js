@@ -9,8 +9,8 @@
 
 import { Config } from '@athenna/config'
 import { Module } from '@athenna/common'
-import { LoggerHelper } from '#src/Helpers/LoggerHelper'
 import { Logger } from '@athenna/logger'
+import { LoggerHelper } from '#src/Helpers/LoggerHelper'
 
 export class ProviderHelper {
   /**
