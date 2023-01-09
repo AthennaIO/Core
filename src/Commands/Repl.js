@@ -7,9 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { Command } from '@athenna/artisan'
-
 import { Ignite } from '#src/index'
+import { Command } from '@athenna/artisan'
 
 export class Repl extends Command {
   /**
