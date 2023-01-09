@@ -15,7 +15,6 @@ import { normalize, resolve } from 'node:path'
 
 import { Ioc } from '@athenna/ioc'
 import { ColorHelper } from '@athenna/logger'
-import { Route, Server } from '@athenna/http'
 import { Config, EnvHelper } from '@athenna/config'
 import { Exception, File, Module, Path } from '@athenna/common'
 
@@ -332,7 +331,7 @@ export class Application {
     /**
      * Preload default console route file
      */
-    await this.#preloadFile(Path.routes('console.js'))
+    await this.#preloadFile(Path.routes(`console.${Path.ext()}`))
 
     this.#registerGracefulShutdown(process)
 
@@ -346,6 +345,7 @@ export class Application {
    */
   async bootHttpServer() {
     const httpServer = this.#container.safeUse('Athenna/Core/HttpServer')
+    const httpRoute = this.#container.safeUse('Athenna/Core/HttpRoute')
 
     /**
      * Resolve the Kernel file inside Http directory. It's
@@ -357,14 +357,14 @@ export class Application {
     /**
      * Preload default http route file
      */
-    await this.#preloadFile(Path.routes('http.js'))
+    await this.#preloadFile(Path.routes(`http.${Path.ext()}`))
 
-    Route.register()
+    httpRoute.register()
 
     const port = Config.get('http.port')
     const host = Config.get('http.host')
 
-    await Server.listen(port, host)
+    await httpServer.listen(port, host)
 
     this.#registerGracefulShutdown(process)
 
@@ -394,7 +394,7 @@ export class Application {
    * @private
    */
   async #resolveHttpKernel() {
-    const Kernel = await Module.getFrom(Path.http('Kernel.js'))
+    const Kernel = await Module.getFrom(Path.http(`Kernel.${Path.ext()}`))
 
     const kernel = new Kernel()
 
@@ -416,7 +416,7 @@ export class Application {
    * @private
    */
   async #resolveConsoleKernel() {
-    const Kernel = await Module.getFrom(Path.console('Kernel.js'))
+    const Kernel = await Module.getFrom(Path.console(`Kernel.${Path.ext()}`))
 
     const kernel = new Kernel()
 
