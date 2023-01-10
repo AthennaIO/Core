@@ -75,9 +75,9 @@ export class Ignite {
   async fire() {
     try {
       /**
-       * Load all config files of config folder
+       * Load/Reload all config files of config folder.
        */
-      await Config.loadAll(Path.config())
+      await Config.loadAll(Path.config(), false)
 
       this.#logger = LoggerHelper.get()
 
