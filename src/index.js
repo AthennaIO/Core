@@ -401,13 +401,13 @@ export class Application {
     this.#logger.success('Booting the Http Kernel')
 
     await kernel.registerCors()
+    await kernel.registerTracer()
     await kernel.registerHelmet()
     await kernel.registerSwagger()
     await kernel.registerRateLimit()
     await kernel.registerMiddlewares()
     await kernel.registerErrorHandler()
     await kernel.registerLogMiddleware()
-    await kernel.registerRequestIdMiddleware()
   }
 
   /**
