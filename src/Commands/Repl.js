@@ -37,6 +37,7 @@ export class Repl extends Command {
    */
   async handle() {
     process.env.BOOT_LOGS = 'false'
+    process.env.IS_ARTISAN = 'false'
     process.env.SHUTDOWN_LOGS = 'false'
 
     const application = await new Ignite().fire()
