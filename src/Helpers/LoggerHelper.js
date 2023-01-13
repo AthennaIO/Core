@@ -70,4 +70,30 @@ export class LoggerHelper {
       ? logger.channel('discard')
       : logger.channel('application')
   }
+
+  /**
+   * Create a console logger using console log to
+   * log exceptions.
+   *
+   * @return {{
+   *  warn: ((...m: any[]) => void),
+   *  trace: ((...m: any[]) => void),
+   *  debug: ((...m: any[]) => void),
+   *  success: ((...m: any[]) => void),
+   *  error: ((...m: any[]) => void),
+   *  info: ((...m: any[]) => void),
+   *  fatal: ((...m: any[]) => void)
+   *  }}
+   */
+  static getConsoleLogger() {
+    return {
+      info: (...m) => console.log(...m),
+      warn: (...m) => console.log(...m),
+      error: (...m) => console.error(...m),
+      debug: (...m) => console.log(...m),
+      trace: (...m) => console.log(...m),
+      fatal: (...m) => console.error(...m),
+      success: (...m) => console.log(...m),
+    }
+  }
 }
