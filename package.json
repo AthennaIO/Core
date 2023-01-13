@@ -80,6 +80,8 @@
     ],
     "exclude": [
       "src/Commands/Repl.js",
+      "src/Helpers/CoreLoader.js",
+      "src/Helpers/LoggerHelper.js",
       "src/Exceptions/Exception.js"
     ],
     "reporter": [
