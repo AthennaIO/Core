@@ -92,31 +92,21 @@ export class Ignite {
 
       return this.#createApplication()
     } catch (error) {
-      if (error.prettify) {
-        const prettyError = await error.prettify()
+      if (!Env('FORCE_USE_DEFAULT_LOG', false)) {
+        this.#logger = LoggerHelper.getConsoleLogger()
+      }
 
-        if (!this.#logger) {
-          console.log(prettyError)
-        } else {
-          this.#logger.error(prettyError)
-        }
-
-        process.exit()
-      } else {
+      if (!error.prettify) {
         const exception = new Exception(error.message, 0, error.name)
 
         exception.stack = error.stack
-
-        const prettyException = await exception.prettify()
-
-        if (!this.#logger) {
-          console.log(prettyException)
-        } else {
-          this.#logger.error(prettyException)
-        }
-
-        process.exit()
+        // eslint-disable-next-line no-ex-assign
+        error = exception
       }
+
+      this.#logger.fatal(await error.prettify())
+
+      process.exit()
     }
   }
 

@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -80,6 +80,8 @@
     ],
     "exclude": [
       "src/Commands/Repl.js",
+      "src/Helpers/CoreLoader.js",
+      "src/Helpers/LoggerHelper.js",
       "src/Exceptions/Exception.js"
     ],
     "reporter": [
