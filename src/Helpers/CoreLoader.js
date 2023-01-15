@@ -7,6 +7,9 @@
  * file that was distributed with this source code.
  */
 
+import { join } from 'node:path'
+import { Folder, Module } from '@athenna/common'
+
 export class CoreLoader {
   /**
    * Return all commands from artisan console application.
@@ -14,7 +17,15 @@ export class CoreLoader {
    * @return {any[]}
    */
   static loadCommands() {
-    return [import('#src/Commands/Repl')]
+    return [
+      import('#src/Commands/Repl'),
+      import('#src/Commands/Serve'),
+      import('#src/Commands/Make/Facade'),
+      import('#src/Commands/Make/Service'),
+      import('#src/Commands/Make/Provider'),
+      import('#src/Commands/Make/Exception'),
+      import('#src/Commands/Make/Repository'),
+    ]
   }
 
   /**
@@ -23,6 +34,9 @@ export class CoreLoader {
    * @return {any[]}
    */
   static loadTemplates() {
-    return []
+    const dirname = Module.createDirname(import.meta.url)
+    const templatesPath = join(dirname, '..', '..', 'templates')
+
+    return new Folder(templatesPath).loadSync().getFilesByPattern('**/*.edge')
   }
 }
