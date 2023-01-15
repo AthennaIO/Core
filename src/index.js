@@ -126,6 +126,10 @@ export class Ignite {
    * @return {void}
    */
   #listenToUncaughtExceptions() {
+    if (Env('LISTEN_UNCAUGHT_CONFIGURED', false)) {
+      return
+    }
+
     process.on('uncaughtException', async error => {
       let logger = this.#logger
 
@@ -141,6 +145,8 @@ export class Ignite {
 
       process.exit()
     })
+
+    process.env.LISTEN_UNCAUGHT_CONFIGURED = 'true'
   }
 
   /**
@@ -380,6 +386,10 @@ export class Application {
    * @param {string} filePath
    */
   async #preloadFile(filePath) {
+    if (!(await File.exists(filePath))) {
+      return
+    }
+
     const { name, href } = new File(filePath)
 
     this.#logger.success(`Preloading ${name} file`)
