@@ -11,13 +11,12 @@ import { test } from '@japa/runner'
 import { Config, Env } from '@athenna/config'
 import { File, Folder, Path } from '@athenna/common'
 
-import { Application, Ignite } from '#src/index'
+import { Application, Ignite, ProviderHelper } from '#src/index'
 import { NullApplicationException } from '#src/Exceptions/NullApplicationException'
+import { OnlyArtisanProvider } from '#tests/Stubs/providers/OnlyArtisanProvider'
 
 test.group('IgniteTest', group => {
   group.each.setup(async () => {
-    process.env.BOOT_LOGS = '(false)'
-    process.env.SHUTDOWN_LOGS = '(false)'
     await new Folder(Path.stubs('app')).copy(Path.app())
     await new Folder(Path.stubs('config')).copy(Path.config())
     await new Folder(Path.stubs('routes')).copy(Path.routes())
@@ -47,7 +46,7 @@ test.group('IgniteTest', group => {
 
     const ignite = new Ignite()
 
-    await ignite.fire()
+    await ignite.fire(import.meta.url)
 
     process.env.THROW_ERROR_PROVIDER = null
   })
@@ -57,7 +56,7 @@ test.group('IgniteTest', group => {
 
     const ignite = new Ignite()
 
-    await ignite.fire()
+    await ignite.fire(import.meta.url)
 
     process.env.THROW_EXCEPTION_PROVIDER = null
   })
@@ -65,7 +64,7 @@ test.group('IgniteTest', group => {
   test('should be able to get the application from ignite class', async ({ assert }) => {
     const ignite = new Ignite()
 
-    await ignite.fire()
+    await ignite.fire(import.meta.url)
 
     assert.instanceOf(ignite.getApplication(), Application)
   })
@@ -73,7 +72,7 @@ test.group('IgniteTest', group => {
   test('should be able to ignite an Athenna http application and graceful shutdown', async ({ assert }) => {
     process.env.ATHENNA_APPLICATIONS = 'http'
 
-    const application = await new Ignite().fire()
+    const application = await new Ignite().fire(import.meta.url)
     const httpServer = await application.bootHttpServer()
 
     assert.isFalse(ioc.hasDependency('Athenna/Artisan/Test'))
@@ -107,7 +106,7 @@ test.group('IgniteTest', group => {
   test('should be able to ignite an Athenna artisan application', async ({ assert }) => {
     process.env.ATHENNA_APPLICATIONS = 'artisan'
 
-    const application = await new Ignite().fire()
+    const application = await new Ignite().fire(import.meta.url)
     const artisan = await application.bootArtisan()
 
     assert.isTrue(ioc.hasDependency('Athenna/Artisan/Test'))
@@ -124,7 +123,7 @@ test.group('IgniteTest', group => {
   test('should be able to ignite an Athenna REPL application and graceful shutdown', async ({ assert }) => {
     process.env.ATHENNA_APPLICATIONS = 'repl'
 
-    const application = await new Ignite().fire()
+    const application = await new Ignite().fire(import.meta.url)
     const repl = await application.bootREPL()
 
     assert.equal(Env('APP_NAME'), 'Athenna')
@@ -134,5 +133,14 @@ test.group('IgniteTest', group => {
     assert.equal(Config.get('http.domain'), 'http://localhost:1335')
 
     repl.write('.exit\n')
+  })
+
+  test('should be able to specify which providers should run by ignite options', async ({ assert }) => {
+    await new Ignite().fire(import.meta.url, {
+      bootLogs: true,
+      providers: [import('../Stubs/providers/OnlyArtisanProvider.js')],
+    })
+
+    assert.equal(ProviderHelper.getAll()[0], OnlyArtisanProvider)
   })
 })

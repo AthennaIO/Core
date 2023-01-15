@@ -7,8 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { Env } from '@athenna/config'
-import { ColorHelper, Logger } from '@athenna/logger'
+import { ColorHelper } from '@athenna/logger'
 
 export class LoggerHelper {
   /**
@@ -55,19 +54,5 @@ export class LoggerHelper {
       purple: ColorHelper.purple,
       yellow: ColorHelper.chalk.yellow,
     }
-  }
-
-  /**
-   * Create a new instance of logger based in NODE_ENV
-   * and BOOT_LOGS envs.
-   *
-   * @return {Logger}
-   */
-  static get() {
-    const logger = new Logger()
-
-    return Env('NODE_ENV') === 'test' || !Env('BOOT_LOGS')
-      ? logger.channel('discard')
-      : logger.channel('application')
   }
 }

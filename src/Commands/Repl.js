@@ -36,11 +36,10 @@ export class Repl extends Command {
    * @return {Promise<void>}
    */
   async handle() {
-    process.env.BOOT_LOGS = 'false'
-    process.env.IS_ARTISAN = 'false'
-    process.env.SHUTDOWN_LOGS = 'false'
-
-    const application = await new Ignite().fire()
+    const application = await new Ignite().fire(import.meta.url, {
+      bootLogs: false,
+      shutdownLogs: false,
+    })
 
     await application.bootREPL()
   }

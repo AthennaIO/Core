@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import dotenv from 'dotenv'
 import figlet from 'figlet'
 import chalkRainbow from 'chalk-rainbow'
 
@@ -14,9 +15,9 @@ import { start } from 'node:repl'
 import { normalize, resolve } from 'node:path'
 
 import { Ioc } from '@athenna/ioc'
-import { ColorHelper, Logger } from '@athenna/logger'
 import { Config, EnvHelper } from '@athenna/config'
 import { File, Module, Path } from '@athenna/common'
+import { ColorHelper, Logger } from '@athenna/logger'
 
 import { LoggerHelper } from '#src/Helpers/LoggerHelper'
 import { ProviderHelper } from '#src/Helpers/ProviderHelper'
@@ -28,13 +29,14 @@ export * from './Helpers/ProviderHelper.js'
 
 export class Ignite {
   /**
-   * Simple logger for Ignite class. Ignite creates a new
-   * instance of Logger because providers are not registered
-   * yet.
+   * Simple vanilla logger for Ignite class.
    *
-   * @type {Logger}
+   * @type {import('@athenna/logger').VanillaLogger}
    */
-  #logger
+  #logger = Logger.getVanillaLogger({
+    driver: 'console',
+    formatter: 'simple',
+  })
 
   /**
    * An instance of the application. Is here that the
@@ -44,7 +46,51 @@ export class Ignite {
    */
   #application
 
-  constructor() {
+  /**
+   * Set listener in "uncaughtException" event. You can set
+   * your own callback or use the Athenna default to handle
+   * uncaught errors.
+   *
+   * @param {any} [callback]
+   * @return {void}
+   */
+  setUncaught(callback) {
+    if (Env('LISTEN_UNCAUGHT_CONFIGURED', false)) {
+      return
+    }
+
+    const defaultCallback = async error => {
+      const logger = Logger.getVanillaLogger({
+        driver: 'console',
+        formatter: 'none',
+      })
+
+      if (!error.prettify) {
+        error = error.toAthennaException()
+      }
+
+      logger.fatal(await error.prettify())
+
+      process.exit()
+    }
+
+    process.on('uncaughtException', callback || defaultCallback)
+
+    process.env.LISTEN_UNCAUGHT_CONFIGURED = 'true'
+  }
+
+  /**
+   * Set the process chdir and resolve the environment
+   * where the application is running.
+   *
+   * This method will also set if the application is TS,
+   * if is Artisan and the Path.defaultBeforePath.
+   *
+   * @param metaUrl {string}
+   * @param [beforePath] {string}
+   * @return {void}
+   */
+  setRootPath(metaUrl, beforePath = '') {
     /**
      * Change all process.cwd commands to return the
      * root path where the application root is stored.
@@ -58,50 +104,164 @@ export class Ignite {
      * Now process.chdir is in the application root.
      */
     if (!process.env.CORE_TESTING) {
-      process.chdir(
-        resolve(Module.createDirname(import.meta.url), '..', '..', '..', '..'),
-      )
+      const __dirname = Module.createDirname(import.meta.url)
+
+      process.chdir(resolve(__dirname, '..', '..', '..', '..'))
     }
 
-    this.#resolveNodeEnv()
+    /**
+     * If env IS_TS is already set, then we cant change it.
+     */
+    if (Env('IS_TS') === true || Env('IS_TS') === false) {
+      Path.resolveEnvironment(metaUrl, beforePath)
+    }
+
+    if (metaUrl.endsWith(`artisan.${Path.ext()}`)) {
+      process.env.IS_ARTISAN = process.env.IS_ARTISAN || 'true'
+    } else {
+      process.env.IS_ARTISAN = 'false'
+    }
+  }
+
+  /**
+   * Set the env file that the application will use.
+   * The env file path will be automactlly be resolved by
+   * Athenna (using the NODE_ENV variable) if any path is set.
+   *
+   * In case path is empty:
+   * If NODE_ENV variable it's already set the .env.${NODE_ENV} file
+   * will be used. If not, Athenna will load the .env file and reload
+   * the environment variables with OVERRIDE_ENV=true in case NODE_ENV
+   * is set inside .env file.
+   *
+   * @param {string} [path]
+   * @return {void}
+   */
+  setEnvFile(path) {
+    if (path) {
+      const configurations = { path }
+
+      dotenv.config(configurations)
+
+      return
+    }
+
+    if (!process.env.NODE_ENV) {
+      EnvHelper.resolveFile()
+
+      process.env.OVERRIDE_ENV = 'true'
+
+      EnvHelper.resolveFile()
+
+      return
+    }
+
+    EnvHelper.resolveFile()
+  }
+
+  /**
+   * Load the configuration files inside some path.
+   * The default path is always Path.config().
+   *
+   * @param {string} [path]
+   * @param {boolean} [safe]
+   * @return {Promise<void>}
+   */
+  async setConfigFiles(path = Path.config(), safe) {
+    await Config.loadAll(path, safe)
+  }
+
+  /**
+   * Also set the application providers. By default, if
+   * providers array is empty, Athenna will bootstrap
+   * according to "config/app" file using "providers" key
+   * value.
+   *
+   * @param {any[]} providers
+   * @return {Promise<void>}
+   */
+  async setProviders(providers = Config.get('app.providers')) {
+    await ProviderHelper.setProviders(providers)
+
+    await ProviderHelper.registerAll()
+    await ProviderHelper.bootAll()
+
+    this.#logger.success('Providers successfully bootstrapped')
+  }
+
+  /**
+   * Files that Athenna needs to preload when bootstraping
+   * the application. By default, if files is undefined, Athenna
+   * will look up into config/app using the "preloads" key value.
+   *
+   * @param {any[]} preloads
+   * @return {Promise<void>}
+   */
+  async setFilesToPreload(preloads = Config.get('app.preloads')) {
+    preloads = await Promise.all(preloads)
+
+    const promises = preloads.map(preload => {
+      preload = normalize(preload)
+
+      const { base, href } = new File(Path.config(preload))
+
+      this.#logger.success(`Preloading ${base} file`)
+
+      return import(href)
+    })
+
+    await Promise.all(promises)
   }
 
   /**
    * Fire the application loading configuration files, registering
    * providers and preloading files. Everything in order.
    *
+   * @param metaUrl {string}
+   * @param {{
+   *   envPath?: string,
+   *   preloads?: any[],
+   *   providers?: any[],
+   *   bootLogs?: boolean,
+   *   beforePath?: string,
+   *   configsPath?: string,
+   *   shutdownLogs?: boolean,
+   *   loadConfigSafe?: boolean,
+   *   uncaughtExceptionHandler?: (error: Error) => void | Promise<void>
+   * }} [options]
    * @return {Promise<Application>}
    */
-  async fire() {
+  async fire(metaUrl, options = {}) {
     try {
-      /**
-       * Load/Reload all config files of config folder.
-       */
-      await Config.loadAll(Path.config(), false)
-
-      this.#logger = LoggerHelper.get()
-
-      this.#listenToUncaughtExceptions()
-
-      await ProviderHelper.registerAll()
-      await ProviderHelper.bootAll()
-
-      this.#logger.success('Providers successfully bootstrapped')
-
-      await this.#preloadFiles()
-
-      return this.#createApplication()
-    } catch (error) {
-      if (!Env('FORCE_USE_DEFAULT_LOG', false)) {
-        this.#logger = Logger.getConsoleLogger()
+      if (options?.bootLogs === false) {
+        this.#logger = Logger.getVanillaLogger({
+          driver: 'null',
+        })
       }
+
+      ProviderHelper.shutdownLogs = options.shutdownLogs || false
+
+      this.setUncaught(options.uncaughtExceptionHandler)
+      this.setRootPath(metaUrl, options.beforePath)
+      this.setEnvFile(options.envPath)
+
+      await this.setConfigFiles(options.configsPath, options.loadConfigSafe)
+      await this.setProviders(options.providers)
+      await this.setFilesToPreload(options.preloads)
+
+      return this.createApplication()
+    } catch (error) {
+      const logger = Logger.getVanillaLogger({
+        driver: 'console',
+        formatter: 'none',
+      })
 
       if (!error.prettify) {
         // eslint-disable-next-line no-ex-assign
         error = error.toAthennaException()
       }
 
-      this.#logger.fatal(await error.prettify())
+      logger.fatal(await error.prettify())
 
       process.exit()
     }
@@ -121,98 +281,28 @@ export class Ignite {
   }
 
   /**
-   * Notify about uncaught exceptions
-   *
-   * @return {void}
-   */
-  #listenToUncaughtExceptions() {
-    if (Env('LISTEN_UNCAUGHT_CONFIGURED', false)) {
-      return
-    }
-
-    process.on('uncaughtException', async error => {
-      let logger = this.#logger
-
-      if (!Env('FORCE_USE_DEFAULT_LOG', false)) {
-        logger = Logger.getConsoleLogger()
-      }
-
-      if (!error.prettify) {
-        error = error.toAthennaException()
-      }
-
-      logger.fatal(await error.prettify())
-
-      process.exit()
-    })
-
-    process.env.LISTEN_UNCAUGHT_CONFIGURED = 'true'
-  }
-
-  /**
    * Create a new instance of application inside
    * Ignite class.
    *
    * @return {Application}
    */
-  #createApplication() {
+  createApplication() {
     this.#application = new Application()
 
     return this.#application
-  }
-
-  /**
-   * Resolve the NODE_ENV Env variable verifying if it's already
-   * set. If not, get the content of config/app file and take the
-   * environment key value to set as NODE_ENV. Then, resolve the
-   * .env.${NODE_ENV} file in Node.js process.
-   *
-   * @return {void}
-   */
-  #resolveNodeEnv() {
-    if (!process.env.NODE_ENV) {
-      EnvHelper.resolveFile()
-
-      process.env.OVERRIDE_ENV = 'true'
-
-      EnvHelper.resolveFile()
-
-      return
-    }
-
-    EnvHelper.resolveFile()
-  }
-
-  /**
-   * Preload all the files configured inside config/app
-   * file.
-   *
-   * @return {Promise<void>}
-   */
-  async #preloadFiles() {
-    const preloads = await Promise.all(Config.get('app.preloads'))
-
-    const promises = preloads.map(preload => {
-      preload = normalize(preload)
-
-      const { name, href } = new File(Path.config(preload))
-
-      this.#logger.success(`Preloading ${name} file`)
-
-      return import(href)
-    })
-
-    await Promise.all(promises)
   }
 }
 
 export class Application {
   /**
-   * Simple mocked logger.
+   * Simple vanilla logger for Ignite class.
    *
-   * @type {Logger}
+   * @type {import('@athenna/logger').VanillaLogger}
    */
-  #logger
+  #logger = Logger.getVanillaLogger({
+    driver: 'console',
+    formatter: 'simple',
+  })
 
   /**
    * An instance of the Ioc class that is a Monostate with
@@ -227,7 +317,6 @@ export class Application {
    */
   constructor() {
     this.#container = new Ioc()
-    this.#logger = LoggerHelper.get()
   }
 
   // TODO
@@ -390,9 +479,9 @@ export class Application {
       return
     }
 
-    const { name, href } = new File(filePath)
+    const { base, href } = new File(filePath)
 
-    this.#logger.success(`Preloading ${name} file`)
+    this.#logger.success(`Preloading ${base} file`)
 
     return import(href)
   }
