@@ -14,9 +14,9 @@ import { start } from 'node:repl'
 import { normalize, resolve } from 'node:path'
 
 import { Ioc } from '@athenna/ioc'
-import { ColorHelper } from '@athenna/logger'
+import { ColorHelper, Logger } from '@athenna/logger'
 import { Config, EnvHelper } from '@athenna/config'
-import { Exception, File, Module, Path } from '@athenna/common'
+import { File, Module, Path } from '@athenna/common'
 
 import { LoggerHelper } from '#src/Helpers/LoggerHelper'
 import { ProviderHelper } from '#src/Helpers/ProviderHelper'
@@ -93,15 +93,12 @@ export class Ignite {
       return this.#createApplication()
     } catch (error) {
       if (!Env('FORCE_USE_DEFAULT_LOG', false)) {
-        this.#logger = LoggerHelper.getConsoleLogger()
+        this.#logger = Logger.getConsoleLogger()
       }
 
       if (!error.prettify) {
-        const exception = new Exception(error.message, 0, error.name)
-
-        exception.stack = error.stack
         // eslint-disable-next-line no-ex-assign
-        error = exception
+        error = error.toAthennaException()
       }
 
       this.#logger.fatal(await error.prettify())
@@ -129,9 +126,27 @@ export class Ignite {
    * @return {void}
    */
   #listenToUncaughtExceptions() {
-    process.on('uncaughtExceptionMonitor', error => {
-      this.#logger.fatal(error, '"uncaughtException" detected')
+    if (Env('LISTEN_UNCAUGHT_CONFIGURED', false)) {
+      return
+    }
+
+    process.on('uncaughtException', async error => {
+      let logger = this.#logger
+
+      if (!Env('FORCE_USE_DEFAULT_LOG', false)) {
+        logger = Logger.getConsoleLogger()
+      }
+
+      if (!error.prettify) {
+        error = error.toAthennaException()
+      }
+
+      logger.fatal(await error.prettify())
+
+      process.exit()
     })
+
+    process.env.LISTEN_UNCAUGHT_CONFIGURED = 'true'
   }
 
   /**
@@ -371,6 +386,10 @@ export class Application {
    * @param {string} filePath
    */
   async #preloadFile(filePath) {
+    if (!(await File.exists(filePath))) {
+      return
+    }
+
     const { name, href } = new File(filePath)
 
     this.#logger.success(`Preloading ${name} file`)

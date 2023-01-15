@@ -27,6 +27,6 @@ export class Kernel extends ConsoleKernel {
    * @return {any[]}
    */
   get templates() {
-    return [...HttpLoader.loadTemplates(), ...ArtisanLoader.loadTemplates()]
+    return [...HttpLoader.loadTemplates(), ...ArtisanLoader.loadTemplates(), ...CoreLoader.loadTemplates()]
   }
 }
