@@ -104,7 +104,7 @@ export class Ignite {
     /**
      * If env IS_TS is already set, then we cant change it.
      */
-    if (Env('IS_TS') === true || Env('IS_TS') === false) {
+    if (Env('IS_TS') === undefined) {
       Path.resolveEnvironment(metaUrl, beforePath)
     }
 
