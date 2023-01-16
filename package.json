@@ -40,6 +40,9 @@
     "#src/*": "./src/*.js",
     "#tests/*": "./tests/*.js"
   },
+  "dependencies": {
+    "pretty-repl": "3.1.1"
+  },
   "devDependencies": {
     "@athenna/artisan": "3.0.9",
     "@athenna/common": "3.0.2",
