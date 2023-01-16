@@ -146,5 +146,5 @@ test.group('IgniteTest', group => {
 
     assert.lengthOf(providers, 1)
     assert.equal(providers[0], OnlyArtisanProvider)
-  }).pin()
+  })
 })
