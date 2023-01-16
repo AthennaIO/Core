@@ -120,7 +120,7 @@ test.group('IgniteTest', group => {
     await artisan.call('make:controller TestController')
   })
 
-  test('should be able to ignite an Athenna REPL application and graceful shutdown', async ({ assert }) => {
+  test('should be able to ignite an Athenna REPL application and force shutdown', async ({ assert }) => {
     process.env.ATHENNA_APPLICATIONS = 'repl'
 
     const application = await new Ignite().fire(import.meta.url)
@@ -133,7 +133,7 @@ test.group('IgniteTest', group => {
     assert.equal(Config.get('http.domain'), 'http://localhost:1335')
 
     assert.equal(repl.context.Hello.world(), 'hello world')
-    repl.write("const { User } = await import('#app/Models/User')\n")
+    repl.write('throw new Error("Testing uncaught handler")\n')
     repl.write('.exit\n')
   })
 
