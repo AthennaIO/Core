@@ -37,11 +37,17 @@ export class Serve extends Command {
    * @return {import('@athenna/artisan').Commander}
    */
   addFlags(commander) {
-    return commander.option(
-      '-w, --watch',
-      'Watch for file changes and re-start the application on change',
-      false,
-    )
+    return commander
+      .option(
+        '-w, --watch',
+        'Watch for file changes and re-start the application on change',
+        false,
+      )
+      .option(
+        '-e, --env <env>',
+        'Change the environment where the application will run. Default is ""',
+        '',
+      )
   }
 
   /**
@@ -51,6 +57,10 @@ export class Serve extends Command {
    * @return {Promise<void>}
    */
   async handle(options) {
+    if (options.env !== '') {
+      process.env.NODE_ENV = options.env
+    }
+
     if (options.watch) {
       let execCmd = "'npm run start --silent'"
       const nodemon = await import('nodemon')

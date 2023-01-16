@@ -31,12 +31,31 @@ export class Repl extends Command {
   }
 
   /**
+   * Set additional flags in the commander instance.
+   * This method is executed when registering your command.
+   *
+   * @param {import('@athenna/artisan').Commander} commander
+   * @return {import('@athenna/artisan').Commander}
+   */
+  addFlags(commander) {
+    return commander.option(
+      '-e, --env <env>',
+      'Change the environment where the REPLSession will run. Default is ""',
+      '',
+    )
+  }
+
+  /**
    * Execute the console command.
    *
    * @params {any} options
    * @return {Promise<void>}
    */
-  async handle() {
+  async handle(options) {
+    if (options.env !== '') {
+      process.env.NODE_ENV = options.env
+    }
+
     const application = await new Ignite().fire(import.meta.url, {
       bootLogs: false,
       shutdownLogs: false,
