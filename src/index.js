@@ -12,7 +12,7 @@ import dotenv from 'dotenv'
 import { Logger } from '@athenna/logger'
 import { normalize, resolve } from 'node:path'
 import { Config, EnvHelper } from '@athenna/config'
-import { File, Is, Module, Path } from '@athenna/common'
+import { File, Is, Module, Options, Path } from '@athenna/common'
 import { Application } from '#src/Application/Application'
 import { ProviderHelper } from '#src/Helpers/ProviderHelper'
 import { NullApplicationException } from '#src/Exceptions/NullApplicationException'
@@ -251,13 +251,19 @@ export class Ignite {
    */
   async fire(metaUrl, options = {}) {
     try {
-      if (options?.bootLogs === false) {
+      options = Options.create(options, {
+        bootLogs: true,
+        shutdownLogs: false,
+      })
+
+      process.env.BOOT_LOGS = `${options.bootLogs}`
+      process.env.SHUTDOWN_LOGS = `${options.shutdownLogs}`
+
+      if (!options.bootLogs) {
         this.#logger = Logger.getVanillaLogger({
           driver: 'null',
         })
       }
-
-      ProviderHelper.shutdownLogs = options.shutdownLogs || false
 
       this.setUncaught(options.uncaughtExceptionHandler)
       this.setRootPath(metaUrl, options.beforePath)
