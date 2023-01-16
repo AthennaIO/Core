@@ -314,6 +314,14 @@ export class ProviderHelper {
   static providers: any[]
 
   /**
+   * Set if provider helper will generate shutdown logs
+   * when running providers shutdown method.
+   *
+   * @type {boolean}
+   */
+  static shutdownLogs: boolean
+
+  /**
    * Set the providers that ProviderHelper will work with.
    *
    * @param providers {any[]}
@@ -359,7 +367,7 @@ export class ProviderHelper {
    *
    * @return {Promise<void>}
    */
-  static shutdownAll(log?: boolean): Promise<void>
+  static shutdownAll(): Promise<void>
 
   /**
    * Verify if provider can be bootstrap using ATHENNA_APPLICATIONS env.
