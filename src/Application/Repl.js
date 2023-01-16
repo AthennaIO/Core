@@ -10,10 +10,10 @@
 import figlet from 'figlet'
 import chalkRainbow from 'chalk-rainbow'
 
-import { start } from 'node:repl'
+import { start } from 'pretty-repl'
 import { ColorHelper } from '@athenna/logger'
-import { File, Module, Options, Path } from '@athenna/common'
 import { LoggerHelper } from '#src/Helpers/LoggerHelper'
+import { File, Module, Options, Path } from '@athenna/common'
 import { INTERNAL_REPL_PROPS } from '#src/Constants/InternalReplProps'
 
 const ui = LoggerHelper.replUi
@@ -52,7 +52,7 @@ export class Repl {
    * @param {{
    *   routePath?: string,
    * }} [options]
-   * @return {Promise<import('node:repl').Http>}
+   * @return {Promise<import('node:repl').REPLServer>}
    */
   async boot(options) {
     options = Options.create(options, {
@@ -78,10 +78,8 @@ export class Repl {
     repl.setPrompt(ui.purple.bold('Athenna ') + ColorHelper.green.bold('❯ '))
     repl.displayPrompt(false)
 
-    const routePath = Path.routes(`repl.${Path.ext()}`)
-
-    if (await File.exists(routePath)) {
-      const context = await Module.get(import(routePath))
+    if (await File.exists(options.routePath)) {
+      const context = await Module.get(import(options.routePath))
 
       Object.keys(context).forEach(key => (repl.context[key] = context[key]))
     }
