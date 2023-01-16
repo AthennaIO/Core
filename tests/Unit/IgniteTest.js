@@ -142,6 +142,9 @@ test.group('IgniteTest', group => {
       providers: [import('../Stubs/providers/OnlyArtisanProvider.js')],
     })
 
-    assert.equal(ProviderHelper.getAll()[0], OnlyArtisanProvider)
-  })
+    const providers = ProviderHelper.getAll()
+
+    assert.lengthOf(providers, 1)
+    assert.equal(providers[0], OnlyArtisanProvider)
+  }).pin()
 })
