@@ -12,8 +12,8 @@ import { Config, Env } from '@athenna/config'
 import { File, Folder, Path } from '@athenna/common'
 
 import { Application, Ignite, ProviderHelper } from '#src/index'
-import { NullApplicationException } from '#src/Exceptions/NullApplicationException'
 import { OnlyArtisanProvider } from '#tests/Stubs/providers/OnlyArtisanProvider'
+import { NullApplicationException } from '#src/Exceptions/NullApplicationException'
 
 test.group('IgniteTest', group => {
   group.each.setup(async () => {
@@ -132,6 +132,8 @@ test.group('IgniteTest', group => {
     assert.equal(Config.get('app.name'), 'Athenna')
     assert.equal(Config.get('http.domain'), 'http://localhost:1335')
 
+    assert.equal(repl.context.Hello.world(), 'hello world')
+    repl.write("const { User } = await import('#app/Models/User')\n")
     repl.write('.exit\n')
   })
 

@@ -8,24 +8,18 @@
  */
 
 import dotenv from 'dotenv'
-import figlet from 'figlet'
-import chalkRainbow from 'chalk-rainbow'
 
-import { start } from 'node:repl'
+import { Logger } from '@athenna/logger'
 import { normalize, resolve } from 'node:path'
-
-import { Ioc } from '@athenna/ioc'
 import { Config, EnvHelper } from '@athenna/config'
-import { File, Module, Path } from '@athenna/common'
-import { ColorHelper, Logger } from '@athenna/logger'
-
-import { LoggerHelper } from '#src/Helpers/LoggerHelper'
+import { File, Is, Module, Path } from '@athenna/common'
+import { Application } from '#src/Application/Application'
 import { ProviderHelper } from '#src/Helpers/ProviderHelper'
-import { INTERNAL_REPL_PROPS } from '#src/Constants/InternalReplProps'
 import { NullApplicationException } from '#src/Exceptions/NullApplicationException'
 
 export * from './Helpers/CoreLoader.js'
 export * from './Helpers/ProviderHelper.js'
+export * from './Application/Application.js'
 
 export class Ignite {
   /**
@@ -55,8 +49,8 @@ export class Ignite {
    * @return {void}
    */
   setUncaught(callback) {
-    if (Env('LISTEN_UNCAUGHT_CONFIGURED', false)) {
-      return
+    if (Is.Array(process._events.uncaughtException)) {
+      process._events.uncaughtException.splice(1, 1)
     }
 
     const defaultCallback = async error => {
@@ -75,8 +69,6 @@ export class Ignite {
     }
 
     process.on('uncaughtException', callback || defaultCallback)
-
-    process.env.LISTEN_UNCAUGHT_CONFIGURED = 'true'
   }
 
   /**
@@ -214,11 +206,37 @@ export class Ignite {
   }
 
   /**
+   * Register graceful shutdown set in "config/app" file.
+   *
+   * @private
+   */
+  setGracefulShutdown(signals = Config.get('app.gracefulShutdown')) {
+    if (!signals || Is.Empty(signals)) {
+      return
+    }
+
+    if (Env('GRACEFUL_SHUTDOWN_CONFIGURED', false)) {
+      return
+    }
+
+    Object.keys(signals).forEach(key => {
+      if (!signals[key]) {
+        return
+      }
+
+      process.on(key, signals[key])
+    })
+
+    process.env.GRACEFUL_SHUTDOWN_CONFIGURED = 'true'
+  }
+
+  /**
    * Fire the application loading configuration files, registering
    * providers and preloading files. Everything in order.
    *
    * @param metaUrl {string}
    * @param {{
+   *   signals?: any,
    *   envPath?: string,
    *   preloads?: any[],
    *   providers?: any[],
@@ -248,6 +266,8 @@ export class Ignite {
       await this.setConfigFiles(options.configsPath, options.loadConfigSafe)
       await this.setProviders(options.providers)
       await this.setFilesToPreload(options.preloads)
+
+      this.setGracefulShutdown(options.signals)
 
       return this.createApplication()
     } catch (error) {
@@ -287,268 +307,8 @@ export class Ignite {
    * @return {Application}
    */
   createApplication() {
-    this.#application = new Application()
+    this.#application = new Application(this.#logger)
 
     return this.#application
-  }
-}
-
-export class Application {
-  /**
-   * Simple vanilla logger for Ignite class.
-   *
-   * @type {import('@athenna/logger').VanillaLogger}
-   */
-  #logger = Logger.getVanillaLogger({
-    driver: 'console',
-    formatter: 'simple',
-  })
-
-  /**
-   * An instance of the Ioc class that is a Monostate with
-   * the Awilix container inside.
-   *
-   * @type {import('@athenna/ioc').Ioc}
-   */
-  #container
-
-  /**
-   * Creates a new instance of Application.
-   */
-  constructor() {
-    this.#container = new Ioc()
-  }
-
-  // TODO
-  // async bootWorker() {}
-
-  /**
-   * Boot a new REPL inside this Application instance.
-   *
-   * @return {Promise<import('node:repl').REPLServer>}
-   */
-  async bootREPL() {
-    const ui = LoggerHelper.replUi
-    const log = LoggerHelper.replLog
-
-    log.write(chalkRainbow(figlet.textSync('REPL\n')))
-
-    log.gray('To import your modules use dynamic imports:\n')
-    log.gray("{ Log } = await import('@athenna/logger')")
-    log.gray("{ User } = await import('#app/Models/User')")
-    log.gray("const stringHelper = await import('#app/Helpers/string')\n")
-
-    log.write(
-      `${ui.yellow.bold('To see all commands available type:')} .help\n`,
-    )
-
-    const repl = start(
-      ui.purple.bold('Athenna ') + ColorHelper.green.bold('❯ '),
-    )
-
-    repl.on('exit', () => {
-      ProviderHelper.shutdownAll().then(() => process.exit())
-    })
-
-    repl.defineCommand('ls', {
-      help: 'List all Athenna preloaded methods/properties in REPL context.',
-      action(property) {
-        this.clearBufferedCommand()
-
-        log.write('')
-        Object.keys(repl.context).forEach(key => {
-          if (INTERNAL_REPL_PROPS.includes(key)) {
-            return
-          }
-
-          log.yellow(key)
-        })
-        log.write('')
-
-        this.displayPrompt()
-      },
-    })
-
-    repl.defineCommand('clean', {
-      help: `Clean any property of REPL global context. Example: .clean ${ui.gray(
-        '(propertyName)',
-      )}`,
-      action(property) {
-        this.clearBufferedCommand()
-
-        log.write('')
-
-        if (!property) {
-          log.red('You have not provided any property to remove.')
-          log.write(`Try like this: .clean ${ui.gray('(propertyName)')}\n`)
-
-          return this.displayPrompt()
-        }
-
-        if (!repl.context[property]) {
-          log.red(
-            `The property "${property}" doesnt exist inside REPL global context.`,
-          )
-          log.red(
-            'Use the ".ls" command to check the properties available in REPL global context.',
-          )
-
-          return this.displayPrompt()
-        }
-
-        delete repl.context[property]
-
-        log.green(
-          `Property "${property}" successfully removed from REPL context.\n`,
-        )
-
-        this.displayPrompt()
-      },
-    })
-
-    return repl
-  }
-
-  /**
-   * Boot a new Artisan inside this Application instance.
-   *
-   * @return {Promise<import('@athenna/artisan').ArtisanImpl>}
-   */
-  async bootArtisan() {
-    const artisan = this.#container.safeUse('Athenna/Core/Artisan')
-
-    /**
-     * Resolve the Kernel file inside Console directory.
-     */
-    await this.#resolveConsoleKernel()
-
-    /**
-     * Preload default console route file
-     */
-    await this.#preloadFile(Path.routes(`console.${Path.ext()}`))
-
-    this.#registerGracefulShutdown(process)
-
-    return artisan
-  }
-
-  /**
-   * Boot a new HttpServer inside this Application instance.
-   *
-   * @return {Promise<import('@athenna/http').Http>}
-   */
-  async bootHttpServer() {
-    const httpServer = this.#container.safeUse('Athenna/Core/HttpServer')
-    const httpRoute = this.#container.safeUse('Athenna/Core/HttpRoute')
-
-    /**
-     * Resolve the Kernel file inside Http directory. It's
-     * extremely important to call this method before preloading
-     * the routes/http file because of named middlewares
-     */
-    await this.#resolveHttpKernel()
-
-    /**
-     * Preload default http route file
-     */
-    await this.#preloadFile(Path.routes(`http.${Path.ext()}`))
-
-    httpRoute.register()
-
-    const port = Config.get('http.port')
-    const host = Config.get('http.host')
-
-    await httpServer.listen(port, host)
-
-    this.#registerGracefulShutdown(process)
-
-    this.#logger.success(`Http server started on http://${host}:${port}`)
-
-    return httpServer
-  }
-
-  /**
-   * Preload the file according to filePath. This is usefully
-   * to preload default files of each type of application. Such
-   * as routes and Kernels.
-   *
-   * @param {string} filePath
-   */
-  async #preloadFile(filePath) {
-    if (!(await File.exists(filePath))) {
-      return
-    }
-
-    const { base, href } = new File(filePath)
-
-    this.#logger.success(`Preloading ${base} file`)
-
-    return import(href)
-  }
-
-  /**
-   * Resolve the Kernel of the http server.
-   *
-   * @private
-   */
-  async #resolveHttpKernel() {
-    const Kernel = await Module.getFrom(Path.http(`Kernel.${Path.ext()}`))
-
-    const kernel = new Kernel()
-
-    this.#logger.success('Booting the Http Kernel')
-
-    await kernel.registerCors()
-    await kernel.registerTracer()
-    await kernel.registerHelmet()
-    await kernel.registerSwagger()
-    await kernel.registerRateLimit()
-    await kernel.registerMiddlewares()
-    await kernel.registerErrorHandler()
-    await kernel.registerLogMiddleware()
-  }
-
-  /**
-   * Resolve the Kernel of the artisan/console.
-   *
-   * @private
-   */
-  async #resolveConsoleKernel() {
-    const Kernel = await Module.getFrom(Path.console(`Kernel.${Path.ext()}`))
-
-    const kernel = new Kernel()
-
-    this.#logger.success('Booting the Console Kernel')
-
-    await kernel.registerErrorHandler()
-    await kernel.registerCommands()
-    await kernel.registerTemplates()
-  }
-
-  /**
-   * Register graceful shutdown using config/app file.
-   *
-   * @private
-   */
-  #registerGracefulShutdown(process) {
-    if (Env('GRACEFUL_SHUTDOWN_CONFIGURED', false)) {
-      return
-    }
-
-    const signals = Config.get('app.gracefulShutdown')
-
-    if (!signals) {
-      return
-    }
-
-    Object.keys(signals).forEach(key => {
-      if (!signals[key]) {
-        return
-      }
-
-      process.on(key, signals[key])
-    })
-
-    process.env.GRACEFUL_SHUTDOWN_CONFIGURED = 'true'
   }
 }

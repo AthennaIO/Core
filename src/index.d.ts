@@ -7,15 +7,149 @@
  * file that was distributed with this source code.
  */
 
+import { Http } from '@athenna/http'
+import { REPLServer } from 'node:repl'
+import { ArtisanImpl } from '@athenna/artisan'
+import { VanillaLogger } from '@athenna/logger'
+
+export interface REPLOptions {
+  /**
+   * The repl route path.
+   *
+   * @default Path.routes(`repl.${Path.ext()}`)
+   */
+  routePath?: string,
+}
+
+export interface ArtisanOptions {
+  /**
+   * The artisan route path.
+   *
+   * @default Path.routes(`console.${Path.ext()}`)
+   */
+  routePath?: string,
+
+  /**
+   * The console kernel path.
+   *
+   * @default Path.console(`Kernel.${Path.ext()}`)
+   */
+  kernelPath?: string
+}
+
+export interface HttpServerOptions {
+  /**
+   * The http route path.
+   *
+   * @default Path.routes(`http.${Path.ext()}`)
+   */
+  routePath?: string,
+
+  /**
+   * The http kernel path.
+   *
+   * @default Path.http(`Kernel.${Path.ext()}`)
+   */
+  kernelPath?: string
+}
+
 export interface IgniteOptions {
+  /**
+   * Signals that the application should listen too.
+   * Useful for configuring graceful shutdown.
+   *
+   * @default Config.get('app.gracefulShutdown')
+   */
+  signals?: any,
+
+  /**
+   * Your environment variable file path. By
+   * default, Athenna will load your ".env" file
+   * (just to get the NODE_ENV env) and then try
+   * to reload with "OVERRIDE_ENV=true" searching
+   * for the ".env.${NODE_ENV}" file.
+   *
+   * If the envFile path is set, Athenna will only load
+   * the env path you set.
+   *
+   * @default Path.pwd('.env')
+   */
   envPath?: string,
+
+  /**
+   * Your application preload files. Preload files help
+   * an Athenna application to bootstrap, in somecases
+   * you might not want to import all your preload files
+   * depending on the application you are running. This
+   * option could be used for this purpose.
+   *
+   * @default Config.get('app.preloads')
+   */
   preloads?: any[],
+
+  /**
+   * Your application providers. Providers help
+   * an Athenna application to bootstrap, in somecases
+   * you might not want to bootstrap all your providers
+   * depending on the application you are running. This
+   * option could be used for this purpose.
+   *
+   * @default Config.get('app.providers')
+   */
   providers?: any[],
+
+  /**
+   * Show boot logs of the application. If this option
+   * is true, Athenna will log operations that are being
+   * executed to boot your application.
+   *
+   * @default true
+   */
   bootLogs?: boolean,
+
+  /**
+   * The before path that will be used in all
+   * "Path" helper calls. This is extremelly useful
+   * when working with TypeScript and you need to build
+   * your code, just set the "beforePath" as "/build" and
+   * Athenna will automatically add it if running ".js" files.
+   *
+   * If file ends with ".ts", Athenna will not set the "beforePath".
+   *
+   * @default ''
+   */
   beforePath?: string,
+
+  /**
+   * The configuration files path.
+   *
+   * @default Path.config()
+   */
   configsPath?: string,
+
+  /**
+   * Show shutdown logs of the application. If
+   * this option is true, ProviderHelper will
+   * log all the providers shutting down.
+   *
+   * @default false
+   */
   shutdownLogs?: boolean,
+
+  /**
+   * Load the configurations file safelly. If
+   * this option is true, Athenna will not reload
+   * configuration files that are already loaded.
+   *
+   * @default false
+   */
   loadConfigSafe?: boolean,
+
+  /**
+   * The exception handler for uncaught exceptions.
+   * The default one uses VanillaLogger to show errors.
+   * After the error is logged, the application exits.
+   */
   uncaughtExceptionHandler?: (error: Error) => void | Promise<void>
 }
 
@@ -134,25 +268,41 @@ export class Ignite {
 
 export class Application {
   /**
+   * Creates a new instance of Application.
+   */
+  constructor(logger: VanillaLogger)
+
+  /**
    * Boot a new REPL inside this Application instance.
    *
+   * @param {{
+   *   routePath?: string,
+   * }} [options]
    * @return {Promise<import('node:repl').REPLServer>}
    */
-  bootREPL(): Promise<import('node:repl').REPLServer>
+  bootREPL(options?: REPLOptions): Promise<REPLServer>
 
   /**
    * Boot a new Artisan inside this Application instance.
    *
+   * @param {{
+   *   routePath?: string,
+   *   kernelPath?: string,
+   * }} [options]
    * @return {Promise<import('@athenna/artisan').ArtisanImpl>}
    */
-  bootArtisan(): Promise<import('@athenna/artisan').ArtisanImpl>
+  bootArtisan(options?: ArtisanOptions): Promise<ArtisanImpl>
 
   /**
    * Boot a new HttpServer inside this Application instance.
    *
+   * @param {{
+   *   routePath?: string,
+   *   kernelPath?: string,
+   * }} [options]
    * @return {Promise<import('@athenna/http').Http>}
    */
-  bootHttpServer(): Promise<import('@athenna/http').Http>
+  bootHttpServer(options?: HttpServerOptions): Promise<Http>
 }
 
 export class ProviderHelper {

@@ -8,6 +8,7 @@
  */
 
 import { Ignite } from '#src/index'
+import { Logger } from '@athenna/logger'
 import { Command } from '@athenna/artisan'
 
 export class Repl extends Command {
@@ -39,8 +40,22 @@ export class Repl extends Command {
     const application = await new Ignite().fire(import.meta.url, {
       bootLogs: false,
       shutdownLogs: false,
+      uncaughtExceptionHandler: async error => {
+        const logger = Logger.getVanillaLogger({
+          driver: 'console',
+          formatter: 'none',
+        })
+
+        if (!error.prettify) {
+          error = error.toAthennaException()
+        }
+
+        logger.fatal(await error.prettify())
+
+        repl.displayPrompt()
+      },
     })
 
-    await application.bootREPL()
+    const repl = await application.bootREPL()
   }
 }
