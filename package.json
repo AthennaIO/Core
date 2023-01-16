@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "3.0.13",
+  "version": "3.0.14",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -47,7 +47,7 @@
     "@athenna/artisan": "3.0.9",
     "@athenna/common": "3.0.2",
     "@athenna/config": "3.0.4",
-    "@athenna/http": "3.0.9",
+    "@athenna/http": "3.0.10",
     "@athenna/ioc": "3.0.2",
     "@athenna/logger": "3.0.9",
     "@fastify/cors": "8.1.1",

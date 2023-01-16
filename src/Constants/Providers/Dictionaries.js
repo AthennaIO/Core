@@ -18,11 +18,11 @@ export const MESSAGE = {
   shutdown: 'is going down',
 }
 
-export const getDriver = (shutdownLogs, method) => {
+export const getDriver = method => {
   const DICTIONARY = {
     boot: 'null',
     register: 'null',
-    shutdown: shutdownLogs ? 'console' : 'null',
+    shutdown: Env('SHUTDOWN_LOGS', false) ? 'console' : 'null',
   }
 
   return DICTIONARY[method]

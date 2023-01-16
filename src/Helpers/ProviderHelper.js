@@ -25,14 +25,6 @@ export class ProviderHelper {
   static providers = []
 
   /**
-   * Set if provider helper will generate shutdown logs
-   * when running providers shutdown method.
-   *
-   * @type {boolean}
-   */
-  static shutdownLogs = false
-
-  /**
    * Set the providers that ProviderHelper will work with.
    *
    * @param providers {any[]}
@@ -142,7 +134,7 @@ export class ProviderHelper {
   static async #runProvider(method, Provider) {
     const provider = new Provider()
     const logger = Logger.getVanillaLogger({
-      driver: getDriver(this.shutdownLogs, method),
+      driver: getDriver(method),
       formatter: 'simple',
     })
 
