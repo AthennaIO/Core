@@ -51,8 +51,6 @@ export class Serve extends Command {
    * @return {Promise<void>}
    */
   async handle(options) {
-    process.env.BOOT_LOGS = 'true'
-
     if (options.watch) {
       let execCmd = "'npm run start --silent'"
       const nodemon = await import('nodemon')

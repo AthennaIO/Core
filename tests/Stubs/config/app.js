@@ -172,5 +172,5 @@ export default {
   |
   */
 
-  preloads: ['../tests/Stubs/preload.js'],
+  preloads: [],
 }

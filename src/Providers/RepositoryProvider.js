@@ -17,7 +17,7 @@ export class RepositoryProvider extends ServiceProvider {
    * @return {Promise<void>}
    */
   async boot() {
-    const path = Path.app('repositories')
+    const path = Path.repositories()
     const subAlias = 'App/Repositories'
 
     const services = await Module.getAllFromWithAlias(path, subAlias)

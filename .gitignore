@@ -120,3 +120,6 @@ out
 
 # MacOS folder mapper file
 .DS_Store
+
+# Simple test file to run REPL sessions
+test.js

@@ -7,25 +7,53 @@
  * file that was distributed with this source code.
  */
 
-import { Config } from '@athenna/config'
 import { Module } from '@athenna/common'
 import { Logger } from '@athenna/logger'
-import { LoggerHelper } from '#src/Helpers/LoggerHelper'
+
+import {
+  getDriver,
+  LEVEL,
+  MESSAGE,
+} from '#src/Constants/Providers/Dictionaries'
 
 export class ProviderHelper {
+  /**
+   * All the providers registered in the application.
+   *
+   * @type {any[]}
+   */
+  static providers = []
+
+  /**
+   * Set if provider helper will generate shutdown logs
+   * when running providers shutdown method.
+   *
+   * @type {boolean}
+   */
+  static shutdownLogs = false
+
+  /**
+   * Set the providers that ProviderHelper will work with.
+   *
+   * @param providers {any[]}
+   * @return {Promise<void>}
+   */
+  static async setProviders(providers) {
+    const promises = providers.map(module => Module.get(module))
+
+    this.providers = await Promise.all(promises)
+  }
+
   /**
    * Get all the providers from config/app.js file with
    * export normalized.
    *
    * export default, export, module.exports, etc.
    *
-   * @return {Promise<any[]>}
+   * @return {any[]}
    */
-  static async getAll() {
-    const providersModules = Config.get('app.providers')
-    const promises = providersModules.map(module => Module.get(module))
-
-    return Promise.all(promises)
+  static getAll() {
+    return this.providers
   }
 
   /**
@@ -33,10 +61,10 @@ export class ProviderHelper {
    * export normalized and only where provider is bootable
    * by ATHENNA_APPLICATIONS env.
    *
-   * @return {Promise<any[]>}
+   * @return {any[]}
    */
-  static async getAllBootable() {
-    const providers = await this.getAll()
+  static getAllBootable() {
+    const providers = this.getAll()
 
     return providers.filter(Provider => this.canBeBootstrapped(Provider))
   }
@@ -47,9 +75,9 @@ export class ProviderHelper {
    * @return {Promise<void>}
    */
   static async bootAll() {
-    const providers = await this.getAllBootable()
+    const providers = this.getAllBootable()
 
-    const promises = providers.map(P => this.#runProvider('boot', false, P))
+    const promises = providers.map(P => this.#runProvider('boot', P))
 
     await Promise.all(promises)
   }
@@ -60,9 +88,9 @@ export class ProviderHelper {
    * @return {Promise<void>}
    */
   static async registerAll() {
-    const providers = await this.getAllBootable()
+    const providers = this.getAllBootable()
 
-    const promises = providers.map(P => this.#runProvider('register', false, P))
+    const promises = providers.map(P => this.#runProvider('register', P))
 
     await Promise.all(promises)
   }
@@ -72,10 +100,10 @@ export class ProviderHelper {
    *
    * @return {Promise<void>}
    */
-  static async shutdownAll(log = true) {
-    const providers = await this.getAllBootable()
+  static async shutdownAll() {
+    const providers = this.getAllBootable()
 
-    const promises = providers.map(P => this.#runProvider('shutdown', log, P))
+    const promises = providers.map(P => this.#runProvider('shutdown', P))
 
     await Promise.all(promises)
   }
@@ -108,46 +136,29 @@ export class ProviderHelper {
    * Run the providers by method.
    *
    * @param {'boot' | 'register' | 'shutdown'} method
-   * @param {boolean} log
    * @param {any} Provider
    * @return {Promise<void>}
    */
-  static async #runProvider(method, log, Provider) {
+  static async #runProvider(method, Provider) {
     const provider = new Provider()
-    let logger = LoggerHelper.get()
-
-    if (method === 'shutdown' && Env('SHUTDOWN_LOGS')) {
-      logger = new Logger().channel('application')
-    }
-
-    const messageDictionary = {
-      boot: 'has been bootstrapped',
-      register: 'has been registered',
-      shutdown: 'is going down',
-    }
-    const logLevelDictionary = {
-      boot: 'success',
-      register: 'success',
-      shutdown: 'warn',
-    }
+    const logger = Logger.getVanillaLogger({
+      driver: getDriver(this.shutdownLogs, method),
+      formatter: 'simple',
+    })
 
     const possiblePromise = provider.registerAttributes()[method]()
 
-    const logFn = logger[logLevelDictionary[method]].bind(logger)
-    const logMsg = `Provider ${Provider.name} ${messageDictionary[method]}`
+    const logFn = logger[LEVEL[method]].bind(logger)
+    const message = `Provider ${Provider.name} ${MESSAGE[method]}`
 
     if (!possiblePromise) {
-      if (log) {
-        logFn(logMsg)
-      }
+      logFn(message)
 
       return undefined
     }
 
     return possiblePromise.then(result => {
-      if (log) {
-        logFn(logMsg)
-      }
+      logFn(message)
 
       return result
     })

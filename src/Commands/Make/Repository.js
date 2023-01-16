@@ -53,7 +53,7 @@ export class MakeRepository extends Command {
    */
   async handle(name, options) {
     const resource = 'Repository'
-    const path = Path.app(`Repositories/${name}.${Path.ext()}`)
+    const path = Path.repositories(`${name}.${Path.ext()}`)
 
     this.title(`MAKING ${resource}\n`, 'bold', 'green')
 
