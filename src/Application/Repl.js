@@ -63,7 +63,7 @@ export class Repl {
 
     repl.write('delete process.domain._events.error\n', {
       ctrl: true,
-      name: 'l',
+      name: 'u',
     })
 
     log.write(chalkRainbow(figlet.textSync('REPL\n')))
