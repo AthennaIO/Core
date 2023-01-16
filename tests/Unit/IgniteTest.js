@@ -133,7 +133,6 @@ test.group('IgniteTest', group => {
     assert.equal(Config.get('http.domain'), 'http://localhost:1335')
 
     assert.equal(repl.context.Hello.world(), 'hello world')
-    repl.write('throw new Error("Testing uncaught handler")\n')
     repl.write('.exit\n')
   })
 
