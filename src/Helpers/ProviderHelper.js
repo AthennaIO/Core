@@ -8,13 +8,8 @@
  */
 
 import { Module } from '@athenna/common'
-import { Logger } from '@athenna/logger'
-
-import {
-  getDriver,
-  LEVEL,
-  MESSAGE,
-} from '#src/Constants/Providers/Dictionaries'
+import { LoggerHelper } from '#src/Helpers/LoggerHelper'
+import { LEVEL, MESSAGE } from '#src/Constants/Providers/Dictionaries'
 
 export class ProviderHelper {
   /**
@@ -133,10 +128,7 @@ export class ProviderHelper {
    */
   static async #runProvider(method, Provider) {
     const provider = new Provider()
-    const logger = Logger.getVanillaLogger({
-      driver: getDriver(method),
-      formatter: 'simple',
-    })
+    const logger = LoggerHelper.getProviderHelperLogger(method)
 
     const possiblePromise = provider.registerAttributes()[method]()
 

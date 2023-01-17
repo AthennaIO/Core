@@ -61,8 +61,10 @@ export class Repl {
 
     const repl = start({ prompt: '' }).on('exit', () => process.exit())
 
-    repl.write('delete process.domain._events.error\n')
-    repl.write('', { ctrl: true, name: 'l' })
+    if (!Env('CORE_TESTING', false)) {
+      repl.write('delete process.domain._events.error\n')
+      repl.write('', { ctrl: true, name: 'l' })
+    }
 
     log.write(chalkRainbow(figlet.textSync('REPL\n')))
     log.gray('To import your modules use dynamic imports:\n')

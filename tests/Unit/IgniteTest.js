@@ -48,7 +48,10 @@ test.group('IgniteTest', group => {
 
     await ignite.fire(import.meta.url)
 
-    process.env.THROW_ERROR_PROVIDER = null
+    assert.isTrue(Env('PROVIDER_THROW_ERROR', false))
+
+    delete process.env.THROW_ERROR_PROVIDER
+    delete process.env.PROVIDER_THROW_ERROR
   })
 
   test('should be able to handle application exceptions on bootstrap', async ({ assert }) => {
@@ -58,7 +61,10 @@ test.group('IgniteTest', group => {
 
     await ignite.fire(import.meta.url)
 
-    process.env.THROW_EXCEPTION_PROVIDER = null
+    assert.isTrue(Env('PROVIDER_THROW_EXCEPTION', false))
+
+    delete process.env.THROW_EXCEPTION_PROVIDER
+    delete process.env.PROVIDER_THROW_EXCEPTION
   })
 
   test('should be able to get the application from ignite class', async ({ assert }) => {

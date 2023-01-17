@@ -377,3 +377,72 @@ export class ProviderHelper {
    */
   static canBeBootstrapped(Provider: any): boolean
 }
+
+export class LoggerHelper {
+  /**
+   * Return repl log object.
+   *
+   * @return {{
+   *    red: (m: string) => any,
+   *    gray: (m: string) => any,
+   *    green: (m: string) => any,
+   *    yellow: (m: string) => any,
+   *    purple: (m: string) => any,
+   *    write: (m: string) => any
+   * }}
+   */
+  static get replLog(): {
+    red: (m: string) => any,
+    gray: (m: string) => any,
+    green: (m: string) => any,
+    yellow: (m: string) => any,
+    purple: (m: string) => any,
+    write: (m: string) => any
+  }
+
+  /**
+   * Return repl ui kit object.
+   *
+   * @return {{
+   *    red: import('chalk').ChalkInstance,
+   *    gray: import('chalk').ChalkInstance,
+   *    green: import('chalk').ChalkInstance,
+   *    yellow: import('chalk').ChalkInstance,
+   *    purple: import('chalk').ChalkInstance,
+   *    pure: import('chalk').ChalkInstance
+   * }}
+   */
+  static get replUi(): {
+    red: import('chalk').ChalkInstance,
+    gray: import('chalk').ChalkInstance,
+    green: import('chalk').ChalkInstance,
+    yellow: import('chalk').ChalkInstance,
+    purple: import('chalk').ChalkInstance,
+    pure: import('chalk').ChalkInstance
+  }
+
+  /**
+   * Get the logger with default driver and
+   * formatter.
+   *
+   * @return {import('@athenna/logger').VanillaLogger}
+   */
+  static getLogger(): VanillaLogger
+
+  /**
+   * Get the error logger with default driver and
+   * formatter.
+   *
+   * @return {import('@athenna/logger').VanillaLogger}
+   */
+  static getErrorLogger(): VanillaLogger
+
+  /**
+   * Get the logger for provider helper
+   * method.
+   *
+   * @param method {string}
+   * @return {import('@athenna/logger').VanillaLogger}
+   */
+  static getProviderHelperLogger(method: string): VanillaLogger
+}

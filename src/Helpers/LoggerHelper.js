@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { ColorHelper } from '@athenna/logger'
+import { ColorHelper, Logger } from '@athenna/logger'
 
 export class LoggerHelper {
   /**
@@ -23,6 +23,17 @@ export class LoggerHelper {
    * }}
    */
   static get replLog() {
+    if (Env('CORE_TESTING', false)) {
+      return {
+        write: m => null,
+        red: m => null,
+        gray: m => null,
+        green: m => null,
+        purple: m => null,
+        yellow: m => null,
+      }
+    }
+
     return {
       write: m => process.stdout.write(m + '\n'),
       red: m => process.stdout.write(this.replUi.red(m + '\n')),
@@ -54,5 +65,57 @@ export class LoggerHelper {
       purple: ColorHelper.purple,
       yellow: ColorHelper.chalk.yellow,
     }
+  }
+
+  /**
+   * Get the logger with default driver and
+   * formatter.
+   *
+   * @return {import('@athenna/logger').VanillaLogger}
+   */
+  static getLogger() {
+    if (Env('CORE_TESTING', false)) {
+      return Logger.getVanillaLogger({ driver: 'null' })
+    }
+
+    if (Env('BOOT_LOGS', true)) {
+      return Logger.getVanillaLogger({ driver: 'console', formatter: 'simple' })
+    }
+
+    return Logger.getVanillaLogger({ driver: 'null' })
+  }
+
+  /**
+   * Get the error logger with default driver and
+   * formatter.
+   *
+   * @return {import('@athenna/logger').VanillaLogger}
+   */
+  static getErrorLogger() {
+    if (Env('CORE_TESTING', false)) {
+      return Logger.getVanillaLogger({ driver: 'null' })
+    }
+
+    return Logger.getVanillaLogger({ driver: 'console', formatter: 'none' })
+  }
+
+  /**
+   * Get the logger for provider helper
+   * method.
+   *
+   * @param method {string}
+   * @return {import('@athenna/logger').VanillaLogger}
+   */
+  static getProviderHelperLogger(method) {
+    const DICTIONARY = {
+      boot: 'null',
+      register: 'null',
+      shutdown: Env('SHUTDOWN_LOGS', false) ? 'console' : 'null',
+    }
+
+    return Logger.getVanillaLogger({
+      driver: DICTIONARY[method],
+      formatter: 'simple',
+    })
   }
 }

@@ -23,24 +23,24 @@ export default {
 
   channels: {
     application: {
-      driver: 'console',
+      driver: 'null',
       formatter: 'simple',
     },
     console: {
-      driver: 'console',
+      driver: 'null',
       formatter: 'cli',
     },
     discard: {
       driver: 'null',
     },
     exception: {
-      driver: 'console',
+      driver: 'null',
       streamType: 'stderr',
 
       formatter: 'none',
     },
     request: {
-      driver: 'console',
+      driver: 'null',
       streamType: 'stdout',
 
       formatter: 'request',

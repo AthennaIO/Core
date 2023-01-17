@@ -8,8 +8,8 @@
  */
 
 import { Ignite } from '#src/index'
-import { Logger } from '@athenna/logger'
 import { Command } from '@athenna/artisan'
+import { LoggerHelper } from '#src/Helpers/LoggerHelper'
 
 export class Repl extends Command {
   /**
@@ -60,10 +60,7 @@ export class Repl extends Command {
       bootLogs: false,
       shutdownLogs: false,
       uncaughtExceptionHandler: async error => {
-        const logger = Logger.getVanillaLogger({
-          driver: 'console',
-          formatter: 'none',
-        })
+        const logger = LoggerHelper.getErrorLogger()
 
         if (!error.prettify) {
           error = error.toAthennaException()
