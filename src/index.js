@@ -9,15 +9,16 @@
 
 import dotenv from 'dotenv'
 
-import { Logger } from '@athenna/logger'
 import { normalize, resolve } from 'node:path'
 import { Config, EnvHelper } from '@athenna/config'
-import { File, Is, Module, Options, Path } from '@athenna/common'
+import { LoggerHelper } from '#src/Helpers/LoggerHelper'
 import { Application } from '#src/Application/Application'
 import { ProviderHelper } from '#src/Helpers/ProviderHelper'
+import { File, Is, Module, Options, Path } from '@athenna/common'
 import { NullApplicationException } from '#src/Exceptions/NullApplicationException'
 
 export * from './Helpers/CoreLoader.js'
+export * from './Helpers/LoggerHelper.js'
 export * from './Helpers/ProviderHelper.js'
 export * from './Application/Application.js'
 
@@ -27,10 +28,7 @@ export class Ignite {
    *
    * @type {import('@athenna/logger').VanillaLogger}
    */
-  #logger = Logger.getVanillaLogger({
-    driver: 'console',
-    formatter: 'simple',
-  })
+  #logger
 
   /**
    * An instance of the application. Is here that the
@@ -54,10 +52,7 @@ export class Ignite {
     }
 
     const defaultCallback = async error => {
-      const logger = Logger.getVanillaLogger({
-        driver: 'console',
-        formatter: 'none',
-      })
+      const logger = LoggerHelper.getLogger(false)
 
       if (!error.prettify) {
         error = error.toAthennaException()
@@ -95,7 +90,7 @@ export class Ignite {
      *
      * Now process.chdir is in the application root.
      */
-    if (!process.env.CORE_TESTING) {
+    if (!Env('CORE_TESTING', false)) {
       const __dirname = Module.createDirname(import.meta.url)
 
       process.chdir(resolve(__dirname, '..', '..', '..', '..'))
@@ -259,11 +254,7 @@ export class Ignite {
       process.env.BOOT_LOGS = `${options.bootLogs}`
       process.env.SHUTDOWN_LOGS = `${options.shutdownLogs}`
 
-      if (!options.bootLogs) {
-        this.#logger = Logger.getVanillaLogger({
-          driver: 'null',
-        })
-      }
+      this.#logger = LoggerHelper.getLogger()
 
       this.setUncaught(options.uncaughtExceptionHandler)
       this.setRootPath(metaUrl, options.beforePath)
@@ -277,10 +268,7 @@ export class Ignite {
 
       return this.createApplication()
     } catch (error) {
-      const logger = Logger.getVanillaLogger({
-        driver: 'console',
-        formatter: 'none',
-      })
+      const logger = LoggerHelper.getErrorLogger()
 
       if (!error.prettify) {
         // eslint-disable-next-line no-ex-assign

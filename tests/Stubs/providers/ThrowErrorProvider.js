@@ -3,11 +3,13 @@ import { PrettyException } from '#tests/Stubs/app/Exceptions/PrettyException'
 
 export class ThrowErrorProvider extends ServiceProvider {
   register() {
-    if (process.env.THROW_ERROR_PROVIDER && process.env.THROW_ERROR_PROVIDER === 'true') {
+    if (Env('THROW_ERROR_PROVIDER', false)) {
+      process.env.PROVIDER_THROW_ERROR = 'true'
       throw new Error('Some error')
     }
 
-    if (process.env.THROW_EXCEPTION_PROVIDER && process.env.THROW_EXCEPTION_PROVIDER === 'true') {
+    if (Env('THROW_EXCEPTION_PROVIDER', false)) {
+      process.env.PROVIDER_THROW_EXCEPTION = 'true'
       throw new PrettyException()
     }
   }
