@@ -15,9 +15,36 @@ export class FileHelper {
    *
    * Will only work for files that are valid JSON.
    */
-  public static getContentAsJson(path: string) {
+  public static getContentAsJson(path: string): Record<string, any> {
     const file = new File(path, Buffer.from(''))
 
-    return JSON.parse(file.getContentSync().toString())
+    if (!file.fileExists) {
+      return null
+    }
+
+    const json = file.getContentSync().toString()
+
+    if (json.replace(/ /g, '').replace(/\n/g, '') === '') {
+      return {}
+    }
+
+    return JSON.parse(json)
+  }
+
+  /**
+   * Get the content of some file as JSON.
+   */
+  public static getContentOfFile(file: File): Record<string, any> {
+    if (!file.fileExists) {
+      return {}
+    }
+
+    const json = file.getContentSync().toString()
+
+    if (json.replace(/ /g, '').replace(/\n/g, '') === '') {
+      return {}
+    }
+
+    return JSON.parse(json)
   }
 }

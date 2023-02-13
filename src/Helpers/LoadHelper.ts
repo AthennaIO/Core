@@ -7,9 +7,9 @@
  * file that was distributed with this source code.
  */
 
-import { resolve } from 'node:path'
 import { Log } from '@athenna/logger'
 import { Module } from '@athenna/common'
+import { resolve, parse } from 'node:path'
 import { ServiceProvider } from '@athenna/ioc'
 
 export class LoadHelper {
@@ -27,12 +27,12 @@ export class LoadHelper {
     await this.registerProviders()
     await this.bootProviders()
 
-    if (Config.get('rc.bootLogs', false)) {
-      this.providers.forEach(Provider => {
-        const message = `Provider ({yellow} ${Provider.name}) successfully booted`
-
-        Log.channelOrVanilla('application').success(message)
-      })
+    if (Config.is('rc.bootLogs', true)) {
+      this.providers.forEach(Provider =>
+        Log.channelOrVanilla('application').success(
+          `Provider ({yellow} ${Provider.name}) successfully booted`,
+        ),
+      )
     }
   }
 
@@ -54,7 +54,17 @@ export class LoadHelper {
    * Execute the "shutdown" method of all the providers loaded.
    */
   public static async shutdownProviders(): Promise<void> {
-    await Promise.all(this.providers.map(Provider => new Provider().shutdown()))
+    await Promise.all(
+      this.providers.map(Provider => {
+        if (Config.is('rc.bootLogs', true)) {
+          Log.channelOrVanilla('application').success(
+            `Provider ({yellow} ${Provider.name}) successfully shutdown`,
+          )
+        }
+
+        return new Provider().shutdown()
+      }),
+    )
   }
 
   /**
@@ -63,7 +73,17 @@ export class LoadHelper {
   public static async preloadFiles(): Promise<void> {
     const paths = Config.get<string[]>('rc.preloads').map(path => resolve(path))
 
-    await Promise.all(paths.map(path => import(path)))
+    await Promise.all(
+      paths.map(path => {
+        if (Config.is('rc.bootLogs', true)) {
+          Log.channelOrVanilla('application').success(
+            `File ({yellow} ${parse(path).base}) successfully preloaded`,
+          )
+        }
+
+        return import(path)
+      }),
+    )
   }
 
   /**

@@ -14,7 +14,7 @@ export type ArtisanOptions = {
    *
    * @default Artisan
    */
-  displayName: string
+  displayName?: string
 
   /**
    * The path to the console routes. Artisan is the only application that
@@ -24,7 +24,7 @@ export type ArtisanOptions = {
    *
    * Artisan does not need all the application to bootstrap to run.
    */
-  routePath: string
+  routePath?: string
 
   /**
    * The path to the ConsoleKernel. The console kernel is responsible to
@@ -36,7 +36,7 @@ export type ArtisanOptions = {
    *
    * @default Path.nodeModules('@athenna/artisan/build/Kernels/ConsoleKernel.js')
    */
-  kernelPath: string
+  kernelPath?: string
 
   /**
    * The path to the exception handler of console commands. The exception
@@ -48,5 +48,5 @@ export type ArtisanOptions = {
    *
    * @default Path.nodeModules('@athenna/artisan/build/Handlers/ConsoleExceptionHandler.js')
    */
-  exceptionHandlerPath: string
+  exceptionHandlerPath?: string
 }

@@ -58,7 +58,11 @@ export class Artisan {
 
     const kernel = new Kernel()
 
-    Log.channelOrVanilla('application').success(`Booting kernel ${Kernel.name}`)
+    if (Config.is('rc.bootLogs', true)) {
+      Log.channelOrVanilla('application').success(
+        `Booting kernel ${Kernel.name}`,
+      )
+    }
 
     await kernel.registerCommands(argv)
     await kernel.registerRouteCommands(options.routePath)

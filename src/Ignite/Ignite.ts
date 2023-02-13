@@ -179,9 +179,11 @@ export class Ignite {
    * ```
    */
   public setApplicationRootPath(): void {
-    const __dirname = Module.createDirname(import.meta.url)
+    if (!process.env.CORE_TESTING) {
+      const __dirname = Module.createDirname(import.meta.url)
 
-    process.chdir(resolve(__dirname, '..', '..', '..', '..'))
+      process.chdir(resolve(__dirname, '..', '..', '..', '..'))
+    }
 
     /**
      * If env IS_TS is already set, then we cant change it.
@@ -258,7 +260,6 @@ export class Ignite {
     const file = new File(this.options.athennaRcPath, Buffer.from(''))
     const pkgJson = FileHelper.getContentAsJson(Path.pwd('package.json'))
     const corePkgJson = FileHelper.getContentAsJson('../../package.json')
-
     const coreSemverVersion = this.parseVersion(corePkgJson.version)
 
     process.env.APP_NAME = pkgJson.name
@@ -272,14 +273,20 @@ export class Ignite {
       bootLogs: this.options.bootLogs,
       shutdownLogs: this.options.shutdownLogs,
       version: coreSemverVersion,
+      athennaVersion: process.env.ATHENNA_VERSION,
       engines: pkgJson.engines || {},
+      commands: [],
+      services: [],
+      preloads: [],
+      providers: [],
       environments: [],
+      commandsManifest: {},
     }
 
     if (file.fileExists) {
       Config.set('rc', {
         ...athennaRc,
-        ...JSON.parse(file.getContentSync().toString()),
+        ...FileHelper.getContentOfFile(file),
         ...Config.get('rc', {}),
       })
 
