@@ -12,9 +12,11 @@ import { resolve } from 'node:path'
 import { EnvHelper } from '@athenna/config'
 import { Log, Logger } from '@athenna/logger'
 import { SemverNode } from '#src/Types/SemverNode'
+import { Artisan } from '#src/Applications/Artisan'
 import { FileHelper } from '#src/Helpers/FileHelper'
 import { LoadHelper } from '#src/Helpers/LoadHelper'
 import { IgniteOptions } from '#src/Types/IgniteOptions'
+import { ArtisanOptions } from '#src/Types/ArtisanOptions'
 import { Is, File, Module, Options } from '@athenna/common'
 import { parse as semverParse, satisfies as semverSatisfies } from 'semver'
 import { NotSatisfiedNodeVersion } from '#src/Exceptions/NotSatisfiedNodeVersion'
@@ -46,7 +48,7 @@ export class Ignite {
       bootLogs: true,
       shutdownLogs: false,
       beforePath: '/build',
-      loadConfigSafe: false,
+      loadConfigSafe: true,
       configPath: Path.config(),
       athennaRcPath: Path.pwd('.athennarc.json'),
       uncaughtExceptionHandler: this.handleError,
@@ -67,7 +69,10 @@ export class Ignite {
   /**
    * Ignite the Artisan application.
    */
-  public async artisan() {}
+  public async artisan(argv: string[], options?: ArtisanOptions) {
+    await Artisan.load()
+    await Artisan.boot(argv, options)
+  }
 
   /**
    * Ignite the Http server application.
