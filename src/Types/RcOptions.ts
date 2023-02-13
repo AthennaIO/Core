@@ -9,9 +9,35 @@
 
 export interface RcOptions {
   /**
+   * The meta url of where the application has bootstrapped. Athenna will always save this information
+   * to know the call path where the application has started.
+   */
+  meta?: string
+
+  /**
+   * Set if the application will have boot logs showed.
+   */
+  bootLogs?: boolean
+
+  /**
+   * Set if the application will have shutdown logs showed.
+   */
+  shutdownLogs?: boolean
+
+  /**
+   * The NPM engines property of your application package.json.
+   */
+  engines?: Record<string, any>
+
+  /**
    * The Athenna version that is running.
    */
   version?: boolean
+
+  /**
+   * The environments where the application is running.
+   */
+  environments?: string[]
 
   /**
    * Set if Athenna is running as a TypeScript application or not.
