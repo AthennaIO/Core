@@ -197,6 +197,8 @@
       "@athenna/http/providers/HttpRouteProvider",
       "@athenna/http/providers/HttpServerProvider"
     ],
-    "preloads": ["#tests/Stubs/preloads/http"]
+    "preloads": [
+      "#tests/Stubs/preloads/http"
+    ]
   }
 }
