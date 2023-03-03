@@ -65,6 +65,26 @@ export interface RcOptions {
   providers?: string[]
 
   /**
+   * Set the controllers that Athenna needs to register in the application bootstrap.
+   */
+  controllers?: string[]
+
+  /**
+   * Set the middlewares that Athenna needs to register in the application bootstrap.
+   */
+  middlewares?: string[]
+
+  /**
+   * Set the namedMiddlewares that Athenna needs to register in the application bootstrap.
+   */
+  namedMiddlewares?: Record<string, string>
+
+  /**
+   * Set the globalMiddlewares that Athenna needs to register in the application bootstrap.
+   */
+  globalMiddlewares?: string[]
+
+  /**
    * Set the commands that Athenna needs to register when running an Artisan command.
    */
   commands?: string[]

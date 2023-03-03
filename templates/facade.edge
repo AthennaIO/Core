@@ -12,6 +12,6 @@ import { Facade } from '@athenna/ioc'
 |
 */
 
-import { {{ namePascal }} as {{ namePascal }}Impl } from '#app/Services/{{ namePascal }}'
+import { {{ namePascal }}Impl } from '#app/Services/{{ namePascal }}'
 
-export const {{ namePascal }} = Facade.createFor<{{ namePascal }}Impl>('App/Services/{{ namePascal }}')
+export const {{ namePascal }} = Facade.createFor<{{ namePascal }}>('App/Services/{{ namePascal }}')

@@ -10,11 +10,13 @@
 import { Ioc } from '@athenna/ioc'
 import { resolve } from 'node:path'
 import { EnvHelper } from '@athenna/config'
-import { Log, Logger } from '@athenna/logger'
+import { Http } from '#src/Applications/Http'
 import { SemverNode } from '#src/Types/SemverNode'
 import { Artisan } from '#src/Applications/Artisan'
 import { FileHelper } from '#src/Helpers/FileHelper'
 import { LoadHelper } from '#src/Helpers/LoadHelper'
+import { HttpOptions } from '#src/Types/HttpOptions'
+import { Log, LoggerProvider } from '@athenna/logger'
 import { IgniteOptions } from '#src/Types/IgniteOptions'
 import { ArtisanOptions } from '#src/Types/ArtisanOptions'
 import { Is, File, Module, Options } from '@athenna/common'
@@ -43,6 +45,8 @@ export class Ignite {
   public options: IgniteOptions
 
   public constructor(meta: string, options?: IgniteOptions) {
+    new LoggerProvider().register()
+
     this.meta = meta
     this.options = Options.create(options, {
       bootLogs: true,
@@ -77,7 +81,14 @@ export class Ignite {
   /**
    * Ignite the Http server application.
    */
-  public async httpServer() {}
+  public async httpServer(options?: HttpOptions) {
+    const environments = Config.get<string[]>('rc.environments', [])
+
+    environments.push('http')
+
+    await this.fire(environments)
+    await Http.boot(options)
+  }
 
   /**
    * Fire the application configuring the env variables file, configuration files
@@ -279,6 +290,10 @@ export class Ignite {
       services: [],
       preloads: [],
       providers: [],
+      controllers: [],
+      middlewares: [],
+      namedMiddlewares: {},
+      globalMiddlewares: {},
       environments: [],
       commandsManifest: {},
     }
@@ -348,11 +363,7 @@ export class Ignite {
       error = error.toAthennaException()
     }
 
-    if (this.container.hasDependency('Athenna/Core/Logger')) {
-      Log.channelOrVanilla('exception').fatal(await error.prettify())
-    } else {
-      new Logger().channelOrVanilla('exception').fatal(await error.prettify())
-    }
+    Log.channelOrVanilla('exception').fatal(await error.prettify())
 
     process.exit(1)
   }

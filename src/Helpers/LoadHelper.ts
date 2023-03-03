@@ -9,6 +9,7 @@
 
 import { Log } from '@athenna/logger'
 import { Module } from '@athenna/common'
+import { pathToFileURL } from 'node:url'
 import { resolve, parse } from 'node:path'
 import { ServiceProvider } from '@athenna/ioc'
 
@@ -16,7 +17,7 @@ export class LoadHelper {
   /**
    * The providers modules loaded.
    */
-  public static providers: (typeof ServiceProvider)[]
+  public static providers: (typeof ServiceProvider)[] = []
 
   /**
    * REGOOT (Register and Boot) providers.
@@ -71,7 +72,7 @@ export class LoadHelper {
    * Preload all the files inside "rc.preloads" configuration by importing.
    */
   public static async preloadFiles(): Promise<void> {
-    const paths = Config.get<string[]>('rc.preloads').map(path => resolve(path))
+    const paths = Config.get<string[]>('rc.preloads')
 
     await Promise.all(
       paths.map(path => {
@@ -81,7 +82,7 @@ export class LoadHelper {
           )
         }
 
-        return import(path)
+        return this.resolvePathAndImport(path)
       }),
     )
   }
@@ -92,7 +93,7 @@ export class LoadHelper {
    */
   public static async loadBootableProviders(): Promise<void> {
     const paths = Config.get<string[]>('rc.providers')
-    const providers = await Promise.all(paths.map(path => Module.getFrom(path)))
+    const providers = await Promise.all(paths.map(this.resolvePathAndImport))
 
     this.providers = providers.filter(Provider => {
       if (!this.isRegistered(Provider) && this.canBeBootstrapped(Provider)) {
@@ -127,5 +128,18 @@ export class LoadHelper {
     }
 
     return envs.some(env => provider.environment.indexOf(env) >= 0)
+  }
+
+  /**
+   * Resolve the import path by meta URL and import it.
+   */
+  private static async resolvePathAndImport(path: string) {
+    if (path.includes('./') || path.includes('../')) {
+      path = pathToFileURL(resolve(path)).href
+    }
+
+    return import.meta
+      .resolve(path, Config.get('rc.meta'))
+      .then(meta => Module.get(import(meta)))
   }
 }

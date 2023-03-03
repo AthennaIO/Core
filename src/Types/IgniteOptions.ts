@@ -106,11 +106,7 @@ export type IgniteOptions = {
    *   error = error.toAthennaException()
    * }
    *
-   * if (this.container.hasDependency('Athenna/Core/Logger')) {
-   *   Log.channelOrVanilla('exception').fatal(await error.prettify())
-   * } else {
-   *   new Logger().channelOrVanilla('exception').fatal(await error.prettify())
-   * }
+   * Log.channelOrVanilla('exception').fatal(await error.prettify())
    *
    * process.exit(1)
    * ```

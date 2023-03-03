@@ -16,10 +16,13 @@
     "bootstrap"
   ],
   "scripts": {
-    "build": "ts-node bin/build.ts",
+    "node": "cross-env NODE_OPTIONS=\"--experimental-import-meta-resolve\" ts-node",
+    "build": "npm run node --silent -- bin/build.ts",
+    "http": "npm run node --silent -- bin/http.ts",
+    "artisan": "npm run node --silent -- bin/artisan.ts",
     "lint:fix": "eslint \"{src,tests}/**/*.ts\" --fix",
-    "test": "npm run --silent lint:fix && ts-node bin/test.ts",
-    "test:debug": "cross-env DEBUG=api:* ts-node bin/test.ts --inspect",
+    "test": "npm run --silent lint:fix && npm run node --silent -- bin/test.ts",
+    "test:debug": "cross-env DEBUG=api:* npm run node --silent -- bin/test.ts --inspect",
     "test:coverage": "c8 npm run --silent test"
   },
   "files": [
@@ -51,6 +54,7 @@
     "@athenna/artisan": "^3.0.0",
     "@athenna/common": "^3.0.0",
     "@athenna/config": "^3.0.0",
+    "@athenna/http": "^3.0.0",
     "@athenna/ioc": "^3.0.0",
     "@athenna/logger": "^3.0.0",
     "@athenna/view": "^3.0.0",
@@ -187,5 +191,12 @@
         }
       ]
     }
+  },
+  "athenna": {
+    "providers": [
+      "@athenna/http/providers/HttpRouteProvider",
+      "@athenna/http/providers/HttpServerProvider"
+    ],
+    "preloads": ["#tests/Stubs/preloads/http"]
   }
 }
