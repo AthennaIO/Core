@@ -47,7 +47,10 @@ export class Artisan {
    * commands, routes and console exception handler.
    */
   private static async resolveKernel(argv: string[], options?: ArtisanOptions) {
-    const Kernel = await Module.getFrom(options.kernelPath)
+    const Kernel = await Module.resolve(
+      options.kernelPath,
+      Config.get('rc.meta'),
+    )
 
     const kernel = new Kernel()
 

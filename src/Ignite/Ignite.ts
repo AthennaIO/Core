@@ -13,7 +13,6 @@ import { EnvHelper } from '@athenna/config'
 import { Http } from '#src/Applications/Http'
 import { SemverNode } from '#src/Types/SemverNode'
 import { Artisan } from '#src/Applications/Artisan'
-import { FileHelper } from '#src/Helpers/FileHelper'
 import { LoadHelper } from '#src/Helpers/LoadHelper'
 import { HttpOptions } from '#src/Types/HttpOptions'
 import { Log, LoggerProvider } from '@athenna/logger'
@@ -268,9 +267,9 @@ export class Ignite {
    * ```
    */
   public setRcContentAndAppVars() {
-    const file = new File(this.options.athennaRcPath, Buffer.from(''))
-    const pkgJson = FileHelper.getContentAsJson(Path.pwd('package.json'))
-    const corePkgJson = FileHelper.getContentAsJson('../../package.json')
+    const file = new File(this.options.athennaRcPath, '')
+    const pkgJson = new File(Path.pwd('package.json')).getContentAsJsonSync()
+    const corePkgJson = new File('../../package.json').getContentAsJsonSync()
     const coreSemverVersion = this.parseVersion(corePkgJson.version)
 
     process.env.APP_NAME = pkgJson.name
@@ -301,7 +300,7 @@ export class Ignite {
     if (file.fileExists) {
       Config.set('rc', {
         ...athennaRc,
-        ...FileHelper.getContentOfFile(file),
+        ...file.getContentAsJsonSync(),
         ...Config.get('rc', {}),
       })
 
@@ -359,7 +358,7 @@ export class Ignite {
    * the application with exit code "1".
    */
   private async handleError(error: any) {
-    if (!error.prettify) {
+    if (!Is.Exception(error)) {
       error = error.toAthennaException()
     }
 

@@ -7,10 +7,9 @@
  * file that was distributed with this source code.
  */
 
+import { parse } from 'node:path'
 import { Log } from '@athenna/logger'
-import { Module } from '@athenna/common'
-import { pathToFileURL } from 'node:url'
-import { resolve, parse } from 'node:path'
+import { Exec, Module } from '@athenna/common'
 import { ServiceProvider } from '@athenna/ioc'
 
 export class LoadHelper {
@@ -41,50 +40,50 @@ export class LoadHelper {
    * Execute the "boot" method of all the providers loaded.
    */
   public static async bootProviders(): Promise<void> {
-    await Promise.all(this.providers.map(Provider => new Provider().boot()))
+    await Exec.concurrently(
+      this.providers,
+      Provider => new Provider().boot() as Promise<void>,
+    )
   }
 
   /**
    * Execute the "register" method of all the providers loaded.
    */
   public static async registerProviders(): Promise<void> {
-    await Promise.all(this.providers.map(Provider => new Provider().register()))
+    await Exec.concurrently(
+      this.providers,
+      Provider => new Provider().register() as Promise<void>,
+    )
   }
 
   /**
    * Execute the "shutdown" method of all the providers loaded.
    */
   public static async shutdownProviders(): Promise<void> {
-    await Promise.all(
-      this.providers.map(Provider => {
-        if (Config.is('rc.bootLogs', true)) {
-          Log.channelOrVanilla('application').success(
-            `Provider ({yellow} ${Provider.name}) successfully shutdown`,
-          )
-        }
+    await Exec.concurrently(this.providers, Provider => {
+      if (Config.is('rc.bootLogs', true)) {
+        Log.channelOrVanilla('application').success(
+          `Provider ({yellow} ${Provider.name}) successfully shutdown`,
+        )
+      }
 
-        return new Provider().shutdown()
-      }),
-    )
+      return new Provider().shutdown() as Promise<void>
+    })
   }
 
   /**
    * Preload all the files inside "rc.preloads" configuration by importing.
    */
   public static async preloadFiles(): Promise<void> {
-    const paths = Config.get<string[]>('rc.preloads')
+    await Exec.concurrently(Config.get('rc.preloads'), path => {
+      if (Config.is('rc.bootLogs', true)) {
+        Log.channelOrVanilla('application').success(
+          `File ({yellow} ${parse(path).base}) successfully preloaded`,
+        )
+      }
 
-    await Promise.all(
-      paths.map(path => {
-        if (Config.is('rc.bootLogs', true)) {
-          Log.channelOrVanilla('application').success(
-            `File ({yellow} ${parse(path).base}) successfully preloaded`,
-          )
-        }
-
-        return this.resolvePathAndImport(path)
-      }),
-    )
+      return this.resolvePath(path)
+    })
   }
 
   /**
@@ -92,8 +91,8 @@ export class LoadHelper {
    * the providers have the same value of "rc.s".
    */
   public static async loadBootableProviders(): Promise<void> {
-    const paths = Config.get<string[]>('rc.providers')
-    const providers = await Promise.all(paths.map(this.resolvePathAndImport))
+    const paths = Config.get('rc.providers')
+    const providers = await Exec.concurrently(paths, this.resolvePath)
 
     this.providers = providers.filter(Provider => {
       if (!this.isRegistered(Provider) && this.canBeBootstrapped(Provider)) {
@@ -133,13 +132,7 @@ export class LoadHelper {
   /**
    * Resolve the import path by meta URL and import it.
    */
-  private static async resolvePathAndImport(path: string) {
-    if (path.includes('./') || path.includes('../')) {
-      path = pathToFileURL(resolve(path)).href
-    }
-
-    return import.meta
-      .resolve(path, Config.get('rc.meta'))
-      .then(meta => Module.get(import(meta)))
+  private static async resolvePath(path: string) {
+    return Module.resolve(path, Config.get('rc.meta'))
   }
 }

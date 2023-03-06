@@ -57,7 +57,10 @@ export class Http {
    * requests.
    */
   private static async resolveKernel(options?: HttpOptions) {
-    const Kernel = await Module.getFrom(options.kernelPath)
+    const Kernel = await Module.resolve(
+      options.kernelPath,
+      Config.get('rc.meta'),
+    )
 
     const kernel = new Kernel()
 

@@ -8,6 +8,7 @@
  */
 
 import { assert } from '@japa/assert'
+import { Config } from '@athenna/config'
 import { pathToFileURL } from 'node:url'
 import { specReporter } from '@japa/spec-reporter'
 import { configure, processCliArgs, run } from '@japa/runner'
@@ -53,6 +54,8 @@ declare module '@japa/runner' {
 */
 
 process.env.IS_TS = 'true'
+
+Config.set('meta', import.meta.url)
 
 /*
 |--------------------------------------------------------------------------
