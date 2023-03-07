@@ -70,7 +70,9 @@ export class Serve extends Command {
         execCmd = execCmd.concat(' ', Env('NODEMON_NPM_ARGS'))
       }
 
-      nodemon(`--quiet ${ignorePaths} --watch ${Path.pwd()} --exec ${execCmd}`)
+      nodemon.default(
+        `--quiet ${ignorePaths} --watch ${Path.pwd()} --exec ${execCmd}`,
+      )
 
       return
     }
