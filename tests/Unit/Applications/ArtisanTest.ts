@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import { test } from '@japa/runner'
 import { Config } from '@athenna/config'
 import { LoggerProvider } from '@athenna/logger'
 import { Artisan } from '#src/Applications/Artisan'
@@ -15,38 +14,44 @@ import { ExitFaker } from '#tests/Helpers/ExitFaker'
 import { File, Folder, Path } from '@athenna/common'
 import { CALLED_MAP } from '#tests/Helpers/CalledMap'
 import { ConsoleKernel } from '#tests/Stubs/kernels/ConsoleKernel'
+import { Test, AfterEach, BeforeEach, TestContext } from '@athenna/test'
 import { ConsoleExceptionHandler } from '#tests/Stubs/handlers/ConsoleExceptionHandler'
 
-test.group('ArtisanTest', group => {
-  group.each.setup(async () => {
+export default class ArtisanTest {
+  @BeforeEach()
+  public async beforeEach() {
     ioc.reconstruct()
     ExitFaker.fake()
 
     await Config.loadAll(Path.stubs('config'))
     new LoggerProvider().register()
-  })
+  }
 
-  group.each.teardown(async () => {
+  @AfterEach()
+  public async afterEach() {
     ExitFaker.release()
 
     await Folder.safeRemove(Path.stubs('storage'))
-  })
+  }
 
-  test('should be able to load artisan application defaults', async ({ assert }) => {
+  @Test()
+  public async shouldBeAbleToLoadArtisanApplicationDefaults({ assert }: TestContext) {
     await Artisan.load()
 
     assert.isTrue(ioc.hasDependency('Athenna/Core/View'))
     assert.isTrue(ioc.hasDependency('Athenna/Core/Artisan'))
-  })
+  }
 
-  test('should be able to boot an artisan application without any option', async ({ assert }) => {
+  @Test()
+  public async shouldBeAbleToBootAnArtisanApplicationWithoutAnyOption({ assert }: TestContext) {
     await Artisan.load()
-    await Artisan.boot(['node', 'artisan'], { displayName: null }) // <- Only for tests
+    await Artisan.boot(['node', 'artisan'])
 
     assert.isTrue(ExitFaker.faker.called)
-  })
+  }
 
-  test('should be able to boot an artisan application and register commands from routes', async ({ assert }) => {
+  @Test()
+  public async shouldBeAbleToBootAnArtisanApplicationAndRegisterCommandsFromRoutes({ assert }: TestContext) {
     await Artisan.load()
     await Artisan.boot(['node', 'artisan', 'test:generate'], {
       displayName: null,
@@ -55,9 +60,10 @@ test.group('ArtisanTest', group => {
 
     assert.isTrue(ExitFaker.faker.called)
     assert.isTrue(await File.exists(Path.stubs('storage/Command.ts')))
-  })
+  }
 
-  test('should be able to boot an artisan application and register a different console kernel', async ({ assert }) => {
+  @Test()
+  public async shouldBeAbleToBootAnArtisanApplicationAndRegisterAConsoleKernel({ assert }: TestContext) {
     await Artisan.load()
     await Artisan.boot(['node', 'artisan', 'test:generate'], {
       displayName: null,
@@ -68,22 +74,19 @@ test.group('ArtisanTest', group => {
     assert.isTrue(ExitFaker.faker.called)
     assert.isTrue(CALLED_MAP.get(ConsoleKernel.name))
     assert.isTrue(await File.exists(Path.stubs('storage/Command.ts')))
-  })
+  }
 
-  test('should be able to boot an artisan application and register a different exception handler', async ({
-    assert,
-  }) => {
+  @Test()
+  public async shouldBeAbleToBootAnArtisanApplicationAndRegisterAConsoleExceptionHandler({ assert }: TestContext) {
     await Artisan.load()
     await Artisan.boot(['node', 'artisan', 'test:generate'], {
       displayName: null,
       routePath: Path.stubs('routes/console.ts'),
-      kernelPath: Path.stubs('kernels/ConsoleKernel.ts'),
       exceptionHandlerPath: Path.stubs('handlers/ConsoleExceptionHandler.ts'),
     })
 
     assert.isTrue(ExitFaker.faker.called)
-    assert.isTrue(CALLED_MAP.get(ConsoleKernel.name))
     assert.isTrue(CALLED_MAP.get(ConsoleExceptionHandler.name))
     assert.isTrue(await File.exists(Path.stubs('storage/Command.ts')))
-  })
-})
+  }
+}
