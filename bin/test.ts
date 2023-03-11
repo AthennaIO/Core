@@ -9,40 +9,9 @@
 
 import { assert } from '@japa/assert'
 import { Config } from '@athenna/config'
-import { pathToFileURL } from 'node:url'
+import { Importer } from '@athenna/test'
 import { specReporter } from '@japa/spec-reporter'
 import { configure, processCliArgs, run } from '@japa/runner'
-
-/*
-|--------------------------------------------------------------------------
-| Japa types
-|--------------------------------------------------------------------------
-|
-| Declare customized japa types.
-*/
-
-declare module '@japa/assert' {
-  export interface Assert {
-    throws(fn: () => any, errType: any, message?: string): void
-    doesNotThrows(fn: () => any, errType: any, message?: string): void
-    rejects(
-      fn: () => any | Promise<any>,
-      errType: any,
-      message?: string,
-    ): Promise<any>
-    doesNotRejects(
-      fn: () => any | Promise<any>,
-      errType: any,
-      message?: string,
-    ): Promise<any>
-  }
-}
-
-declare module '@japa/runner' {
-  interface TestContext {
-    assert: import('@japa/assert').Assert
-  }
-}
 
 /*
 |--------------------------------------------------------------------------
@@ -77,7 +46,7 @@ configure({
     files: ['tests/**/*Test.ts'],
     plugins: [assert()],
     reporters: [specReporter()],
-    importer: filePath => import(pathToFileURL(filePath).href),
+    importer: Importer.import,
     timeout: 10000,
   },
 })
