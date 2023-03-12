@@ -1,0 +1,8 @@
+import { Test, TestContext } from '@athenna/test'
+
+export default class {{ namePascal }} {
+  @Test()
+  public async shouldBeEqual({ assert }: TestContext) {
+    assert.equal(1, 1)
+  }
+}
