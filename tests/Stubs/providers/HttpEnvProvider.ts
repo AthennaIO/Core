@@ -15,6 +15,14 @@ export default class HttpEnvProvider extends ServiceProvider {
   }
 
   public register(): void {
-    this.container.instance('HttpEnv', 'provided')
+    this.container.instance('HttpEnvRegister', 'provided')
+  }
+
+  public boot(): void {
+    this.container.instance('HttpEnvBoot', 'provided')
+  }
+
+  public shutdown(): void {
+    this.container.instance('HttpEnvShutdown', 'provided')
   }
 }

@@ -15,6 +15,14 @@ export default class HttpAndConsoleEnvProvider extends ServiceProvider {
   }
 
   public register(): void {
-    this.container.instance('ConsoleEnv', 'provided')
+    this.container.instance('HttpAndConsoleEnvRegister', 'provided')
+  }
+
+  public boot(): void {
+    this.container.instance('HttpAndConsoleEnvBoot', 'provided')
+  }
+
+  public shutdown(): void {
+    this.container.instance('HttpAndConsoleEnvShutdown', 'provided')
   }
 }

@@ -23,7 +23,6 @@ export class LoadHelper {
    */
   public static async regootProviders(): Promise<void> {
     await this.loadBootableProviders()
-
     await this.registerProviders()
     await this.bootProviders()
 

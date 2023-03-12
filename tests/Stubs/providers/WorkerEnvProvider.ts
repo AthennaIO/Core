@@ -15,6 +15,14 @@ export default class WorkerEnvProvider extends ServiceProvider {
   }
 
   public register(): void {
-    this.container.instance('WorkerEnv', 'provided')
+    this.container.instance('WorkerEnvRegister', 'provided')
+  }
+
+  public boot(): void {
+    this.container.instance('WorkerEnvBoot', 'provided')
+  }
+
+  public shutdown(): void {
+    this.container.instance('WorkerEnvShutdown', 'provided')
   }
 }

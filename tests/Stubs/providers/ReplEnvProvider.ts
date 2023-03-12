@@ -15,6 +15,14 @@ export default class ReplEnvProvider extends ServiceProvider {
   }
 
   public register(): void {
-    this.container.instance('ReplEnv', 'provided')
+    this.container.instance('ReplEnvRegister', 'provided')
+  }
+
+  public boot(): void {
+    this.container.instance('ReplEnvBoot', 'provided')
+  }
+
+  public shutdown(): void {
+    this.container.instance('ReplEnvShutdown', 'provided')
   }
 }
