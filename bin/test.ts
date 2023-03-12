@@ -24,6 +24,20 @@ import { configure, processCliArgs, run } from '@japa/runner'
 
 process.env.IS_TS = 'true'
 
+/*
+|--------------------------------------------------------------------------
+| Core testing
+|--------------------------------------------------------------------------
+|
+| This property helps the @athenna/core package to test the implementation
+| of the Ignite class. With this env as "true", Athenna will not resolve
+| the application root path because the package is not inside a node_modu
+| les folder when running locally and in pipelines.
+|
+*/
+
+process.env.CORE_TESTING = 'true'
+
 Config.set('meta', import.meta.url)
 
 /*

@@ -8,8 +8,8 @@
  */
 
 import { LoadHelper } from '#src'
+import { CALLED_MAP } from '#tests/Helpers/CalledMap'
 import { Test, BeforeEach, TestContext } from '@athenna/test'
-import { CALLED_MAP } from '../../Helpers/CalledMap.js'
 
 export default class LoadHelperTest {
   @BeforeEach()

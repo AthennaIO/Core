@@ -10,11 +10,10 @@
 import { Config } from '@athenna/config'
 import { LoggerProvider } from '@athenna/logger'
 import { Artisan } from '#src/Applications/Artisan'
-import { ExitFaker } from '#tests/Helpers/ExitFaker'
 import { File, Folder, Path } from '@athenna/common'
 import { CALLED_MAP } from '#tests/Helpers/CalledMap'
 import { ConsoleKernel } from '#tests/Stubs/kernels/ConsoleKernel'
-import { Test, AfterEach, BeforeEach, TestContext } from '@athenna/test'
+import { Test, ExitFaker, AfterEach, BeforeEach, TestContext } from '@athenna/test'
 import { ConsoleExceptionHandler } from '#tests/Stubs/handlers/ConsoleExceptionHandler'
 
 export default class ArtisanTest {
