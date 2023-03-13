@@ -57,7 +57,6 @@ export class Ignite {
       uncaughtExceptionHandler: this.handleError,
     })
 
-    this.setApplicationRootPath()
     this.setRcContentAndAppVars()
     this.verifyNodeEngineVersion()
     this.setUncaughtExceptionHandler()
@@ -98,14 +97,6 @@ export class Ignite {
 
     this.setEnvVariablesFile()
     await this.setConfigurationFiles()
-
-    if (this.options.preloads) {
-      Config.set('rc.preloads', this.options.preloads)
-    }
-
-    if (this.options.providers) {
-      Config.set('rc.providers', this.options.providers)
-    }
 
     await LoadHelper.regootProviders()
     await LoadHelper.preloadFiles()
@@ -272,6 +263,8 @@ export class Ignite {
     const corePkgJson = new File('../../package.json').getContentAsJsonSync()
     const coreSemverVersion = this.parseVersion(corePkgJson.version)
 
+    this.setApplicationRootPath()
+
     process.env.APP_NAME = pkgJson.name
     process.env.APP_VERSION = this.parseVersion(pkgJson.version)?.toString()
     process.env.ATHENNA_VERSION = `Athenna Framework ${coreSemverVersion.toString()}`
@@ -314,6 +307,7 @@ export class Ignite {
     }
 
     athennaRc.isInPackageJson = true
+    this.options.athennaRcPath = Path.pwd('package.json')
 
     Config.set('rc', {
       ...athennaRc,

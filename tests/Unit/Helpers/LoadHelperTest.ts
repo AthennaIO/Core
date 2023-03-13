@@ -7,7 +7,9 @@
  * file that was distributed with this source code.
  */
 
+import { fake } from 'sinon'
 import { LoadHelper } from '#src'
+import { Log, LoggerProvider } from '@athenna/logger'
 import { CALLED_MAP } from '#tests/Helpers/CalledMap'
 import { Test, BeforeEach, TestContext } from '@athenna/test'
 
@@ -27,7 +29,10 @@ export default class LoadHelperTest {
 
     LoadHelper.providers = []
     Config.set('rc.preloads', [])
+    Config.set('rc.bootLogs', false)
     Config.set('rc.environments', [])
+
+    new LoggerProvider().register()
   }
 
   @Test()
@@ -73,9 +78,25 @@ export default class LoadHelperTest {
   }
 
   @Test()
-  public async shouldBeAbleToRegisterProviders({ assert }: TestContext) {
+  public async shouldLoadProviderIfHisFirstIndexOfEnvironmentMethodIsAnAstheristic({ assert }: TestContext) {
+    Config.set('rc.environments', [])
+    Config.set('rc.providers', [
+      '#tests/Stubs/providers/AllEnvProvider',
+      '#tests/Stubs/providers/ReplEnvProvider',
+      '#tests/Stubs/providers/HttpEnvProvider',
+      '#tests/Stubs/providers/WorkerEnvProvider',
+      '#tests/Stubs/providers/ConsoleEnvProvider',
+      '#tests/Stubs/providers/HttpAndConsoleEnvProvider',
+    ])
+
     await LoadHelper.loadBootableProviders()
 
+    assert.lengthOf(LoadHelper.providers, 6)
+  }
+
+  @Test()
+  public async shouldBeAbleToRegisterProviders({ assert }: TestContext) {
+    await LoadHelper.loadBootableProviders()
     await LoadHelper.registerProviders()
 
     assert.isFalse(ioc.hasDependency('ReplEnvBoot'))
@@ -130,6 +151,31 @@ export default class LoadHelperTest {
   }
 
   @Test()
+  public async shouldBeAbleToLogThatProvidersAreShutingdownIfRcBootLogsIsTrue({ assert }: TestContext) {
+    Config.set('rc.bootLogs', true)
+
+    const mock = Log.getMock()
+    const successFake = fake()
+
+    mock
+      .expects('channelOrVanilla')
+      .exactly(5)
+      .withArgs('application')
+      .returns({ success: args => successFake(args) })
+
+    await LoadHelper.loadBootableProviders()
+    await LoadHelper.shutdownProviders()
+
+    assert.isTrue(successFake.calledWith('Provider ({yellow} ReplEnvProvider) successfully shutdown'))
+    assert.isTrue(successFake.calledWith('Provider ({yellow} HttpEnvProvider) successfully shutdown'))
+    assert.isTrue(successFake.calledWith('Provider ({yellow} WorkerEnvProvider) successfully shutdown'))
+    assert.isTrue(successFake.calledWith('Provider ({yellow} ConsoleEnvProvider) successfully shutdown'))
+    assert.isTrue(successFake.calledWith('Provider ({yellow} HttpAndConsoleEnvProvider) successfully shutdown'))
+
+    mock.verify()
+  }
+
+  @Test()
   public async shouldBeAbleToRegootProviders({ assert }: TestContext) {
     await LoadHelper.regootProviders()
 
@@ -146,11 +192,56 @@ export default class LoadHelperTest {
   }
 
   @Test()
+  public async shouldBeAbleToLogThatProvidersAreRegootingIfRcBootLogsIsTrue({ assert }: TestContext) {
+    Config.set('rc.bootLogs', true)
+
+    const mock = Log.getMock()
+    const successFake = fake()
+
+    mock
+      .expects('channelOrVanilla')
+      .exactly(5)
+      .withArgs('application')
+      .returns({ success: args => successFake(args) })
+
+    await LoadHelper.regootProviders()
+
+    assert.isTrue(successFake.calledWith('Provider ({yellow} ReplEnvProvider) successfully booted'))
+    assert.isTrue(successFake.calledWith('Provider ({yellow} HttpEnvProvider) successfully booted'))
+    assert.isTrue(successFake.calledWith('Provider ({yellow} WorkerEnvProvider) successfully booted'))
+    assert.isTrue(successFake.calledWith('Provider ({yellow} ConsoleEnvProvider) successfully booted'))
+    assert.isTrue(successFake.calledWith('Provider ({yellow} HttpAndConsoleEnvProvider) successfully booted'))
+
+    mock.verify()
+  }
+
+  @Test()
   public async shouldBeAbleToPreloadFiles({ assert }: TestContext) {
     Config.set('rc.preloads', ['#tests/Stubs/routes/load'])
 
     await LoadHelper.preloadFiles()
 
     assert.isTrue(CALLED_MAP.has('load.ts'))
+  }
+
+  @Test()
+  public async shouldBeAbleToLogPreloadFilesThatAreBeingImportedIfRcBootLogsIsTrue({ assert }: TestContext) {
+    Config.set('rc.bootLogs', true)
+    Config.set('rc.preloads', ['#tests/Stubs/routes/load'])
+
+    const mock = Log.getMock()
+    const successFake = fake()
+
+    mock
+      .expects('channelOrVanilla')
+      .exactly(1)
+      .withArgs('application')
+      .returns({ success: args => successFake(args) })
+
+    await LoadHelper.preloadFiles()
+
+    assert.isTrue(successFake.calledWith('File ({yellow} load) successfully preloaded'))
+
+    mock.verify()
   }
 }

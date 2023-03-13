@@ -54,14 +54,14 @@ export class Artisan {
 
     const kernel = new Kernel()
 
-    if (Config.is('rc.bootLogs', true)) {
-      Log.channelOrVanilla('application').success(
-        `Booting kernel ${Kernel.name}`,
-      )
-    }
-
     await kernel.registerCommands(argv)
     await kernel.registerRouteCommands(options.routePath)
     await kernel.registerExceptionHandler(options.exceptionHandlerPath)
+
+    if (Config.is('rc.bootLogs', true)) {
+      Log.channelOrVanilla('application').success(
+        `Kernel ({yellow} ${Kernel.name}) successfully booted`,
+      )
+    }
   }
 }

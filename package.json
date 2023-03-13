@@ -54,7 +54,7 @@
     "@athenna/artisan": "^3.2.0",
     "@athenna/common": "^3.3.1",
     "@athenna/config": "^3.2.0",
-    "@athenna/http": "^3.2.0",
+    "@athenna/http": "^3.2.1",
     "@athenna/ioc": "^3.1.5",
     "@athenna/logger": "^3.1.5",
     "@athenna/test": "^3.2.0",
@@ -106,7 +106,9 @@
     "include": [
       "src/**/*.ts"
     ],
-    "exclude": [],
+    "exclude": [
+      "src/Types/*"
+    ],
     "reporter": [
       "text-summary",
       "html"

@@ -7,10 +7,11 @@
  * file that was distributed with this source code.
  */
 
+import { fake } from 'sinon'
 import { Config } from '@athenna/config'
 import { Http } from '#src/Applications/Http'
 import { Folder, Path } from '@athenna/common'
-import { LoggerProvider } from '@athenna/logger'
+import { Log, LoggerProvider } from '@athenna/logger'
 import { LoadHelper } from '#src/Helpers/LoadHelper'
 import { CALLED_MAP } from '#tests/Helpers/CalledMap'
 import { HttpKernel } from '#tests/Stubs/kernels/HttpKernel'
@@ -43,6 +44,45 @@ export default class HttpTest {
     assert.isTrue(Server.isListening)
     assert.equal(Server.getPort(), 3000)
     assert.equal(Server.getHost(), '::1')
+  }
+
+  @Test()
+  public async shouldNotLogThatTheHttpServerHasStartedIfRcBootLogsIsFalse({ assert }: TestContext) {
+    Config.set('rc.bootLogs', false)
+
+    const mock = Log.getMock()
+
+    mock.expects('channelOrVanilla').exactly(0)
+
+    await Http.boot()
+
+    assert.isTrue(Server.isListening)
+    assert.equal(Server.getPort(), 3000)
+    assert.equal(Server.getHost(), '::1')
+    mock.verify()
+  }
+
+  @Test()
+  public async shouldBeAbleToLogThatTheHttpServerHasStartedIfRcBootLogsIsTrue({ assert }: TestContext) {
+    Config.set('rc.bootLogs', true)
+
+    const mock = Log.getMock()
+    const successFake = fake()
+
+    mock
+      .expects('channelOrVanilla')
+      .exactly(2)
+      .withArgs('application')
+      .returns({ success: args => successFake(args) })
+
+    await Http.boot()
+
+    assert.isTrue(Server.isListening)
+    assert.equal(Server.getPort(), 3000)
+    assert.equal(Server.getHost(), '::1')
+    assert.isTrue(successFake.calledWith('Kernel ({yellow} HttpKernel) successfully booted'))
+    assert.isTrue(successFake.calledWith('Http server started on ({yellow} localhost:3000)'))
+    mock.verify()
   }
 
   @Test()

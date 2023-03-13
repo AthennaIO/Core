@@ -114,12 +114,19 @@ out
 .yarn/install-state.gz
 .pnp.*
 
+# Transpiled code path
+dist
+build
+
 # IDE
 .idea
+.fleet
 .vscode
+
+# Environment variables file
+.env
+.env.testing
+.env.production
 
 # MacOS folder mapper file
 .DS_Store
-
-# Simple test file to run REPL sessions
-test.js

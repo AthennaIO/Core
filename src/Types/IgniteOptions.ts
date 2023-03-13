@@ -54,25 +54,6 @@ export type IgniteOptions = {
   loadConfigSafe?: boolean
 
   /**
-   * Your application preload files. Preload files help an Athenna application
-   * to bootstrap, in somecases you might not want to import all your preload
-   * files depending on the application you are running. This option could be
-   * used for this purpose.
-   *
-   * @default Config.get('rc.preloads')
-   */
-  preloads?: any[]
-
-  /**
-   * Your application providers. Providers help an Athenna application to bootstrap,
-   * in somecases you might not want to bootstrap all your providers depending on
-   * the application you are running. This option could be used for this purpose.
-   *
-   * @default Config.get('rc.providers')
-   */
-  providers?: any[]
-
-  /**
    * The before path that will be used in all "Path" helper calls. This is extremelly
    * useful when working with TypeScript and you need to build your code, just set
    * the "beforePath" as "/build" and Athenna will automatically add it if running

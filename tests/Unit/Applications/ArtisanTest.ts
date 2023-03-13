@@ -7,11 +7,12 @@
  * file that was distributed with this source code.
  */
 
+import { fake } from 'sinon'
 import { Config } from '@athenna/config'
-import { LoggerProvider } from '@athenna/logger'
 import { Artisan } from '#src/Applications/Artisan'
 import { File, Folder, Path } from '@athenna/common'
 import { CALLED_MAP } from '#tests/Helpers/CalledMap'
+import { Log, LoggerProvider } from '@athenna/logger'
 import { ConsoleKernel } from '#tests/Stubs/kernels/ConsoleKernel'
 import { Test, ExitFaker, AfterEach, BeforeEach, TestContext } from '@athenna/test'
 import { ConsoleExceptionHandler } from '#tests/Stubs/handlers/ConsoleExceptionHandler'
@@ -22,7 +23,7 @@ export default class ArtisanTest {
     ioc.reconstruct()
     ExitFaker.fake()
 
-    await Config.loadAll(Path.stubs('config'))
+    await await Config.loadAll(Path.stubs('config'))
     new LoggerProvider().register()
   }
 
@@ -47,6 +48,27 @@ export default class ArtisanTest {
     await Artisan.boot(['node', 'artisan'])
 
     assert.isTrue(ExitFaker.faker.called)
+  }
+
+  @Test()
+  public async shouldBeAbleToLogThatTheConsoleKernelIsBootingIfRcBootLogsIsTrue({ assert }: TestContext) {
+    Config.set('rc.bootLogs', true)
+
+    const mock = Log.getMock()
+    const successFake = fake()
+
+    mock
+      .expects('channelOrVanilla')
+      .exactly(1)
+      .withArgs('application')
+      .returns({ success: args => successFake(args) })
+
+    await Artisan.load()
+    await Artisan.boot(['node', 'artisan'])
+
+    assert.isTrue(ExitFaker.faker.called)
+    assert.isTrue(successFake.calledWith('Kernel ({yellow} ConsoleKernel) successfully booted'))
+    mock.verify()
   }
 
   @Test()
