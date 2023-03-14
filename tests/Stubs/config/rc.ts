@@ -13,6 +13,6 @@ import { Path, File } from '@athenna/common'
 const athennaRc = new File(Path.pwd('package.json')).getContentAsJsonSync().athenna
 
 athennaRc.isInPackageJson = true
-athennaRc.meta = Config.get('meta')
+athennaRc.meta = Config.get('meta', import.meta.url)
 
 export default athennaRc

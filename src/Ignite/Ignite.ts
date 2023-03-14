@@ -43,24 +43,33 @@ export class Ignite {
    */
   public options: IgniteOptions
 
-  public constructor(meta: string, options?: IgniteOptions) {
-    new LoggerProvider().register()
+  /**
+   * Load the Ignite class using the options and meta url path.
+   */
+  public async load(meta: string, options?: IgniteOptions): Promise<this> {
+    try {
+      new LoggerProvider().register()
 
-    this.meta = meta
-    this.options = Options.create(options, {
-      bootLogs: true,
-      shutdownLogs: false,
-      beforePath: '/build',
-      loadConfigSafe: true,
-      configPath: Path.config(),
-      athennaRcPath: Path.pwd('.athennarc.json'),
-      uncaughtExceptionHandler: this.handleError,
-    })
+      this.meta = meta
+      this.options = Options.create(options, {
+        bootLogs: true,
+        shutdownLogs: false,
+        beforePath: '/build',
+        loadConfigSafe: true,
+        configPath: Path.config(),
+        athennaRcPath: Path.pwd('.athennarc.json'),
+        uncaughtExceptionHandler: this.handleError,
+      })
 
-    this.setRcContentAndAppVars()
-    this.verifyNodeEngineVersion()
-    this.setUncaughtExceptionHandler()
-    this.registerItselfToTheContainer()
+      this.setUncaughtExceptionHandler()
+      await this.setRcContentAndAppVars()
+      this.verifyNodeEngineVersion()
+      this.registerItselfToTheContainer()
+
+      return this
+    } catch (err) {
+      await this.handleError(err)
+    }
   }
 
   /**
@@ -93,13 +102,19 @@ export class Ignite {
    * providers and preload files.
    */
   public async fire(environments: string[]) {
-    Config.set('rc.environments', environments)
+    try {
+      Config.set('rc.environments', environments)
 
-    this.setEnvVariablesFile()
-    await this.setConfigurationFiles()
+      this.setEnvVariablesFile()
+      await this.setConfigurationFiles()
 
-    await LoadHelper.regootProviders()
-    await LoadHelper.preloadFiles()
+      await LoadHelper.regootProviders()
+      await LoadHelper.preloadFiles()
+
+      this.setApplicationSignals()
+    } catch (err) {
+      await this.handleError(err)
+    }
   }
 
   /**
@@ -201,37 +216,41 @@ export class Ignite {
    *
    * In case path is empty:
    * If NODE_ENV variable it's already set the .env.${NODE_ENV} file will be used.
-   * If not, Athenna will load the .env file and reload the environment variables
-   * with OVERRIDE_ENV=true in case NODE_ENV is set inside .env file.
+   * If not, Athenna will read the .env file and try to find the NODE_ENV value and
+   * then load the environment variables inside the .env.${NODE_ENV} file. If any
+   * NODE_ENV value is found in .env or .env.${NODE_ENV} file does not exist, Athenna
+   * will use the .env file.
    */
   public setEnvVariablesFile(): void {
     if (this.options.envPath) {
       return EnvHelper.resolveFilePath(this.options.envPath)
     }
 
-    if (!process.env.NODE_ENV) {
-      EnvHelper.resolveFile()
-
-      process.env.OVERRIDE_ENV = 'true'
-
-      EnvHelper.resolveFile()
-
-      return
-    }
-
-    EnvHelper.resolveFile()
+    EnvHelper.resolveFile(true)
   }
 
   /**
-   * Configure the graceful shutdown events handler of the application.
+   * Configure the application signals.
    */
-  public setGracefulShutdownHandler(signals?: any): void {
-    if (!signals || Is.Empty(signals)) {
+  public setApplicationSignals(): void {
+    if (Env('SIGNALS_CONFIGURED', false)) {
       return
     }
 
-    if (Env('GRACEFUL_SHUTDOWN_CONFIGURED', false)) {
-      return
+    const signals = Config.get('app.signals', {})
+
+    if (!signals.SIGINT) {
+      signals.SIGINT = async () => {
+        process.exit()
+      }
+    }
+
+    if (!signals.SIGTERM) {
+      signals.SIGTERM = async signal => {
+        await LoadHelper.shutdownProviders()
+
+        process.kill(process.pid, signal)
+      }
     }
 
     Object.keys(signals).forEach(key => {
@@ -242,7 +261,7 @@ export class Ignite {
       process.on(key, signals[key])
     })
 
-    process.env.GRACEFUL_SHUTDOWN_CONFIGURED = 'true'
+    process.env.SIGNALS_CONFIGURED = 'true'
   }
 
   /**
@@ -257,10 +276,10 @@ export class Ignite {
    * Config.get('rc.providers')
    * ```
    */
-  public setRcContentAndAppVars() {
+  public async setRcContentAndAppVars() {
     const file = new File(this.options.athennaRcPath, '')
-    const pkgJson = new File(Path.pwd('package.json')).getContentAsJsonSync()
-    const corePkgJson = new File('../../package.json').getContentAsJsonSync()
+    const pkgJson = await new File(Path.pwd('package.json')).getContentAsJson()
+    const corePkgJson = await new File('../../package.json').getContentAsJson()
     const coreSemverVersion = this.parseVersion(corePkgJson.version)
 
     this.setApplicationRootPath()
@@ -302,6 +321,8 @@ export class Ignite {
 
     if (!pkgJson.athenna) {
       Config.set('rc', { ...athennaRc, ...Config.get('rc', {}) })
+
+      this.options.athennaRcPath = null
 
       return
     }
@@ -356,7 +377,7 @@ export class Ignite {
       error = error.toAthennaException()
     }
 
-    Log.channelOrVanilla('exception').fatal(await error.prettify())
+    await Log.channelOrVanilla('exception').fatal(await error.prettify())
 
     process.exit(1)
   }

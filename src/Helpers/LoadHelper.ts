@@ -19,6 +19,11 @@ export class LoadHelper {
   public static providers: (typeof ServiceProvider)[] = []
 
   /**
+   * The file paths that are already preloaded.
+   */
+  public static alreadyPreloaded: string[] = []
+
+  /**
    * REGOOT (Register and Boot) providers.
    */
   public static async regootProviders(): Promise<void> {
@@ -75,13 +80,17 @@ export class LoadHelper {
    */
   public static async preloadFiles(): Promise<void> {
     await Exec.concurrently(Config.get('rc.preloads'), path => {
+      if (this.alreadyPreloaded.includes(path)) {
+        return
+      }
+
       if (Config.is('rc.bootLogs', true)) {
         Log.channelOrVanilla('application').success(
           `File ({yellow} ${parse(path).base}) successfully preloaded`,
         )
       }
 
-      return this.resolvePath(path)
+      return this.resolvePath(path).then(() => this.alreadyPreloaded.push(path))
     })
   }
 

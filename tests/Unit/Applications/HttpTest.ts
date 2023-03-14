@@ -8,35 +8,19 @@
  */
 
 import { fake } from 'sinon'
+import { Log } from '@athenna/logger'
+import { Path } from '@athenna/common'
+import { Server } from '@athenna/http'
 import { Config } from '@athenna/config'
 import { Http } from '#src/Applications/Http'
-import { Folder, Path } from '@athenna/common'
-import { Log, LoggerProvider } from '@athenna/logger'
+import { Test, TestContext } from '@athenna/test'
+import { BaseTest } from '#tests/Helpers/BaseTest'
 import { LoadHelper } from '#src/Helpers/LoadHelper'
 import { CALLED_MAP } from '#tests/Helpers/CalledMap'
 import { HttpKernel } from '#tests/Stubs/kernels/HttpKernel'
-import { Test, AfterEach, BeforeEach, TestContext } from '@athenna/test'
-import { HttpRouteProvider, HttpServerProvider, Server } from '@athenna/http'
 import { HttpExceptionHandler } from '#tests/Stubs/handlers/HttpExceptionHandler'
 
-export default class HttpTest {
-  @BeforeEach()
-  public async beforeEach() {
-    ioc.reconstruct()
-
-    await Config.loadAll(Path.stubs('config'))
-    new LoggerProvider().register()
-    new HttpRouteProvider().register()
-    new HttpServerProvider().register()
-  }
-
-  @AfterEach()
-  public async afterEach() {
-    await Folder.safeRemove(Path.stubs('storage'))
-
-    await new HttpServerProvider().shutdown()
-  }
-
+export default class HttpTest extends BaseTest {
   @Test()
   public async shouldBeAbleToBootAHttpApplicationWithoutAnyOption({ assert }: TestContext) {
     await Http.boot()

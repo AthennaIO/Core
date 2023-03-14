@@ -8,14 +8,5 @@
  */
 
 export default {
-  default: 'application',
-
-  channels: {
-    application: {
-      driver: 'null',
-    },
-    exception: {
-      driver: 'null',
-    },
-  },
+  fired: true,
 }

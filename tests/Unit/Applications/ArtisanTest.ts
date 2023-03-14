@@ -8,32 +8,17 @@
  */
 
 import { fake } from 'sinon'
+import { Log } from '@athenna/logger'
 import { Config } from '@athenna/config'
+import { File, Path } from '@athenna/common'
+import { BaseTest } from '#tests/Helpers/BaseTest'
 import { Artisan } from '#src/Applications/Artisan'
-import { File, Folder, Path } from '@athenna/common'
 import { CALLED_MAP } from '#tests/Helpers/CalledMap'
-import { Log, LoggerProvider } from '@athenna/logger'
+import { Test, ExitFaker, TestContext } from '@athenna/test'
 import { ConsoleKernel } from '#tests/Stubs/kernels/ConsoleKernel'
-import { Test, ExitFaker, AfterEach, BeforeEach, TestContext } from '@athenna/test'
 import { ConsoleExceptionHandler } from '#tests/Stubs/handlers/ConsoleExceptionHandler'
 
-export default class ArtisanTest {
-  @BeforeEach()
-  public async beforeEach() {
-    ioc.reconstruct()
-    ExitFaker.fake()
-
-    await await Config.loadAll(Path.stubs('config'))
-    new LoggerProvider().register()
-  }
-
-  @AfterEach()
-  public async afterEach() {
-    ExitFaker.release()
-
-    await Folder.safeRemove(Path.stubs('storage'))
-  }
-
+export default class ArtisanTest extends BaseTest {
   @Test()
   public async shouldBeAbleToLoadArtisanApplicationDefaults({ assert }: TestContext) {
     await Artisan.load()

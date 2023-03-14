@@ -9,16 +9,14 @@
 
 import { fake } from 'sinon'
 import { LoadHelper } from '#src'
-import { Log, LoggerProvider } from '@athenna/logger'
+import { Log } from '@athenna/logger'
+import { BaseTest } from '#tests/Helpers/BaseTest'
 import { CALLED_MAP } from '#tests/Helpers/CalledMap'
-import { Test, BeforeEach, TestContext } from '@athenna/test'
+import { BeforeEach, Test, TestContext } from '@athenna/test'
 
-export default class LoadHelperTest {
+export default class LoadHelperTest extends BaseTest {
   @BeforeEach()
-  public async beforeEach() {
-    ioc.reconstruct()
-
-    Config.set('rc.meta', Config.get('meta'))
+  public setProviders() {
     Config.set('rc.providers', [
       '#tests/Stubs/providers/ReplEnvProvider',
       '#tests/Stubs/providers/HttpEnvProvider',
@@ -26,13 +24,6 @@ export default class LoadHelperTest {
       '#tests/Stubs/providers/ConsoleEnvProvider',
       '#tests/Stubs/providers/HttpAndConsoleEnvProvider',
     ])
-
-    LoadHelper.providers = []
-    Config.set('rc.preloads', [])
-    Config.set('rc.bootLogs', false)
-    Config.set('rc.environments', [])
-
-    new LoggerProvider().register()
   }
 
   @Test()
@@ -243,5 +234,18 @@ export default class LoadHelperTest {
     assert.isTrue(successFake.calledWith('File ({yellow} load) successfully preloaded'))
 
     mock.verify()
+  }
+
+  @Test()
+  public async shouldNotPreloadFilesThatHasBeenAlreadyLoaded({ assert }: TestContext) {
+    Config.set('rc.preloads', ['#tests/Stubs/routes/load'])
+
+    await LoadHelper.preloadFiles()
+
+    assert.deepEqual(LoadHelper.alreadyPreloaded, ['#tests/Stubs/routes/load'])
+
+    await LoadHelper.preloadFiles()
+
+    assert.deepEqual(LoadHelper.alreadyPreloaded, ['#tests/Stubs/routes/load'])
   }
 }
