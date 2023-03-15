@@ -28,7 +28,7 @@ export class Artisan {
    */
   public static async boot(argv: string[], options?: ArtisanOptions) {
     options = Options.create(options, {
-      displayName: 'Artisan',
+      displayName: null,
       routePath: Path.routes(`console.${Path.ext()}`),
       kernelPath: Path.nodeModules(
         '@athenna/artisan/build/Kernels/ConsoleKernel.js',
