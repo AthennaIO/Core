@@ -11,7 +11,7 @@ import { fake } from 'sinon'
 import { Ignite } from '#src'
 import { pathToFileURL } from 'node:url'
 import { BaseTest } from '#tests/Helpers/BaseTest'
-import { Exec, File, Folder, Json } from '@athenna/common'
+import { Exec, File, Json } from '@athenna/common'
 import { Test, ExitFaker, TestContext } from '@athenna/test'
 
 export default class IgniteTest extends BaseTest {
@@ -265,8 +265,8 @@ export default class IgniteTest extends BaseTest {
   public async shouldBeAbleToIgniteTheArtisanApplicationFromIgniteClass({ assert }: TestContext) {
     const ignite = await new Ignite().load(Config.get('meta'))
 
-    await ignite.artisan(['node', 'artisan', 'test:generate'])
+    await ignite.artisan(['node', 'artisan', 'test:generate'], { routePath: Path.stubs('routes/console.ts') })
 
-    assert.isTrue(await Folder.exists(Path.stubs('storage/Command.ts')))
+    assert.isTrue(await File.exists(Path.stubs('storage/Command.ts')))
   }
 }

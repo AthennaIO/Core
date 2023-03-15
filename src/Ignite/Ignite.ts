@@ -373,8 +373,6 @@ export class Ignite {
    * the application with exit code "1".
    */
   private async handleError(error: any) {
-    console.log(error)
-
     if (!Is.Exception(error)) {
       error = error.toAthennaException()
     }
