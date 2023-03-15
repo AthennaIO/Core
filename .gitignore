@@ -127,6 +127,7 @@ build
 .env
 .env.testing
 .env.production
+!tests/Stubs/.env
 
 # MacOS folder mapper file
 .DS_Store
