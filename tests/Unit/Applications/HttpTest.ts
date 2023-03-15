@@ -27,7 +27,7 @@ export default class HttpTest extends BaseTest {
 
     assert.isTrue(Server.isListening)
     assert.equal(Server.getPort(), 3000)
-    assert.equal(Server.getHost(), '::1')
+    assert.equal(Server.getHost(), '127.0.0.1')
   }
 
   @Test()
@@ -42,7 +42,7 @@ export default class HttpTest extends BaseTest {
 
     assert.isTrue(Server.isListening)
     assert.equal(Server.getPort(), 3000)
-    assert.equal(Server.getHost(), '::1')
+    assert.equal(Server.getHost(), '127.0.0.1')
     mock.verify()
   }
 
@@ -63,9 +63,9 @@ export default class HttpTest extends BaseTest {
 
     assert.isTrue(Server.isListening)
     assert.equal(Server.getPort(), 3000)
-    assert.equal(Server.getHost(), '::1')
+    assert.equal(Server.getHost(), '127.0.0.1')
     assert.isTrue(successFake.calledWith('Kernel ({yellow} HttpKernel) successfully booted'))
-    assert.isTrue(successFake.calledWith('Http server started on ({yellow} localhost:3000)'))
+    assert.isTrue(successFake.calledWith('Http server started on ({yellow} 127.0.0.1:3000)'))
     mock.verify()
   }
 

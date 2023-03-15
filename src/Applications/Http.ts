@@ -17,7 +17,7 @@ export class Http {
    */
   public static async boot(options?: HttpOptions) {
     options = Options.create(options, {
-      host: Config.get('http.host', 'localhost'),
+      host: Config.get('http.host', '127.0.0.1'),
       port: Config.get('http.port', 3000),
       kernelPath: Path.nodeModules('@athenna/http/build/Kernels/HttpKernel.js'),
     })

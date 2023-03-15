@@ -12,7 +12,7 @@ export type HttpOptions = {
    * The host where the server will run. By default Athenna will read the "http.host" config
    * to get this information, but you can set here and subscribe this behavior.
    *
-   * @default Config.get('http.host', 'localhost')
+   * @default Config.get('http.host', '127.0.0.1')
    */
   host?: string
 

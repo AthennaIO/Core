@@ -8,8 +8,8 @@
  */
 
 import { LoadHelper } from '#src'
-import { LoggerProvider } from '@athenna/logger'
 import { File, Folder, Json } from '@athenna/common'
+import { Log, LoggerProvider } from '@athenna/logger'
 import { ExitFaker, BeforeEach, AfterEach } from '@athenna/test'
 import { HttpRouteProvider, HttpServerProvider } from '@athenna/http'
 
@@ -35,6 +35,8 @@ export class BaseTest {
 
   @AfterEach()
   public async afterEach() {
+    Log.getMock().restore()
+    Log.restoreAllMethods()
     await new LoggerProvider().shutdown()
     await new HttpRouteProvider().shutdown()
     await new HttpServerProvider().shutdown()
