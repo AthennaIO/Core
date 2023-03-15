@@ -36,7 +36,7 @@ export default class IgniteTest extends BaseTest {
     const ignite = await new Ignite().load(Config.get('meta'), { beforePath: '/dist' })
 
     assert.isTrue(Env('IS_TS', false))
-    assert.isFalse(Path.pwd().includes('/dist'))
+    assert.isFalse(Path.pwd().includes('dist'))
     assert.equal(ignite.meta, Config.get('meta'))
     assert.containsSubset(ignite.options, { beforePath: '/dist' })
   }
@@ -50,7 +50,7 @@ export default class IgniteTest extends BaseTest {
     const ignite = await new Ignite().load(meta, { beforePath: '/dist' })
 
     assert.isFalse(Env('IS_TS', true))
-    assert.isTrue(Path.pwd().includes('/dist'))
+    assert.isTrue(Path.pwd().includes('dist'))
     assert.equal(ignite.meta, meta)
     assert.containsSubset(ignite.options, { beforePath: '/dist' })
   }
