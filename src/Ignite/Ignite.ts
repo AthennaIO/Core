@@ -285,7 +285,7 @@ export class Ignite {
     this.setApplicationRootPath()
 
     process.env.APP_NAME = pkgJson.name
-    process.env.APP_VERSION = this.parseVersion(pkgJson.version)?.toString()
+    process.env.APP_VERSION = this.parseVersion(pkgJson.version).toString()
     process.env.ATHENNA_VERSION = `Athenna Framework ${coreSemverVersion.toString()}`
 
     const athennaRc = {
@@ -387,11 +387,20 @@ export class Ignite {
   /**
    * Parse some version string to the SemverNode type.
    */
-  private parseVersion(version: string): SemverNode | null {
+  private parseVersion(version: string): SemverNode {
     const parsed = semverParse(version)
 
     if (!parsed) {
-      return null
+      return {
+        major: null,
+        minor: null,
+        patch: null,
+        prerelease: [],
+        version: null,
+        toString() {
+          return this.version
+        },
+      }
     }
 
     return {

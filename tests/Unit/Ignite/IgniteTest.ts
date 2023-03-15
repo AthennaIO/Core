@@ -228,7 +228,7 @@ export default class IgniteTest extends BaseTest {
   public async shouldBeAbleToExecuteDefaultSIGTERMSignalOfIgnite({ assert }: TestContext) {
     const processKillStub = fake()
     process.kill = processKillStub
-    Config.set('rc.providers', ['#tests/Stubs/Providers/ConsoleEnvProvider'])
+    Config.set('rc.providers', ['#tests/Stubs/providers/ConsoleEnvProvider'])
 
     const ignite = await new Ignite().load(Config.get('meta'))
 
