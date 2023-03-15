@@ -30,6 +30,7 @@ export class BaseCommandTest {
       '#src/Commands/MakeProviderCommand',
       '#src/Commands/MakeServiceCommand',
       '#src/Commands/MakeTestCommand',
+      '#src/Commands/ServeCommand',
     ])
 
     new ViewProvider().register()

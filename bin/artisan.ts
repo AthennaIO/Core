@@ -25,6 +25,15 @@ import { Ignite } from '#src'
 
 process.env.CORE_TESTING = 'true'
 
+Config.set('rc.commands', [
+  '#src/Commands/MakeExceptionCommand',
+  '#src/Commands/MakeFacadeCommand',
+  '#src/Commands/MakeProviderCommand',
+  '#src/Commands/MakeServiceCommand',
+  '#src/Commands/MakeTestCommand',
+  '#src/Commands/ServeCommand',
+])
+
 /*
 |--------------------------------------------------------------------------
 | Ignite
