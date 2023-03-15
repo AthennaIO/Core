@@ -9,6 +9,7 @@
 
 import { fake } from 'sinon'
 import { Ignite } from '#src'
+import { Server } from '@athenna/http'
 import { pathToFileURL } from 'node:url'
 import { BaseTest } from '#tests/Helpers/BaseTest'
 import { Exec, File, Json } from '@athenna/common'
@@ -268,5 +269,14 @@ export default class IgniteTest extends BaseTest {
     await ignite.artisan(['node', 'artisan', 'test:generate'], { routePath: Path.stubs('routes/console.ts') })
 
     assert.isTrue(await File.exists(Path.stubs('storage/Command.ts')))
+  }
+
+  @Test()
+  public async shouldBeAbleToIgniteTheHttpApplicationFromIgniteClass({ assert }: TestContext) {
+    const ignite = await new Ignite().load(Config.get('meta'))
+
+    await ignite.httpServer()
+
+    assert.isTrue(Server.isListening)
   }
 }
