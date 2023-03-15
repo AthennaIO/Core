@@ -36,7 +36,7 @@ process.env.CORE_TESTING = 'true'
 |
 */
 
-const ignite = new Ignite(import.meta.url)
+const ignite = await new Ignite().load(import.meta.url)
 
 /*
 |--------------------------------------------------------------------------
