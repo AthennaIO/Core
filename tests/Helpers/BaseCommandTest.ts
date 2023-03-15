@@ -15,7 +15,7 @@ import { ExitFaker, AfterEach, BeforeEach } from '@athenna/test'
 import { ConsoleKernel, ArtisanProvider, COMMANDS_SETTINGS, CommanderHandler } from '@athenna/artisan'
 
 export class BaseCommandTest {
-  public artisan = Path.pwd('bin/artisan.ts')
+  public artisan = Path.stubs('artisan.ts')
   public originalPJson = new File(Path.pwd('package.json')).getContentAsStringSync()
 
   @BeforeEach()
@@ -31,6 +31,7 @@ export class BaseCommandTest {
       '#src/Commands/MakeServiceCommand',
       '#src/Commands/MakeTestCommand',
       '#src/Commands/ServeCommand',
+      '#src/Commands/TestCommand',
     ])
 
     new ViewProvider().register()

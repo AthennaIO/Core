@@ -43,6 +43,8 @@
   "imports": {
     "#src/*": "./src/*.js",
     "#src": "./src/index.js",
+    "#bin/*": "./bin/*.js",
+    "#bin": "./bin/index.js",
     "#tests/*": "./tests/*.js",
     "#tests": "./tests/index.js"
   },
@@ -198,6 +200,10 @@
     }
   },
   "athenna": {
+    "commandsPaths": {
+      "test": "#bin/test",
+      "serve": "#bin/http"
+    },
     "view": {
       "disks": {},
       "edge": {

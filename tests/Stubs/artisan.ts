@@ -25,6 +25,11 @@ import { Ignite } from '#src'
 
 process.env.CORE_TESTING = 'true'
 
+Config.set('rc.commandsPaths', {
+  serve: '#tests/Stubs/bootstrap/main',
+  test: '#tests/Stubs/tests/main',
+})
+
 Config.set('rc.commands', [
   '#src/Commands/MakeExceptionCommand',
   '#src/Commands/MakeFacadeCommand',

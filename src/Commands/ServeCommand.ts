@@ -8,7 +8,7 @@
  */
 
 import { Module, Path } from '@athenna/common'
-import { BaseCommand, Option } from '@athenna/artisan'
+import { BaseCommand, CommandSettings, Option } from '@athenna/artisan'
 
 export class ServeCommand extends BaseCommand {
   @Option({
@@ -22,17 +22,23 @@ export class ServeCommand extends BaseCommand {
   @Option({
     signature: '-e, --env <env>',
     description:
-      'Change the evironment where the application wil run. Default is ""',
+      'Change the evironment where the application will run. Default is ""',
     default: '',
   })
   public env: string
+
+  public static settings(): CommandSettings {
+    return {
+      stayAlive: true,
+    }
+  }
 
   public static signature(): string {
     return 'serve'
   }
 
   public static description(): string {
-    return 'Serve the Athenna application.'
+    return 'Serve your application.'
   }
 
   public async handle(): Promise<void> {
@@ -54,6 +60,9 @@ export class ServeCommand extends BaseCommand {
       )
     }
 
-    await Module.import(Path.bootstrap(`main.${Path.ext()}`))
+    await Module.resolve(
+      Config.get('rc.commandsPaths.serve', '#bootstrap/main'),
+      Config.get('rc.meta'),
+    )
   }
 }

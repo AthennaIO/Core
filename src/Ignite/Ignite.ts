@@ -292,8 +292,6 @@ export class Ignite {
       meta: this.meta,
       typescript: Env('IS_TS', false),
       isInPackageJson: false,
-      bootLogs: this.options.bootLogs,
-      shutdownLogs: this.options.shutdownLogs,
       version: coreSemverVersion,
       athennaVersion: process.env.ATHENNA_VERSION,
       engines: pkgJson.engines || {},
@@ -309,18 +307,28 @@ export class Ignite {
       commandsManifest: {},
     }
 
+    const replaceableConfigs = {
+      bootLogs: this.options.bootLogs,
+      shutdownLogs: this.options.shutdownLogs,
+    }
+
     if (file.fileExists) {
       Config.set('rc', {
         ...athennaRc,
         ...file.getContentAsJsonSync(),
         ...Config.get('rc', {}),
+        ...replaceableConfigs,
       })
 
       return
     }
 
     if (!pkgJson.athenna) {
-      Config.set('rc', { ...athennaRc, ...Config.get('rc', {}) })
+      Config.set('rc', {
+        ...athennaRc,
+        ...Config.get('rc', {}),
+        ...replaceableConfigs,
+      })
 
       this.options.athennaRcPath = null
 
@@ -334,6 +342,7 @@ export class Ignite {
       ...athennaRc,
       ...pkgJson.athenna,
       ...Config.get('rc', {}),
+      ...replaceableConfigs,
     })
   }
 

@@ -7,7 +7,9 @@
  * file that was distributed with this source code.
  */
 
-export default {
-  hello: 'world'
-  hello:
-}
+console.log('running tests')
+console.log('argv:', process.argv)
+console.log('env:', process.env.NODE_ENV)
+console.log(process.env.DEBUG)
+
+process.exit()
