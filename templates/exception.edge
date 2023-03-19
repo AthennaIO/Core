@@ -5,24 +5,20 @@ import { Exception } from '@athenna/common'
 | Exception
 |--------------------------------------------------------------------------
 |
-| The Exception class imported from `@athenna/core` allows defining
-| a status code, error code and help for every exception.
+| The Exception class imported from `@athenna/common` allows defining a
+| status code, error code and help for every exception.
 |
 | @example
-| new {{ namePascal }}('message', 500, 'E_RUNTIME_EXCEPTION', 'Restart computer.')
+| new {{ namePascal }}('Some exception happened')
 |
 */
 
 export class {{ namePascal }} extends Exception {
-  /**
-   * Return a new instance of {{ namePascal }}Exception.
-   *
-   * @param {string} [message]
-   * @param {number} [status]
-   * @param {string} [code]
-   * @param {string} [help]
-   */
-  constructor(message, status, code, help) {
-    super(message, status, code, help)
+  public constructor(message: string) {
+    const status = 500
+    const help = undefined
+    const code = 'E_{{ namePascalUpperCase }}'
+
+    super({ code, help, status, message })
   }
 }
