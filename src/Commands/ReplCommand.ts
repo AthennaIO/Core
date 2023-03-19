@@ -38,9 +38,11 @@ export class ReplCommand extends BaseCommand {
       process.env.NODE_ENV = this.env
     }
 
-    await Module.resolve(
-      Config.get('rc.commandsPaths.repl', '#bootstrap/repl'),
-      Config.get('rc.meta'),
+    const entrypoint = Config.get(
+      'rc.commandsManifest.__options.repl.entrypoint',
+      '#bootstrap/repl',
     )
+
+    await Module.resolve(entrypoint, Config.get('rc.meta'))
   }
 }

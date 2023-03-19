@@ -10,21 +10,16 @@
 import figlet from 'figlet'
 import chalkRainbow from 'chalk-rainbow'
 
-import { ReplOptions } from '#src/Types/ReplOptions'
+import { Color } from '@athenna/common'
 import { PrettyREPLServer, start } from 'pretty-repl'
-import { Color, Exec, Options } from '@athenna/common'
 import { INTERNAL_REPL_PROPS } from '#src/Constants/InternalReplProps'
 
 export class Repl {
   /**
    * Boot the Repl application and session.
    */
-  public static async boot(options?: ReplOptions): Promise<PrettyREPLServer> {
-    options = Options.create(options, {
-      context: {},
-    })
-
-    const repl = start({ prompt: '' }).on('exit', () => process.exit())
+  public static async boot(): Promise<PrettyREPLServer> {
+    const repl = start({ prompt: '' }).on('exit', Repl.handleExit)
 
     if (!Env('CORE_TESTING', false)) {
       repl.write('delete process.domain._events.error\n')
@@ -34,25 +29,40 @@ export class Repl {
     Repl.log.write(chalkRainbow(figlet.textSync('REPL\n')))
     Repl.log.gray('To import your modules use dynamic imports:\n')
     Repl.log.gray("const { User } = await import('#app/Models/User')\n")
-    Repl.log.gray(
-      'Use the "routes/repl" file to setup REPL global properties automatically\n',
-    )
 
     Repl.log.write(
       `${Color.yellow.bold('To see all commands available type:')} .help\n`,
     )
 
-    repl.setPrompt(Color.purple.bold('Athenna ') + Color.green.bold('❯ '))
+    repl.setPrompt(Repl.getPrompt())
     repl.displayPrompt(false)
 
-    this.defineLsCommand(repl)
-    this.defineClearCommand(repl)
-
-    await Exec.concurrently(Object.keys(options.context), async key => {
-      repl.context[key] = await options.context[key]
-    })
+    Repl.defineLsCommand(repl)
+    Repl.defineCleanCommand(repl)
 
     return repl
+  }
+
+  /**
+   * Handle the exit event of REPL session.
+   */
+  private static handleExit() {
+    if (Env('CORE_TESTING', false)) {
+      return
+    }
+
+    process.exit()
+  }
+
+  /**
+   * Get the REPL prompt.
+   */
+  private static getPrompt() {
+    if (Env('CORE_TESTING', false)) {
+      return ''
+    }
+
+    return Color.purple.bold('Athenna ') + Color.green.bold('❯ ')
   }
 
   /**
@@ -129,9 +139,9 @@ export class Repl {
   }
 
   /**
-   * Define the .clear command in the session.
+   * Define the .clean command in the session.
    */
-  private static defineClearCommand(repl: PrettyREPLServer) {
+  private static defineCleanCommand(repl: PrettyREPLServer) {
     repl.defineCommand('clean', {
       help: `Clean any property of REPL global context. Example: .clean ${Color.gray(
         '(propertyName)',

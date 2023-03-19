@@ -111,7 +111,9 @@
       "src/**/*.ts"
     ],
     "exclude": [
-      "src/Types/*"
+      "src/Types/*",
+      "src/Commands/*.ts",
+      "src/Applications/Repl.ts"
     ],
     "reporter": [
       "text-summary",
@@ -201,10 +203,6 @@
     }
   },
   "athenna": {
-    "commandsPaths": {
-      "test": "#bin/test",
-      "serve": "#bin/http"
-    },
     "view": {
       "disks": {},
       "edge": {
@@ -226,7 +224,19 @@
       }
     },
     "commands": [],
-    "commandsManifest": {},
+    "commandsManifest": {
+      "__options": {
+        "test": {
+          "entrypoint": "#bin/test"
+        },
+        "repl": {
+          "entrypoint": "#bin/repl"
+        },
+        "serve": {
+          "entrypoint": "#bin/http"
+        }
+      }
+    },
     "providers": [
       "@athenna/http/providers/HttpRouteProvider",
       "@athenna/http/providers/HttpServerProvider"

@@ -14,22 +14,25 @@ import { BaseCommandTest } from '#tests/Helpers/BaseCommandTest'
 export default class ServeCommandTest extends BaseCommandTest {
   @Test()
   public async shouldBeAbleToServeTheApplication({ assert }: TestContext) {
-    const { stdout } = await Artisan.callInChild('serve', this.artisan)
+    const { stdout, stderr } = await Artisan.callInChild('serve', this.artisan)
 
+    assert.deepEqual(stderr, '')
     assert.isTrue(stdout.includes('serving application'))
   }
 
   @Test()
   public async shouldBeAbleToServeTheApplicationWithDifferentNodeEnv({ assert }: TestContext) {
-    const { stdout } = await Artisan.callInChild('serve --env heyhey', this.artisan)
+    const { stdout, stderr } = await Artisan.callInChild('serve --env heyhey', this.artisan)
 
+    assert.deepEqual(stderr, '')
     assert.isTrue(stdout.includes('heyhey'))
   }
 
   @Test()
   public async shouldBeAbleToServeTheApplicationInWatchMode({ assert }: TestContext) {
-    const { stdout } = await Artisan.callInChild('serve --watch', this.artisan)
+    const { stdout, stderr } = await Artisan.callInChild('serve --watch', this.artisan)
 
+    assert.deepEqual(stderr, '')
     assert.isTrue(stdout.includes('serving application'))
   }
 }

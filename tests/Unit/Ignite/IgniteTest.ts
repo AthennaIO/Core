@@ -279,4 +279,15 @@ export default class IgniteTest extends BaseTest {
 
     assert.isTrue(Server.isListening)
   }
+
+  @Test()
+  public async shouldBeAbleToIgniteTheReplApplicationFromIgniteClass({ assert }: TestContext) {
+    const ignite = await new Ignite().load(Config.get('meta'))
+
+    const repl = await ignite.repl()
+
+    assert.deepEqual(repl.context.ioc, ioc)
+
+    repl.close()
+  }
 }

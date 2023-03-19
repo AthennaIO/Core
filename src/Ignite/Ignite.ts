@@ -22,6 +22,7 @@ import { ArtisanOptions } from '#src/Types/ArtisanOptions'
 import { Is, File, Module, Options } from '@athenna/common'
 import { parse as semverParse, satisfies as semverSatisfies } from 'semver'
 import { NotSatisfiedNodeVersion } from '#src/Exceptions/NotSatisfiedNodeVersion'
+import { PrettyREPLServer } from 'pretty-repl'
 
 export class Ignite {
   /**
@@ -76,7 +77,7 @@ export class Ignite {
   /**
    * Ignite the REPL application.
    */
-  public async repl() {
+  public async repl(): Promise<PrettyREPLServer> {
     const environments = Config.get<string[]>('rc.environments', [])
 
     environments.push('repl')
@@ -97,6 +98,8 @@ export class Ignite {
     this.setUncaughtExceptionHandler()
 
     const repl = await Repl.boot()
+
+    return repl
   }
 
   /**
@@ -104,7 +107,8 @@ export class Ignite {
    */
   public async artisan(argv: string[], options?: ArtisanOptions) {
     await Artisan.load()
-    await Artisan.boot(argv, options)
+
+    return Artisan.boot(argv, options)
   }
 
   /**
@@ -116,7 +120,8 @@ export class Ignite {
     environments.push('http')
 
     await this.fire(environments)
-    await Http.boot(options)
+
+    return Http.boot(options)
   }
 
   /**

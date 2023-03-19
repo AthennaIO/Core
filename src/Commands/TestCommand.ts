@@ -75,9 +75,11 @@ export class TestCommand extends BaseCommand {
       process.env.DEBUG = 'api:*'
     }
 
-    await Module.resolve(
-      Config.get('rc.commandsPaths.test', '#tests/main'),
-      Config.get('rc.meta'),
+    const entrypoint = Config.get(
+      'rc.commandsManifest.__options.test.entrypoint',
+      '#bootstrap/test',
     )
+
+    await Module.resolve(entrypoint, Config.get('rc.meta'))
   }
 }

@@ -8,6 +8,7 @@
  */
 
 import { Log } from '@athenna/logger'
+import { ServerImpl } from '@athenna/http'
 import { HttpOptions } from '#src/Types/HttpOptions'
 import { Is, Module, Options } from '@athenna/common'
 
@@ -15,7 +16,7 @@ export class Http {
   /**
    * Boot the Http application.
    */
-  public static async boot(options?: HttpOptions) {
+  public static async boot(options?: HttpOptions): Promise<ServerImpl> {
     options = Options.create(options, {
       host: Config.get('http.host', '127.0.0.1'),
       port: Config.get('http.port', 3000),
@@ -49,6 +50,8 @@ export class Http {
         `Http server started on ({yellow} ${path})`,
       )
     })
+
+    return server
   }
 
   /**

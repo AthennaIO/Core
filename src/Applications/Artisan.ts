@@ -8,6 +8,7 @@
  */
 
 import { Log } from '@athenna/logger'
+import { ArtisanImpl } from '@athenna/artisan'
 import { Module, Options } from '@athenna/common'
 import { ArtisanOptions } from '#src/Types/ArtisanOptions'
 
@@ -26,7 +27,10 @@ export class Artisan {
   /**
    * Boot the Artisan application and execute the commands of argv.
    */
-  public static async boot(argv: string[], options?: ArtisanOptions) {
+  public static async boot(
+    argv: string[],
+    options?: ArtisanOptions,
+  ): Promise<ArtisanImpl> {
     options = Options.create(options, {
       displayName: null,
       routePath: Path.routes(`console.${Path.ext()}`),
@@ -38,8 +42,9 @@ export class Artisan {
     const artisan = ioc.safeUse('Athenna/Core/Artisan')
 
     await this.resolveKernel(argv, options)
+    await artisan.parse(argv, options.displayName)
 
-    return artisan.parse(argv, options.displayName)
+    return artisan
   }
 
   /**
