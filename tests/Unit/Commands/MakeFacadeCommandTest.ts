@@ -25,11 +25,11 @@ export default class MakeFacadeCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldBeAbleToCreateAFacadeFileInDifferentDestPath({ assert }: TestContext) {
-    Config.set('rc.commandsManifest.__options.makeFacade.destPath', Path.stubs('storage/Facades'))
+    Config.set('rc.commandsManifest.make:facade.destination', Path.stubs('storage/facades'))
 
     await Artisan.call('make:facade TestFacade')
 
-    const path = Path.stubs('storage/Facades/TestFacade.ts')
+    const path = Path.stubs('storage/facades/TestFacade.ts')
 
     assert.isTrue(await File.exists(path))
     assert.isTrue(ExitFaker.faker.calledOnceWith(0))

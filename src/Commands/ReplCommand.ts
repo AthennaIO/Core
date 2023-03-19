@@ -39,7 +39,7 @@ export class ReplCommand extends BaseCommand {
     }
 
     const entrypoint = Config.get(
-      'rc.commandsManifest.__options.repl.entrypoint',
+      'rc.commandsManifest.repl.entrypoint',
       '#bootstrap/repl',
     )
 

@@ -54,10 +54,10 @@
     "semver": "^7.3.8"
   },
   "devDependencies": {
-    "@athenna/artisan": "^3.2.1",
-    "@athenna/common": "^3.3.2",
+    "@athenna/artisan": "^3.3.0",
+    "@athenna/common": "^3.3.3",
     "@athenna/config": "^3.2.0",
-    "@athenna/http": "^3.2.1",
+    "@athenna/http": "^3.3.0",
     "@athenna/ioc": "^3.1.5",
     "@athenna/logger": "^3.1.5",
     "@athenna/test": "^3.2.2",
@@ -223,18 +223,33 @@
         "terminator": "node_modules/@athenna/http/templates/terminator.edge"
       }
     },
-    "commands": [],
+    "commands": [
+      "#src/Commands/MakeExceptionCommand",
+      "#src/Commands/MakeFacadeCommand",
+      "#src/Commands/MakeProviderCommand",
+      "#src/Commands/MakeServiceCommand",
+      "#src/Commands/MakeTestCommand",
+      "#src/Commands/ServeCommand",
+      "#src/Commands/TestCommand",
+      "#src/Commands/ReplCommand"
+    ],
     "commandsManifest": {
-      "__options": {
-        "test": {
-          "entrypoint": "#bin/test"
-        },
-        "repl": {
-          "entrypoint": "#bin/repl"
-        },
-        "serve": {
-          "entrypoint": "#bin/http"
-        }
+      "make:exception": "#src/Commands/MakeExceptionCommand",
+      "make:facade": "#src/Commands/MakeFacadeCommand",
+      "make:provider": "#src/Commands/MakeProviderCommand",
+      "make:service": "#src/Commands/MakeServiceCommand",
+      "make:test": "#src/Commands/MakeTestCommand",
+      "serve": {
+        "entrypoint": "#bin/http",
+        "path": "#src/Commands/ServeCommand"
+      },
+      "test": {
+        "entrypoint": "#bin/test",
+        "path": "#src/Commands/TestCommand"
+      },
+      "repl": {
+        "entrypoint": "#bin/repl",
+        "path": "#src/Commands/ReplCommand"
       }
     },
     "providers": [

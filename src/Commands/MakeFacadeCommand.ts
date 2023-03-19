@@ -8,6 +8,7 @@
  */
 
 import { Path } from '@athenna/common'
+import { sep, resolve, isAbsolute } from 'node:path'
 import { BaseCommand, Argument } from '@athenna/artisan'
 
 export class MakeFacadeCommand extends BaseCommand {
@@ -27,15 +28,8 @@ export class MakeFacadeCommand extends BaseCommand {
   public async handle(): Promise<void> {
     this.logger.simple('({bold,green} [ MAKING FACADE ])\n')
 
-    const destPath = Config.get(
-      'rc.commandsManifest.__options.makeFacade.destPath',
-      Path.facades(),
-    )
-
-    const path = destPath.concat(`/${this.name}.${Path.ext()}`)
-
     const file = await this.generator
-      .path(path)
+      .path(this.getFilePath())
       .template('facade')
       .setNameProperties(true)
       .make()
@@ -43,5 +37,28 @@ export class MakeFacadeCommand extends BaseCommand {
     this.logger.success(
       `Facade ({yellow} "${file.name}") successfully created.`,
     )
+  }
+
+  /**
+   * Get the file path where it will be generated.
+   */
+  private getFilePath(): string {
+    return this.getDestinationPath().concat(`${sep}${this.name}.${Path.ext()}`)
+  }
+
+  /**
+   * Get the destination path for the file that will be generated.
+   */
+  private getDestinationPath(): string {
+    let destination = Config.get(
+      'rc.commandsManifest.make:facade.destination',
+      Path.facades(),
+    )
+
+    if (!isAbsolute(destination)) {
+      destination = resolve(Path.pwd(), destination)
+    }
+
+    return destination
   }
 }

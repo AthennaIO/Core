@@ -8,6 +8,7 @@
  */
 
 import { Path } from '@athenna/common'
+import { sep, resolve, isAbsolute } from 'node:path'
 import { BaseCommand, Argument, Option } from '@athenna/artisan'
 
 export class MakeTestCommand extends BaseCommand {
@@ -42,29 +43,40 @@ export class MakeTestCommand extends BaseCommand {
     this.logger.simple('({bold,green} [ MAKING TEST ])\n')
 
     let template = 'test'
-    let destPath = Path.tests('E2E')
 
     if (this.isFunction) {
       template = 'testFn'
     }
 
-    if (this.isUnit) {
-      destPath = Path.tests('Unit')
-    }
-
-    destPath = Config.get(
-      'rc.commandsManifest.__options.makeTest.destPath',
-      destPath,
-    )
-
-    const path = destPath.concat(`/${this.name}.${Path.ext()}`)
-
     const file = await this.generator
-      .path(path)
+      .path(this.getFilePath())
       .template(template)
       .setNameProperties(true)
       .make()
 
     this.logger.success(`Test ({yellow} "${file.name}") successfully created.`)
+  }
+
+  /**
+   * Get the file path where it will be generated.
+   */
+  private getFilePath(): string {
+    return this.getDestinationPath().concat(`${sep}${this.name}.${Path.ext()}`)
+  }
+
+  /**
+   * Get the destination path for the file that will be generated.
+   */
+  private getDestinationPath(): string {
+    let destination = Config.get(
+      'rc.commandsManifest.make:test.destination',
+      this.isUnit ? Path.tests('Unit') : Path.tests('E2E'),
+    )
+
+    if (!isAbsolute(destination)) {
+      destination = resolve(Path.pwd(), destination)
+    }
+
+    return destination
   }
 }

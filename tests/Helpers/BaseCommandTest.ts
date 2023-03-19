@@ -24,17 +24,6 @@ export class BaseCommandTest {
 
     await Config.loadAll(Path.stubs('config'))
 
-    Config.set('rc.commands', [
-      '#src/Commands/MakeExceptionCommand',
-      '#src/Commands/MakeFacadeCommand',
-      '#src/Commands/MakeProviderCommand',
-      '#src/Commands/MakeServiceCommand',
-      '#src/Commands/MakeTestCommand',
-      '#src/Commands/ServeCommand',
-      '#src/Commands/TestCommand',
-      '#src/Commands/ReplCommand',
-    ])
-
     new ViewProvider().register()
     new LoggerProvider().register()
     new ArtisanProvider().register()

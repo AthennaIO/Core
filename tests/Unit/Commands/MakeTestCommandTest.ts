@@ -27,11 +27,11 @@ export default class MakeTestCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldBeAbleToCreateATestFileInDifferentDestPath({ assert }: TestContext) {
-    Config.set('rc.commandsManifest.__options.makeTest.destPath', Path.stubs('storage/Tests'))
+    Config.set('rc.commandsManifest.make:test.destination', Path.stubs('storage/tests'))
 
     await Artisan.call('make:test TestTest')
 
-    const path = Path.stubs('storage/Tests/TestTest.ts')
+    const path = Path.stubs('storage/tests/TestTest.ts')
 
     assert.isTrue(await File.exists(path))
     assert.isTrue(ExitFaker.faker.calledOnceWith(0))

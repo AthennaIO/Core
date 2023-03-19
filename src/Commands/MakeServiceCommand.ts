@@ -8,6 +8,7 @@
  */
 
 import { Path } from '@athenna/common'
+import { sep, resolve, isAbsolute } from 'node:path'
 import { BaseCommand, Argument } from '@athenna/artisan'
 
 export class MakeServiceCommand extends BaseCommand {
@@ -27,15 +28,8 @@ export class MakeServiceCommand extends BaseCommand {
   public async handle(): Promise<void> {
     this.logger.simple('({bold,green} [ MAKING SERVICE ])\n')
 
-    const destPath = Config.get(
-      'rc.commandsManifest.__options.makeService.destPath',
-      Path.services(),
-    )
-
-    const path = destPath.concat(`/${this.name}.${Path.ext()}`)
-
     const file = await this.generator
-      .path(path)
+      .path(this.getFilePath())
       .template('service')
       .setNameProperties(true)
       .make()
@@ -44,12 +38,47 @@ export class MakeServiceCommand extends BaseCommand {
       `Service ({yellow} "${file.name}") successfully created.`,
     )
 
-    const importPath = `#app/Services/${file.name}`
+    const importPath = this.getImportPath(file.name)
 
     await this.rc.pushTo('services', importPath).save()
 
     this.logger.success(
       `Athenna RC updated: ({dim,yellow} [ services += "${importPath}" ])`,
     )
+  }
+
+  /**
+   * Get the file path where it will be generated.
+   */
+  private getFilePath(): string {
+    return this.getDestinationPath().concat(`${sep}${this.name}.${Path.ext()}`)
+  }
+
+  /**
+   * Get the destination path for the file that will be generated.
+   */
+  private getDestinationPath(): string {
+    let destination = Config.get(
+      'rc.commandsManifest.make:service.destination',
+      Path.app('Services'),
+    )
+
+    if (!isAbsolute(destination)) {
+      destination = resolve(Path.pwd(), destination)
+    }
+
+    return destination
+  }
+
+  /**
+   * Get the import path that should be registered in RC file.
+   */
+  private getImportPath(fileName: string): string {
+    const destination = this.getDestinationPath()
+
+    return `${destination
+      .replace(Path.pwd(), '')
+      .replace(/\\/g, '/')
+      .replace('/', '#')}/${fileName}`
   }
 }

@@ -25,11 +25,11 @@ export default class MakeExceptionCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldBeAbleToCreateAnExceptionFileInDifferentDestPath({ assert }: TestContext) {
-    Config.set('rc.commandsManifest.__options.makeException.destPath', Path.stubs('storage/Exceptions'))
+    Config.set('rc.commandsManifest.make:exception.destination', Path.stubs('storage/exceptions'))
 
     await Artisan.call('make:exception TestException')
 
-    const path = Path.stubs('storage/Exceptions/TestException.ts')
+    const path = Path.stubs('storage/exceptions/TestException.ts')
 
     assert.isTrue(await File.exists(path))
     assert.isTrue(ExitFaker.faker.calledOnceWith(0))

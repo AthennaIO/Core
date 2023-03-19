@@ -25,28 +25,18 @@ import { Ignite } from '#src'
 
 process.env.CORE_TESTING = 'true'
 
-Config.set('rc.commandsManifest.__options', {
-  serve: {
-    entrypoint: '#tests/Stubs/bootstrap/main',
-  },
-  repl: {
-    entrypoint: '#tests/Stubs/bootstrap/repl',
-  },
-  test: {
-    entrypoint: '#tests/Stubs/tests/main',
-  },
+Config.set('rc.commandsManifest.test', {
+  path: '#src/Commands/TestCommand',
+  entrypoint: '#tests/Stubs/tests/main',
 })
-
-Config.set('rc.commands', [
-  '#src/Commands/MakeExceptionCommand',
-  '#src/Commands/MakeFacadeCommand',
-  '#src/Commands/MakeProviderCommand',
-  '#src/Commands/MakeServiceCommand',
-  '#src/Commands/MakeTestCommand',
-  '#src/Commands/ServeCommand',
-  '#src/Commands/TestCommand',
-  '#src/Commands/ReplCommand',
-])
+Config.set('rc.commandsManifest.repl', {
+  path: '#src/Commands/ReplCommand',
+  entrypoint: '#tests/Stubs/bootstrap/repl',
+})
+Config.set('rc.commandsManifest.serve', {
+  path: '#src/Commands/ServeCommand',
+  entrypoint: '#tests/Stubs/bootstrap/main',
+})
 
 /*
 |--------------------------------------------------------------------------

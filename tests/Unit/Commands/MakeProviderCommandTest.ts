@@ -31,14 +31,19 @@ export default class MakeProviderCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldBeAbleToCreateAProviderFileInDifferentDestPath({ assert }: TestContext) {
-    Config.set('rc.commandsManifest.__options.makeProvider.destPath', Path.stubs('storage/Providers'))
+    Config.set('rc.commandsManifest.make:provider.destination', Path.stubs('storage/providers'))
 
     await Artisan.call('make:provider TestProvider')
 
-    const path = Path.stubs('storage/Providers/TestProvider.ts')
+    const path = Path.stubs('storage/providers/TestProvider.ts')
 
     assert.isTrue(await File.exists(path))
     assert.isTrue(ExitFaker.faker.calledOnceWith(0))
+
+    const { athenna } = await new File(Path.pwd('package.json')).getContentAsJson()
+
+    assert.containsSubset(Config.get('rc.providers'), ['#tests/Stubs/storage/providers/TestProvider'])
+    assert.containsSubset(athenna.providers, ['#tests/Stubs/storage/providers/TestProvider'])
   }
 
   @Test()

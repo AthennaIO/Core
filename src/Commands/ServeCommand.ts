@@ -61,7 +61,7 @@ export class ServeCommand extends BaseCommand {
     }
 
     const entrypoint = Config.get(
-      'rc.commandsManifest.__options.serve.entrypoint',
+      'rc.commandsManifest.serve.entrypoint',
       '#bootstrap/main',
     )
 
