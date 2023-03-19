@@ -30,6 +30,18 @@ export default class MakeServiceCommandTest extends BaseCommandTest {
   }
 
   @Test()
+  public async shouldBeAbleToCreateAServiceFileInDifferentDestPath({ assert }: TestContext) {
+    Config.set('rc.commandsManifest.__options.makeService.destPath', Path.stubs('storage/Services'))
+
+    await Artisan.call('make:service TestService')
+
+    const path = Path.stubs('storage/Services/TestService.ts')
+
+    assert.isTrue(await File.exists(path))
+    assert.isTrue(ExitFaker.faker.calledOnceWith(0))
+  }
+
+  @Test()
   public async shouldThrowAnExceptionWhenTheFileAlreadyExists({ assert }: TestContext) {
     await Artisan.call('make:service TestService')
     await Artisan.call('make:service TestService')

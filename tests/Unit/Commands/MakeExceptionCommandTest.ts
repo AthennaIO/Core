@@ -14,10 +14,22 @@ import { BaseCommandTest } from '#tests/Helpers/BaseCommandTest'
 
 export default class MakeExceptionCommandTest extends BaseCommandTest {
   @Test()
-  public async shouldBeAbleToCreateAExceptionFile({ assert }: TestContext) {
+  public async shouldBeAbleToCreateAnExceptionFile({ assert }: TestContext) {
     await Artisan.call('make:exception TestException')
 
     const path = Path.app('Exceptions/TestException.ts')
+
+    assert.isTrue(await File.exists(path))
+    assert.isTrue(ExitFaker.faker.calledOnceWith(0))
+  }
+
+  @Test()
+  public async shouldBeAbleToCreateAnExceptionFileInDifferentDestPath({ assert }: TestContext) {
+    Config.set('rc.commandsManifest.__options.makeException.destPath', Path.stubs('storage/Exceptions'))
+
+    await Artisan.call('make:exception TestException')
+
+    const path = Path.stubs('storage/Exceptions/TestException.ts')
 
     assert.isTrue(await File.exists(path))
     assert.isTrue(ExitFaker.faker.calledOnceWith(0))

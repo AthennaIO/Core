@@ -42,15 +42,22 @@ export class MakeTestCommand extends BaseCommand {
     this.logger.simple('({bold,green} [ MAKING TEST ])\n')
 
     let template = 'test'
-    let path = Path.tests(`E2E/${this.name}.${Path.ext()}`)
+    let destPath = Path.tests('E2E')
 
     if (this.isFunction) {
       template = 'testFn'
     }
 
     if (this.isUnit) {
-      path = Path.tests(`Unit/${this.name}.${Path.ext()}`)
+      destPath = Path.tests('Unit')
     }
+
+    destPath = Config.get(
+      'rc.commandsManifest.__options.makeTest.destPath',
+      destPath,
+    )
+
+    const path = destPath.concat(`/${this.name}.${Path.ext()}`)
 
     const file = await this.generator
       .path(path)

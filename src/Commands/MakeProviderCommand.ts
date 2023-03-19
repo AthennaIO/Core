@@ -27,8 +27,15 @@ export class MakeProviderCommand extends BaseCommand {
   public async handle(): Promise<void> {
     this.logger.simple('({bold,green} [ MAKING PROVIDER ])\n')
 
+    const destPath = Config.get(
+      'rc.commandsManifest.__options.makeProvider.destPath',
+      Path.providers(),
+    )
+
+    const path = destPath.concat(`/${this.name}.${Path.ext()}`)
+
     const file = await this.generator
-      .path(Path.providers(`${this.name}.${Path.ext()}`))
+      .path(path)
       .template('provider')
       .setNameProperties(true)
       .make()

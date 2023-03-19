@@ -27,8 +27,15 @@ export class MakeServiceCommand extends BaseCommand {
   public async handle(): Promise<void> {
     this.logger.simple('({bold,green} [ MAKING SERVICE ])\n')
 
+    const destPath = Config.get(
+      'rc.commandsManifest.__options.makeService.destPath',
+      Path.services(),
+    )
+
+    const path = destPath.concat(`/${this.name}.${Path.ext()}`)
+
     const file = await this.generator
-      .path(Path.services(`${this.name}.${Path.ext()}`))
+      .path(path)
       .template('service')
       .setNameProperties(true)
       .make()

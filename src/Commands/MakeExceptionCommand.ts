@@ -27,8 +27,15 @@ export class MakeExceptionCommand extends BaseCommand {
   public async handle(): Promise<void> {
     this.logger.simple('({bold,green} [ MAKING EXCEPTION ])\n')
 
+    const destPath = Config.get(
+      'rc.commandsManifest.__options.makeException.destPath',
+      Path.app('Exceptions'),
+    )
+
+    const path = destPath.concat(`/${this.name}.${Path.ext()}`)
+
     const file = await this.generator
-      .path(Path.app(`Exceptions/${this.name}.${Path.ext()}`))
+      .path(path)
       .template('exception')
       .setNameProperties(true)
       .make()

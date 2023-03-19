@@ -26,6 +26,18 @@ export default class MakeTestCommandTest extends BaseCommandTest {
   }
 
   @Test()
+  public async shouldBeAbleToCreateATestFileInDifferentDestPath({ assert }: TestContext) {
+    Config.set('rc.commandsManifest.__options.makeTest.destPath', Path.stubs('storage/Tests'))
+
+    await Artisan.call('make:test TestTest')
+
+    const path = Path.stubs('storage/Tests/TestTest.ts')
+
+    assert.isTrue(await File.exists(path))
+    assert.isTrue(ExitFaker.faker.calledOnceWith(0))
+  }
+
+  @Test()
   public async shouldBeAbleToCreateAnUnitTestFileAsClass({ assert }: TestContext) {
     await Artisan.call('make:test TestTest --unit')
 

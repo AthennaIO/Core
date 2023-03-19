@@ -27,8 +27,15 @@ export class MakeFacadeCommand extends BaseCommand {
   public async handle(): Promise<void> {
     this.logger.simple('({bold,green} [ MAKING FACADE ])\n')
 
+    const destPath = Config.get(
+      'rc.commandsManifest.__options.makeFacade.destPath',
+      Path.facades(),
+    )
+
+    const path = destPath.concat(`/${this.name}.${Path.ext()}`)
+
     const file = await this.generator
-      .path(Path.facades(`${this.name}.${Path.ext()}`))
+      .path(path)
       .template('facade')
       .setNameProperties(true)
       .make()

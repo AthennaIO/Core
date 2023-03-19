@@ -30,6 +30,18 @@ export default class MakeProviderCommandTest extends BaseCommandTest {
   }
 
   @Test()
+  public async shouldBeAbleToCreateAProviderFileInDifferentDestPath({ assert }: TestContext) {
+    Config.set('rc.commandsManifest.__options.makeProvider.destPath', Path.stubs('storage/Providers'))
+
+    await Artisan.call('make:provider TestProvider')
+
+    const path = Path.stubs('storage/Providers/TestProvider.ts')
+
+    assert.isTrue(await File.exists(path))
+    assert.isTrue(ExitFaker.faker.calledOnceWith(0))
+  }
+
+  @Test()
   public async shouldThrowAnExceptionWhenTheFileAlreadyExists({ assert }: TestContext) {
     await Artisan.call('make:provider TestProvider')
     await Artisan.call('make:provider TestProvider')
