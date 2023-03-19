@@ -11,6 +11,7 @@ import { Ioc } from '@athenna/ioc'
 import { resolve } from 'node:path'
 import { EnvHelper } from '@athenna/config'
 import { Http } from '#src/Applications/Http'
+import { Repl } from '#src/Applications/Repl'
 import { SemverNode } from '#src/Types/SemverNode'
 import { Artisan } from '#src/Applications/Artisan'
 import { LoadHelper } from '#src/Helpers/LoadHelper'
@@ -75,7 +76,28 @@ export class Ignite {
   /**
    * Ignite the REPL application.
    */
-  public async repl() {}
+  public async repl() {
+    const environments = Config.get<string[]>('rc.environments', [])
+
+    environments.push('repl')
+
+    await this.fire(environments)
+
+    this.options.uncaughtExceptionHandler = async error => {
+      if (!Is.Exception(error)) {
+        error = error.toAthennaException()
+      }
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      await Log.channelOrVanilla('exception').fatal(await error.prettify())
+      repl.displayPrompt()
+    }
+
+    this.setUncaughtExceptionHandler()
+
+    const repl = await Repl.boot()
+  }
 
   /**
    * Ignite the Artisan application.
@@ -378,8 +400,7 @@ export class Ignite {
   }
 
   /**
-   * Handle an error turning it pretty, logging as fatal and exiting
-   * the application with exit code "1".
+   * Handle an error turning it pretty and logging as fatal.
    */
   private async handleError(error: any) {
     if (!Is.Exception(error)) {

@@ -19,6 +19,7 @@
     "node": "cross-env NODE_OPTIONS=\"--experimental-import-meta-resolve\" ts-node",
     "build": "npm run node --silent -- bin/build.ts",
     "http": "npm run node --silent -- bin/http.ts",
+    "repl": "npm run node --silent -- bin/repl.ts",
     "artisan": "npm run node --silent -- bin/artisan.ts",
     "lint:fix": "eslint \"{src,tests}/**/*.ts\" --fix",
     "test": "npm run --silent lint:fix && npm run node --silent -- bin/test.ts",

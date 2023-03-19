@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * @athenna/core
  *
@@ -25,16 +23,6 @@ import { Ignite } from '#src'
 
 process.env.CORE_TESTING = 'false'
 
-Config.set('rc.commands', [
-  '#src/Commands/MakeExceptionCommand',
-  '#src/Commands/MakeFacadeCommand',
-  '#src/Commands/MakeProviderCommand',
-  '#src/Commands/MakeServiceCommand',
-  '#src/Commands/MakeTestCommand',
-  '#src/Commands/ServeCommand',
-  '#src/Commands/TestCommand',
-])
-
 /*
 |--------------------------------------------------------------------------
 | Ignite
@@ -52,12 +40,11 @@ const ignite = await new Ignite().load(import.meta.url, { bootLogs: false })
 
 /*
 |--------------------------------------------------------------------------
-| Artisan
+| REPL Session
 |--------------------------------------------------------------------------
 |
-| Bootstrap the Artisan application setting the Node.js argv and custom op
-| tions.
+| Bootstrap the repl application.
 |
 */
 
-await ignite.artisan(process.argv, { displayName: 'Artisan' })
+await ignite.repl()

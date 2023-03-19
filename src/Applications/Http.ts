@@ -13,7 +13,7 @@ import { Is, Module, Options } from '@athenna/common'
 
 export class Http {
   /**
-   * Boot the Http application and execute the commands of argv.
+   * Boot the Http application.
    */
   public static async boot(options?: HttpOptions) {
     options = Options.create(options, {
