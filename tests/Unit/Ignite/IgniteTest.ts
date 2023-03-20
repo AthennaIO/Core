@@ -116,6 +116,7 @@ export default class IgniteTest extends BaseTest {
     assert.isTrue(Config.is('ignite.fired', true))
     assert.deepEqual(Config.get('rc.environments'), ['console'])
     assert.deepEqual(Config.get('rc.providers'), [
+      '#src/Providers/CoreProvider',
       '@athenna/http/providers/HttpRouteProvider',
       '@athenna/http/providers/HttpServerProvider',
     ])
@@ -140,6 +141,7 @@ export default class IgniteTest extends BaseTest {
     assert.isTrue(Config.is('ignite.fired', true))
     assert.deepEqual(Config.get('rc.environments'), ['console'])
     assert.deepEqual(Config.get('rc.providers'), [
+      '#src/Providers/CoreProvider',
       '@athenna/http/providers/HttpRouteProvider',
       '@athenna/http/providers/HttpServerProvider',
     ])
@@ -289,5 +291,17 @@ export default class IgniteTest extends BaseTest {
     assert.deepEqual(repl.context.ioc, ioc)
 
     repl.close()
+  }
+
+  @Test()
+  public async shouldBeAbleToRegisterTheServicesDepsUsingTheCoreProvider({ assert }: TestContext) {
+    const ignite = await new Ignite().load(Config.get('meta'))
+
+    await ignite.fire(['console'])
+
+    assert.isTrue(ioc.hasDependency('welcomeService'))
+    assert.isTrue(ioc.hasDependency('App/Services/WelcomeService'))
+    assert.isTrue(ioc.hasDependency('decoratedWelcomeService'))
+    assert.isTrue(ioc.hasDependency('App/Services/DecoratedWelcomeService'))
   }
 }
