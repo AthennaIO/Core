@@ -26,7 +26,6 @@ export default class IgniteTest extends BaseTest {
       shutdownLogs: false,
       beforePath: '/build',
       loadConfigSafe: true,
-      configPath: Path.config(),
       athennaRcPath: Path.pwd('package.json'),
     })
     assert.isTrue(ioc.hasDependency('Athenna/Core/Ignite'))
