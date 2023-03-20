@@ -20,6 +20,7 @@ export class Http {
     options = Options.create(options, {
       host: Config.get('http.host', '127.0.0.1'),
       port: Config.get('http.port', 3000),
+      routePath: Path.routes(`http.${Path.ext()}`),
       kernelPath: Path.nodeModules('@athenna/http/build/Kernels/HttpKernel.js'),
     })
 
@@ -76,6 +77,7 @@ export class Http {
     await kernel.registerRateLimit()
     await kernel.registerRTracer()
     await kernel.registerLoggerTerminator()
+    await kernel.registerRoutes(options.routePath)
 
     if (Config.is('rc.bootLogs', true)) {
       Log.channelOrVanilla('application').success(

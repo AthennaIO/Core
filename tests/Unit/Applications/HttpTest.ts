@@ -97,4 +97,16 @@ export default class HttpTest extends BaseTest {
 
     assert.isTrue(CALLED_MAP.get(HttpExceptionHandler.name))
   }
+
+  @Test()
+  public async shouldBeAbleToBootAHttpApplicationAndRegisterADifferentRouteFile({ assert }: TestContext) {
+    await Http.boot({
+      routePath: Path.stubs('routes/http.ts'),
+    })
+
+    const response = await Server.request().get('/hello')
+
+    assert.equal(response.statusCode, 200)
+    assert.deepEqual(response.json(), { ok: true })
+  }
 }
