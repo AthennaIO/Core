@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -39,6 +39,7 @@
   "types": "./build/index.d.ts",
   "exports": {
     ".": "./build/index.js",
+    "./providers/CoreProvider": "./build/Providers/CoreProvider.js",
     "./commands/MakeExceptionCommand": "./build/Commands/MakeExceptionCommand.js",
     "./commands/MakeFacadeCommand": "./build/Commands/MakeFacadeCommand.js",
     "./commands/MakeProviderCommand": "./build/Commands/MakeProviderCommand.js",
@@ -258,7 +259,12 @@
         "path": "#src/Commands/ReplCommand"
       }
     },
+    "services": [
+      "#tests/Stubs/services/WelcomeService",
+      "#tests/Stubs/services/DecoratedWelcomeService"
+    ],
     "providers": [
+      "#src/Providers/CoreProvider",
       "@athenna/http/providers/HttpRouteProvider",
       "@athenna/http/providers/HttpServerProvider"
     ],
