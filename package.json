@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -39,7 +39,14 @@
   "types": "./build/index.d.ts",
   "exports": {
     ".": "./build/index.js",
-    "./providers/ArtisanProvider": "./build/Providers/ArtisanProvider.js"
+    "./commands/MakeExceptionCommand": "./build/Commands/MakeExceptionCommand.js",
+    "./commands/MakeFacadeCommand": "./build/Commands/MakeFacadeCommand.js",
+    "./commands/MakeProviderCommand": "./build/Commands/MakeProviderCommand.js",
+    "./commands/MakeServiceCommand": "./build/Commands/MakeServiceCommand.js",
+    "./commands/MakeTestCommand": "./build/Commands/MakeTestCommand.js",
+    "./commands/ReplCommand": "./build/Commands/ReplCommand.js",
+    "./commands/ServeCommand": "./build/Commands/ServeCommand.js",
+    "./commands/TestCommand": "./build/Commands/TestCommand.js"
   },
   "imports": {
     "#src/*": "./src/*.js",
@@ -61,7 +68,7 @@
     "@athenna/ioc": "^3.1.5",
     "@athenna/logger": "^3.1.5",
     "@athenna/test": "^3.2.2",
-    "@athenna/view": "^3.0.3",
+    "@athenna/view": "^3.0.4",
     "@japa/assert": "^1.3.6",
     "@japa/run-failed-tests": "^1.1.0",
     "@japa/runner": "^2.2.2",
