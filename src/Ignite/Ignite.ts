@@ -58,7 +58,6 @@ export class Ignite {
         shutdownLogs: false,
         beforePath: '/build',
         loadConfigSafe: true,
-        configPath: Path.config(),
         athennaRcPath: Path.pwd('.athennarc.json'),
         uncaughtExceptionHandler: this.handleError,
       })
@@ -394,7 +393,10 @@ export class Ignite {
    * ```
    */
   public async setConfigurationFiles(): Promise<void> {
-    await Config.loadAll(this.options.configPath, this.options.loadConfigSafe)
+    await Config.loadAll(
+      this.options.configPath || Path.config(),
+      this.options.loadConfigSafe,
+    )
   }
 
   /**

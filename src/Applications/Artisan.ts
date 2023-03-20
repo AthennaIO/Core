@@ -34,8 +34,8 @@ export class Artisan {
     options = Options.create(options, {
       displayName: null,
       routePath: Path.routes(`console.${Path.ext()}`),
-      kernelPath: Path.nodeModules(
-        '@athenna/artisan/build/Kernels/ConsoleKernel.js',
+      kernelPath: Path.originalPwd(
+        'node_modules/@athenna/artisan/build/Kernels/ConsoleKernel.js',
       ),
     })
 
