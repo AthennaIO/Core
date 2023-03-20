@@ -25,6 +25,11 @@ export type HttpOptions = {
   port?: number
 
   /**
+   * The path to the http routes.
+   */
+  routePath?: string
+
+  /**
    * The path to the HttpKernel. The http kernel is responsible to register controllers,
    * all kind of middlewares, plugins and the exception handler for requests. By default,
    * Athenna will use the built in Kernel. But you can do your own implementation

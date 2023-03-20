@@ -17,12 +17,7 @@ export type ArtisanOptions = {
   displayName?: string
 
   /**
-   * The path to the console routes. Artisan is the only application that
-   * loads the routes before application bootstrap. This behavior was implemented
-   * because the "rc.preloads" files are loaded only after the providers. This means
-   * that the entire application needs to be bootstrapped to register the preload files.
-   *
-   * Artisan does not need all the application to bootstrap to run.
+   * The path to the console routes.
    */
   routePath?: string
 

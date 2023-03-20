@@ -12,6 +12,7 @@ import { File, Folder, Json } from '@athenna/common'
 import { Log, LoggerProvider } from '@athenna/logger'
 import { ExitFaker, BeforeEach, AfterEach } from '@athenna/test'
 import { HttpRouteProvider, HttpServerProvider } from '@athenna/http'
+import { CALLED_MAP } from './CalledMap.js'
 
 export class BaseTest {
   public originalEnv = Json.copy(process.env)
@@ -42,6 +43,7 @@ export class BaseTest {
     await new HttpServerProvider().shutdown()
 
     Config.clear()
+    CALLED_MAP.clear()
     ioc.reconstruct()
     ExitFaker.release()
     LoadHelper.providers = []

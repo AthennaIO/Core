@@ -12,6 +12,7 @@ import { resolve } from 'node:path'
 import { EnvHelper } from '@athenna/config'
 import { Http } from '#src/Applications/Http'
 import { Repl } from '#src/Applications/Repl'
+import { PrettyREPLServer } from 'pretty-repl'
 import { SemverNode } from '#src/Types/SemverNode'
 import { Artisan } from '#src/Applications/Artisan'
 import { LoadHelper } from '#src/Helpers/LoadHelper'
@@ -22,7 +23,6 @@ import { ArtisanOptions } from '#src/Types/ArtisanOptions'
 import { Is, File, Module, Options } from '@athenna/common'
 import { parse as semverParse, satisfies as semverSatisfies } from 'semver'
 import { NotSatisfiedNodeVersion } from '#src/Exceptions/NotSatisfiedNodeVersion'
-import { PrettyREPLServer } from 'pretty-repl'
 
 export class Ignite {
   /**
@@ -225,7 +225,7 @@ export class Ignite {
     if (!process.env.CORE_TESTING) {
       const __dirname = Module.createDirname(import.meta.url)
 
-      process.chdir(resolve(__dirname, '..', '..', '..', '..'))
+      process.chdir(resolve(__dirname, '..', '..', '..', '..', '..'))
     }
 
     /**
