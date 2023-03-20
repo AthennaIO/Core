@@ -95,5 +95,5 @@ export interface RcOptions {
    * the commandsManifest property, Athenna will import ONLY that specific command,
    * ignoring the entire "commands" array.
    */
-  commandsManifest?: Record<string, string>
+  commandsManifest?: Record<string, string | any>
 }
