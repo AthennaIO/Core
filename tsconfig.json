@@ -1,0 +1,21 @@
+{
+  "ts-node": {
+    "esm": true,
+    "swc": true
+  },
+  "compilerOptions": {
+    "strict": false,
+    "rootDir": ".",
+    "outDir": "build",
+    "module": "ESNext",
+    "target": "ESNext",
+    "declaration": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "removeComments": false,
+    "resolveJsonModule": true,
+    "moduleResolution": "NodeNext",
+    "experimentalDecorators": true
+  },
+  "exclude": ["node_modules"]
+}
