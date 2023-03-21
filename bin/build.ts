@@ -7,55 +7,74 @@
  * file that was distributed with this source code.
  */
 
-import { Path, File, Exec } from '@athenna/common'
+/* eslint-disable no-ex-assign */
+
+import { Path, File, Exec, Folder, Is } from '@athenna/common'
 
 /*
 |--------------------------------------------------------------------------
-| TypeScript build file path
+| The tsconfig.build.json path and the compile command.
 |--------------------------------------------------------------------------
 |
-| Where the TypeScript build file will be saved.
+| The path where tsconfig.build.json will be created and the compilation
+| command that will be used to compile the files.
 */
 
 const path = Path.nodeModules('@athenna/tsconfig.build.json')
+const compileCommand = `node_modules/.bin/tsc --project ${path}`
 
 /*
 |--------------------------------------------------------------------------
-| TypeScript Config
+| Before all hook.
 |--------------------------------------------------------------------------
 |
-| Create the tsconfig file for building the project.
+| This function will be executed before the compilation starts. Briefly,
+| this function will create a tsconfig.build.json file with the correct
+| configurations to compile the files such as rootDir, outDir, etc and
+| also delete the old build folder if it exists.
 */
 
-const tsconfig = JSON.parse(
-  new File('../tsconfig.json').getContentSync().toString(),
-)
+async function beforeAll() {
+  const tsconfig = await new File('../tsconfig.json').getContentAsBuilder()
 
-delete tsconfig['ts-node']
+  tsconfig.delete('ts-node')
+  tsconfig.set('include', ['../../src'])
+  tsconfig.set('compilerOptions.rootDir', '../../src')
+  tsconfig.set('compilerOptions.outDir', '../../build')
+  tsconfig.set('exclude', ['../../bin', '../../node_modules', '../../tests'])
 
-tsconfig.compilerOptions.rootDir = '../../src'
-tsconfig.compilerOptions.outDir = '../../build'
+  const oldBuild = new Folder(Path.pwd('/build'))
+  await new File(path, JSON.stringify(tsconfig.get())).load()
 
-tsconfig.include = ['../../src']
-tsconfig.exclude = ['../../bin', '../../node_modules', '../../tests']
-
-const tsconfigBuild = JSON.stringify(tsconfig)
-
-/*
-|--------------------------------------------------------------------------
-| Compilation
-|--------------------------------------------------------------------------
-|
-| Saving the file in some path, deleting old "build" folder, executing
-| compilation and deleting the tsconfig file generated.
-*/
-
-const file = new File(path, Buffer.from(tsconfigBuild))
-
-if (file.fileExists) {
-  await file.remove()
+  if (oldBuild.folderExists) await oldBuild.remove()
 }
 
-await file.load()
-await Exec.command(`rimraf ../build && tsc --project ${path}`)
-await file.remove()
+/*
+|--------------------------------------------------------------------------
+| After all hook.
+|--------------------------------------------------------------------------
+|
+| This function will be executed after some error occurs or after the compi
+| lation finishes. This function just delete the tsconfig.build.json file if
+| it exists.
+*/
+
+async function afterAll() {
+  const tsConfigBuild = await new File(path).load()
+
+  if (tsConfigBuild.fileExists) await tsConfigBuild.remove()
+}
+
+try {
+  await beforeAll()
+
+  const { stdout } = await Exec.command(compileCommand)
+
+  if (stdout) console.log(stdout)
+} catch (error) {
+  if (!Is.Exception(error)) error = error.toAthennaException()
+
+  console.error(await error.prettify())
+} finally {
+  await afterAll()
+}

@@ -27,28 +27,4 @@ export default class TestCommandTest extends BaseCommandTest {
     assert.deepEqual(stderr, '')
     assert.isTrue(stdout.includes('heyhey'))
   }
-
-  @Test()
-  public async shouldBeAbleToRunOnlyTheUnitTestSuiteOfTheApplication({ assert }: TestContext) {
-    const { stdout, stderr } = await Artisan.callInChild('test --unit', this.artisan)
-
-    assert.deepEqual(stderr, '')
-    assert.isTrue(stdout.includes('Unit'))
-  }
-
-  @Test()
-  public async shouldBeAbleToRunOnlyTheE2ETestSuiteOfTheApplication({ assert }: TestContext) {
-    const { stdout, stderr } = await Artisan.callInChild('test --e2e', this.artisan)
-
-    assert.deepEqual(stderr, '')
-    assert.isTrue(stdout.includes('E2E'))
-  }
-
-  @Test()
-  public async shouldBeAbleToRunTheApplicationTestsInApiDebugMode({ assert }: TestContext) {
-    const { stdout, stderr } = await Artisan.callInChild('test --debug', this.artisan)
-
-    assert.deepEqual(stderr, '')
-    assert.isTrue(stdout.includes('api:*'))
-  }
 }

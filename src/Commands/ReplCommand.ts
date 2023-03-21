@@ -33,6 +33,7 @@ export class ReplCommand extends BaseCommand {
     return 'Start a new REPL session with Athenna application loaded.'
   }
 
+  // TODO Verify if this command still makes sense to exist.
   public async handle(): Promise<void> {
     if (this.env !== '') {
       process.env.NODE_ENV = this.env

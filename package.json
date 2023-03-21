@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "3.1.3",
+  "version": "3.1.4",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -16,14 +16,14 @@
     "bootstrap"
   ],
   "scripts": {
-    "node": "cross-env NODE_OPTIONS=\"--experimental-import-meta-resolve\" ts-node",
-    "build": "npm run node --silent -- bin/build.ts",
-    "http": "npm run node --silent -- bin/http.ts",
-    "repl": "npm run node --silent -- bin/repl.ts",
-    "artisan": "npm run node --silent -- bin/artisan.ts",
+    "start": "sh node bin/http.ts",
+    "build": "sh node bin/build.ts",
+    "http": "sh node bin/http.ts",
+    "repl": "sh node bin/repl.ts",
+    "artisan": "sh node bin/artisan.ts",
     "lint:fix": "eslint \"{src,tests}/**/*.ts\" --fix",
-    "test": "npm run --silent lint:fix && npm run node --silent -- bin/test.ts",
-    "test:debug": "cross-env DEBUG=api:* npm run node --silent -- bin/test.ts --inspect",
+    "test": "npm run --silent lint:fix && sh node bin/test.ts",
+    "test:debug": "cross-env DEBUG=api:* sh node --inspect bin/test.ts",
     "test:coverage": "c8 npm run --silent test"
   },
   "files": [
@@ -62,14 +62,14 @@
     "semver": "^7.3.8"
   },
   "devDependencies": {
-    "@athenna/artisan": "^3.3.1",
-    "@athenna/common": "^3.4.0",
-    "@athenna/config": "^3.2.0",
-    "@athenna/http": "^3.4.1",
-    "@athenna/ioc": "^3.1.5",
-    "@athenna/logger": "^3.1.5",
+    "@athenna/artisan": "^3.3.3",
+    "@athenna/common": "^3.4.2",
+    "@athenna/config": "^3.2.1",
+    "@athenna/http": "^3.4.2",
+    "@athenna/ioc": "^3.1.6",
+    "@athenna/logger": "^3.1.6",
     "@athenna/test": "^3.2.2",
-    "@athenna/view": "^3.0.4",
+    "@athenna/view": "^3.0.5",
     "@japa/assert": "^1.3.6",
     "@japa/run-failed-tests": "^1.1.0",
     "@japa/runner": "^2.2.2",
@@ -109,7 +109,7 @@
     "prettier": "^2.8.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "sinon": "^15.0.1",
+    "sinon": "^15.0.2",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4"
   },
