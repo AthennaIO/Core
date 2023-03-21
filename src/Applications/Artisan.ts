@@ -59,9 +59,9 @@ export class Artisan {
 
     const kernel = new Kernel()
 
+    await kernel.registerExceptionHandler(options.exceptionHandlerPath)
     await kernel.registerCommands(argv)
     await kernel.registerRouteCommands(options.routePath)
-    await kernel.registerExceptionHandler(options.exceptionHandlerPath)
 
     if (Config.is('rc.bootLogs', true)) {
       Log.channelOrVanilla('application').success(
