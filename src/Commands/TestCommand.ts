@@ -12,33 +12,12 @@ import { BaseCommand, Option, CommandSettings } from '@athenna/artisan'
 
 export class TestCommand extends BaseCommand {
   @Option({
-    signature: '--e2e',
-    description: 'Run only e2e test suite.',
-    default: false,
-  })
-  public e2e: boolean
-
-  @Option({
-    signature: '--unit',
-    description: 'Run only unit test suite.',
-    default: false,
-  })
-  public unit: boolean
-
-  @Option({
     signature: '-e, --env <env>',
     description:
       'Change the evironment where your tests wil run. Default is "test"',
     default: 'test',
   })
   public env: string
-
-  @Option({
-    signature: '--debug',
-    description: 'Enable API debug mode to see more logs.',
-    default: false,
-  })
-  public debug: boolean
 
   public static settings(): CommandSettings {
     return {
@@ -54,31 +33,18 @@ export class TestCommand extends BaseCommand {
     return 'Run the tests of your application.'
   }
 
+  // TODO Verify if this command still makes sense to exist.
   public async handle(): Promise<void> {
     if (this.env !== '') {
       process.env.NODE_ENV = this.env
-    }
-
-    const protectedArgs = ['--e2e', '--unit', '--debug']
-
-    process.argv = process.argv.filter(arg => !protectedArgs.includes(arg))
-
-    if (this.e2e) {
-      process.argv.push('E2E')
-    }
-
-    if (this.unit) {
-      process.argv.push('Unit')
-    }
-
-    if (this.debug) {
-      process.env.DEBUG = 'api:*'
     }
 
     const entrypoint = Config.get(
       'rc.commandsManifest.test.entrypoint',
       '#bootstrap/test',
     )
+
+    process.argv.splice(2, 1)
 
     await Module.resolve(entrypoint, Config.get('rc.meta'))
   }

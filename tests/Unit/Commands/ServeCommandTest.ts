@@ -27,12 +27,4 @@ export default class ServeCommandTest extends BaseCommandTest {
     assert.deepEqual(stderr, '')
     assert.isTrue(stdout.includes('heyhey'))
   }
-
-  @Test()
-  public async shouldBeAbleToServeTheApplicationInWatchMode({ assert }: TestContext) {
-    const { stdout, stderr } = await Artisan.callInChild('serve --watch', this.artisan)
-
-    assert.deepEqual(stderr, '')
-    assert.isTrue(stdout.includes('serving application'))
-  }
 }

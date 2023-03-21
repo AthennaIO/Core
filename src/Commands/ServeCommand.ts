@@ -7,18 +7,10 @@
  * file that was distributed with this source code.
  */
 
-import { Module, Path } from '@athenna/common'
+import { Module } from '@athenna/common'
 import { BaseCommand, CommandSettings, Option } from '@athenna/artisan'
 
 export class ServeCommand extends BaseCommand {
-  @Option({
-    signature: '-w, --watch',
-    description:
-      'Watch for file changes and re-start the application on changes.',
-    default: false,
-  })
-  public watch: boolean
-
   @Option({
     signature: '-e, --env <env>',
     description:
@@ -41,23 +33,10 @@ export class ServeCommand extends BaseCommand {
     return 'Serve your application.'
   }
 
+  // TODO Verify if this command still makes sense to exist.
   public async handle(): Promise<void> {
     if (this.env !== '') {
       process.env.NODE_ENV = this.env
-    }
-
-    if (this.watch) {
-      let execCmd = "'npm run start --silent'"
-      const nodemon = await import('nodemon')
-      const ignorePaths = `--ignore ${Path.tests()} ${Path.storage()} ${Path.nodeModules()}`
-
-      if (Env('NODEMON_NPM_ARGS', '') !== '') {
-        execCmd = execCmd.concat(' ', Env('NODEMON_NPM_ARGS'))
-      }
-
-      nodemon.default(
-        `--quiet ${ignorePaths} --watch ${Path.pwd()} --exec ${execCmd}`,
-      )
     }
 
     const entrypoint = Config.get(
