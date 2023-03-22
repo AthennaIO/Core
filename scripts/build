@@ -1,0 +1,5 @@
+#!/bin/bash
+
+sh scripts/clean
+
+./node_modules/.bin/tsc --project scripts/tsconfig.build.json

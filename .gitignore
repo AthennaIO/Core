@@ -114,9 +114,15 @@ out
 .yarn/install-state.gz
 .pnp.*
 
-# Transpiled code path
-dist
-build
+# Compiled code
+./dist
+./build
+*.js
+*.d.ts
+*.js.map
+!tests/Stubs/**/*.js
+!tests/Stubs/**/*.d.ts
+!tests/Stubs/**/*.js.map
 
 # IDE
 .idea
@@ -127,7 +133,6 @@ build
 .env
 .env.testing
 .env.production
-!tests/Stubs/.env
 
 # MacOS folder mapper file
 .DS_Store
