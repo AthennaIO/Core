@@ -21,14 +21,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Transpile code
-        run: npm run build
-
-      - name: Install jq
-        run: sudo apt-get -y install jq
-
-      - name: Change import aliases to build
-        run: jq '.imports."#src"="./build/index.js" | .imports."#src/*"="./build/*.js"'  package.json > tmp.json && mv tmp.json package.json
+      - name: Compile code
+        run: sh scripts/build
 
       - name: Automatic GitHub Release
         uses: justincy/github-action-npm-release@2.0.1

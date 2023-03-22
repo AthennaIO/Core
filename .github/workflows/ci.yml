@@ -42,8 +42,8 @@ jobs:
       - name: Run tests
         run: npm run test:coverage
 
-      - name: Test code transpilation
-        run: npm run build
+      - name: Test code compilation
+        run: sh scripts/build
 
   windows:
     runs-on: windows-latest
@@ -65,5 +65,5 @@ jobs:
       - name: Run tests
         run: npm run test:coverage
 
-      - name: Test code transpilation
-        run: npm run build
+      - name: Test code compilation
+        run: sh scripts/build
