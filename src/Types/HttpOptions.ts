@@ -46,7 +46,7 @@ export type HttpOptions = {
    * handler. But you can do your own implementantion extending the
    * "HttpExceptionHandler" class from Http and setting the path to it here.
    *
-   * @default Path.originalPwd('node_modules/@athenna/http/build/Handlers/HttpExceptionHandler.js')
+   * @default Path.originalPwd('node_modules/@athenna/http/src/Handlers/HttpExceptionHandler.js')
    */
   exceptionHandlerPath?: string
 }

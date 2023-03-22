@@ -22,7 +22,7 @@ export class Http {
       port: Config.get('http.port', 3000),
       routePath: Path.routes(`http.${Path.ext()}`),
       kernelPath: Path.originalPwd(
-        'node_modules/@athenna/http/build/Kernels/HttpKernel.js',
+        'node_modules/@athenna/http/src/Kernels/HttpKernel.js',
       ),
     })
 
