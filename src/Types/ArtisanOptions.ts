@@ -29,7 +29,7 @@ export type ArtisanOptions = {
    * extending the "ConsoleKernel" class from Artisan and setting the path to it
    * here.
    *
-   * @default Path.originalPwd('node_modules/@athenna/artisan/build/Kernels/ConsoleKernel.js')
+   * @default Path.originalPwd('node_modules/@athenna/artisan/src/Kernels/ConsoleKernel.js')
    */
   kernelPath?: string
 
@@ -41,7 +41,7 @@ export type ArtisanOptions = {
    * "ConsoleExceptionHandler" class from Artisan and setting the path to it
    * here.
    *
-   * @default Path.originalPwd('node_modules/@athenna/artisan/build/Handlers/ConsoleExceptionHandler.js')
+   * @default Path.originalPwd('node_modules/@athenna/artisan/src/Handlers/ConsoleExceptionHandler.js')
    */
   exceptionHandlerPath?: string
 }
