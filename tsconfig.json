@@ -6,16 +6,23 @@
   "compilerOptions": {
     "strict": false,
     "rootDir": ".",
-    "outDir": "build",
-    "module": "ESNext",
+    "baseUrl": ".",
+    "outDir": ".",
+    "module": "NodeNext",
     "target": "ESNext",
     "declaration": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "removeComments": false,
     "resolveJsonModule": true,
+    "experimentalDecorators": true,
     "moduleResolution": "NodeNext",
-    "experimentalDecorators": true
+    "paths": {
+      "#bin/*": ["./bin/*.ts"],
+      "#src/*": ["./src/*.ts"],
+      "#tests/*": ["./tests/*.ts"]
+    }
   },
-  "exclude": ["node_modules"]
+  "include": ["./**/*"],
+  "exclude": ["build", "node_modules"]
 }
