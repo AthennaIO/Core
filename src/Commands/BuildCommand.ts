@@ -61,11 +61,18 @@ export class BuildCommand extends BaseCommand {
     )
 
     const content = {
-      extends: Path.pwd('tsconfig.json'),
-      include: [Path.pwd('**/*')],
-      exclude: [Path.tests(), Path.nodeModules()],
+      extends: this.toPosixPath(Path.pwd('tsconfig.json')),
+      include: [this.toPosixPath(Path.pwd('**/*'))],
+      exclude: [
+        this.toPosixPath(Path.tests()),
+        this.toPosixPath(Path.nodeModules()),
+      ],
     }
 
     return new File(path, JSON.stringify(content, null, 2)).load()
+  }
+
+  private toPosixPath(path: string): string {
+    return path.replace(/\\/g, '/').slice(2)
   }
 }
