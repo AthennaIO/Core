@@ -8,12 +8,13 @@
  */
 
 import { Artisan } from '@athenna/artisan'
-import { Test, TestContext } from '@athenna/test'
 import { Exec, File, Folder } from '@athenna/common'
+import { Test, TestContext, Timeout } from '@athenna/test'
 import { BaseCommandTest } from '#tests/Helpers/BaseCommandTest'
 
 export default class BuildCommandTest extends BaseCommandTest {
   @Test()
+  @Timeout(60000)
   public async shouldBeAbleToBuildTheApplication({ assert }: TestContext) {
     const { stdout, stderr } = await Artisan.callInChild('build', this.artisan)
 
@@ -26,6 +27,7 @@ export default class BuildCommandTest extends BaseCommandTest {
   }
 
   @Test()
+  @Timeout(60000)
   public async shouldBeAbleToBuildTheApplicationEvenIfTsConfigAlreadyExistsInTmp({ assert }: TestContext) {
     await Artisan.callInChild('build', this.artisan)
 
@@ -43,6 +45,7 @@ export default class BuildCommandTest extends BaseCommandTest {
   }
 
   @Test()
+  @Timeout(60000)
   public async shouldBeAbleToCleanAllJsAndDTsFilesFromTheApplication({ assert }: TestContext) {
     const { stdout, stderr } = await Artisan.callInChild('build --clean', this.artisan)
 
