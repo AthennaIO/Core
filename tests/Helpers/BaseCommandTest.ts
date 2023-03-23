@@ -9,7 +9,7 @@
 
 import { Config } from '@athenna/config'
 import { ViewProvider } from '@athenna/view'
-import { File, Folder } from '@athenna/common'
+import { Exec, File, Folder } from '@athenna/common'
 import { LoggerProvider } from '@athenna/logger'
 import { ExitFaker, AfterEach, BeforeEach } from '@athenna/test'
 import { ConsoleKernel, ArtisanProvider, COMMANDS_SETTINGS, CommanderHandler } from '@athenna/artisan'
@@ -57,7 +57,9 @@ export class BaseCommandTest {
     await File.safeRemove(Path.pwd('docker-compose.yml'))
     await File.safeRemove(Path.tests('Unit/TestTest.ts'))
     await Folder.safeRemove(Path.stubs('storage'))
+    await Folder.safeRemove(Path.pwd('tmp'))
 
+    await Exec.command(`cd ${Path.pwd()} && sh scripts/clean`)
     await new File(Path.pwd('package.json')).setContent(this.originalPJson)
   }
 }

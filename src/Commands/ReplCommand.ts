@@ -13,8 +13,7 @@ import { BaseCommand, CommandSettings, Option } from '@athenna/artisan'
 export class ReplCommand extends BaseCommand {
   @Option({
     signature: '-e, --env <env>',
-    description:
-      'Change the evironment where the application will run. Default is ""',
+    description: 'Change the evironment where the application will run.',
     default: '',
   })
   public env: string
