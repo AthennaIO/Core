@@ -18,6 +18,8 @@ export type ArtisanOptions = {
 
   /**
    * The path to the console routes.
+   *
+   * @default Path.routes(`console.${Path.ext()}`)
    */
   routePath?: string
 
@@ -29,7 +31,7 @@ export type ArtisanOptions = {
    * extending the "ConsoleKernel" class from Artisan and setting the path to it
    * here.
    *
-   * @default Path.originalPwd('node_modules/@athenna/artisan/src/Kernels/ConsoleKernel.js')
+   * @default '@athenna/artisan/kernels/ConsoleKernel'
    */
   kernelPath?: string
 
@@ -41,7 +43,7 @@ export type ArtisanOptions = {
    * "ConsoleExceptionHandler" class from Artisan and setting the path to it
    * here.
    *
-   * @default Path.originalPwd('node_modules/@athenna/artisan/src/Handlers/ConsoleExceptionHandler.js')
+   * @default '@athenna/artisan/handlers/ConsoleExceptionHandler'
    */
   exceptionHandlerPath?: string
 }

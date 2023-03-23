@@ -13,7 +13,7 @@ export type ServiceOptions = {
    * the service provider. Athenna will create camel alias from
    * the alias set here.
    *
-   * @default App/Services/YourServiceClassName
+   * @default 'App/Services/YourServiceClassName'
    */
   alias?: string
 
@@ -21,7 +21,7 @@ export type ServiceOptions = {
    * The registration type that will be used to register your service
    * inside the service provider.
    *
-   * @default transient
+   * @default 'transient'
    */
   type?: 'fake' | 'scoped' | 'singleton' | 'transient'
 }

@@ -21,9 +21,7 @@ export class Http {
       host: Config.get('http.host', '127.0.0.1'),
       port: Config.get('http.port', 3000),
       routePath: Path.routes(`http.${Path.ext()}`),
-      kernelPath: Path.originalPwd(
-        'node_modules/@athenna/http/src/Kernels/HttpKernel.js',
-      ),
+      kernelPath: '@athenna/http/kernels/HttpKernel',
     })
 
     const server = ioc.safeUse('Athenna/Core/HttpServer')
