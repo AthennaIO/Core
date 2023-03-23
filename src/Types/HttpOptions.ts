@@ -26,6 +26,8 @@ export type HttpOptions = {
 
   /**
    * The path to the http routes.
+   *
+   * @default Path.routes(`http.${Path.ext()}`)
    */
   routePath?: string
 
@@ -35,7 +37,7 @@ export type HttpOptions = {
    * Athenna will use the built in Kernel. But you can do your own implementation
    * extending the "HttpKernel" class from Http and setting the path to it here.
    *
-   * @default Path.originalPwd('node_modules/@athenna/http/build/Kernels/HttpKernel.js')
+   * @default '@athenna/http/kernels/HttpKernel'
    */
   kernelPath?: string
 
@@ -46,7 +48,7 @@ export type HttpOptions = {
    * handler. But you can do your own implementantion extending the
    * "HttpExceptionHandler" class from Http and setting the path to it here.
    *
-   * @default Path.originalPwd('node_modules/@athenna/http/src/Handlers/HttpExceptionHandler.js')
+   * @default '@athenna/http/handlers/HttpExceptionHandler'
    */
   exceptionHandlerPath?: string
 }

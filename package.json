@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "3.1.8",
+  "version": "3.1.9",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -54,21 +54,22 @@
     "#src/*": "./src/*.js",
     "#src": "./src/index.js",
     "#tests/*": "./tests/*.js",
-    "#tests": "./tests/index.js"
+    "#tests": "./tests/index.js",
+    "#routes/*": "./routes/*.js"
   },
   "dependencies": {
     "pretty-repl": "^3.1.1",
     "semver": "^7.3.8"
   },
   "devDependencies": {
-    "@athenna/artisan": "^3.3.7",
-    "@athenna/common": "^3.4.5",
+    "@athenna/artisan": "^3.3.8",
+    "@athenna/common": "^3.4.6",
     "@athenna/config": "^3.2.5",
-    "@athenna/http": "^3.4.3",
+    "@athenna/http": "^3.4.4",
     "@athenna/ioc": "^3.1.8",
     "@athenna/logger": "^3.1.7",
     "@athenna/test": "^3.2.3",
-    "@athenna/view": "^3.0.6",
+    "@athenna/view": "^3.0.7",
     "@japa/assert": "^1.3.6",
     "@japa/run-failed-tests": "^1.1.0",
     "@japa/runner": "^2.2.2",
@@ -210,24 +211,18 @@
     }
   },
   "athenna": {
-    "view": {
-      "disks": {},
-      "edge": {
-        "cache": false
-      },
-      "templates": {
-        "exception": "./templates/exception.edge",
-        "facade": "./templates/facade.edge",
-        "provider": "./templates/provider.edge",
-        "service": "./templates/service.edge",
-        "test": "./templates/test.edge",
-        "testFn": "./templates/testFn.edge",
-        "command": "node_modules/@athenna/artisan/templates/command.edge",
-        "controller": "node_modules/@athenna/http/templates/controller.edge",
-        "middleware": "node_modules/@athenna/http/templates/middleware.edge",
-        "interceptor": "node_modules/@athenna/http/templates/interceptor.edge",
-        "terminator": "node_modules/@athenna/http/templates/terminator.edge"
-      }
+    "templates": {
+      "exception": "./templates/exception.edge",
+      "facade": "./templates/facade.edge",
+      "provider": "./templates/provider.edge",
+      "service": "./templates/service.edge",
+      "test": "./templates/test.edge",
+      "testFn": "./templates/testFn.edge",
+      "command": "node_modules/@athenna/artisan/templates/command.edge",
+      "controller": "node_modules/@athenna/http/templates/controller.edge",
+      "middleware": "node_modules/@athenna/http/templates/middleware.edge",
+      "interceptor": "node_modules/@athenna/http/templates/interceptor.edge",
+      "terminator": "node_modules/@athenna/http/templates/terminator.edge"
     },
     "commands": [
       "#src/Commands/MakeExceptionCommand",

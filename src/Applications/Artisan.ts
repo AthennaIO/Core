@@ -34,9 +34,7 @@ export class Artisan {
     options = Options.create(options, {
       displayName: null,
       routePath: Path.routes(`console.${Path.ext()}`),
-      kernelPath: Path.originalPwd(
-        'node_modules/@athenna/artisan/src/Kernels/ConsoleKernel.js',
-      ),
+      kernelPath: '@athenna/artisan/kernels/ConsoleKernel',
     })
 
     const artisan = ioc.safeUse('Athenna/Core/Artisan')
