@@ -32,6 +32,7 @@ Config.set('rc.commands', [
   '#src/Commands/MakeServiceCommand',
   '#src/Commands/MakeTestCommand',
   '#src/Commands/ServeCommand',
+  '#src/Commands/BuildCommand',
   '#src/Commands/TestCommand',
 ])
 

@@ -23,6 +23,6 @@
       "#tests/*": ["./tests/*.ts"]
     }
   },
-  "include": ["./**/*"],
+  "include": ["./**/*", "hello/node_modules"],
   "exclude": ["build", "node_modules"]
 }

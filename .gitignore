@@ -137,3 +137,6 @@ out
 
 # MacOS folder mapper file
 .DS_Store
+
+# Temp folder
+tmp
