@@ -35,22 +35,36 @@ export class BuildCommand extends BaseCommand {
 
   public async handle(): Promise<void> {
     if (this.clean) {
+      this.logger.simple('({bold,green} [ CLEANING APPLICATION ])\n')
+
       const folder = await new Folder(Path.pwd()).load()
       const files = folder.getFilesByPattern(
         `!(${this.ignoreOnClean})/**/*.@(js|d.ts)`,
       )
 
-      await Exec.concurrently(files, file => file.remove()).then(() =>
-        this.logger.success('Application successfully cleaned.'),
+      await this.logger.promiseSpinner(
+        () => Exec.concurrently(files, file => file.remove()),
+        {
+          text: 'Cleaning all .js and .d.ts files from your application',
+          successText: 'Application successfully cleaned',
+          failText: 'Failed to clean your application:',
+        },
       )
 
       return
     }
 
+    this.logger.simple('({bold,green} [ BUILDING APPLICATION ])\n')
+
     const tsConfig = await this.getTsConfig()
 
-    await Exec.command(`${Path.bin('tsc')} --project ${tsConfig.path}`).then(
-      () => this.logger.success('Application successfully compiled.'),
+    await this.logger.promiseSpinner(
+      () => Exec.command(`${Path.bin('tsc')} --project ${tsConfig.path}`),
+      {
+        text: 'Compiling all .ts files from your application',
+        successText: 'Application successfully compiled',
+        failText: 'Failed to compile your application:',
+      },
     )
   }
 
