@@ -39,13 +39,14 @@ export class BuildCommand extends BaseCommand {
 
       const folder = await new Folder(Path.pwd()).load()
       const files = folder.getFilesByPattern(
-        `!(${this.ignoreOnClean})/**/*.@(js|d.ts)`,
+        `!(${this.ignoreOnClean})/**/*.@(js|d.ts|js.map)`,
       )
 
       await this.logger.promiseSpinner(
         () => Exec.concurrently(files, file => file.remove()),
         {
-          text: 'Cleaning all .js and .d.ts files from your application',
+          stream: process.stdout,
+          text: 'Cleaning all .js, .d.ts and .js.map files from your application',
           successText: 'Application successfully cleaned',
           failText: 'Failed to clean your application:',
         },
@@ -61,6 +62,7 @@ export class BuildCommand extends BaseCommand {
     await this.logger.promiseSpinner(
       () => Exec.command(`${Path.bin('tsc')} --project ${tsConfig.path}`),
       {
+        stream: process.stdout,
         text: 'Compiling all .ts files from your application',
         successText: 'Application successfully compiled',
         failText: 'Failed to compile your application:',

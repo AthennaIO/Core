@@ -176,9 +176,7 @@ export default class IgniteTest extends BaseTest {
       SIGTERM: () => (SIGTERM = true),
     })
 
-    const ignite = await new Ignite().load(Config.get('meta'))
-
-    await ignite.fire(['console'])
+    await new Ignite().load(Config.get('meta'))
 
     process.emit('SIGINT')
     process.emit('SIGTERM')
@@ -199,14 +197,12 @@ export default class IgniteTest extends BaseTest {
 
     const ignite = await new Ignite().load(Config.get('meta'))
 
-    await ignite.fire(['console'])
-
     Config.set('app.signals', {
       SIGINT: () => (SIGINT = false),
       SIGTERM: () => (SIGTERM = false),
     })
 
-    await ignite.fire(['console'])
+    await ignite.load(Config.get('meta'))
 
     process.emit('SIGINT')
     process.emit('SIGTERM')
@@ -252,9 +248,7 @@ export default class IgniteTest extends BaseTest {
       SIGTERM: undefined, // will set the default signal
     })
 
-    const ignite = await new Ignite().load(Config.get('meta'))
-
-    await ignite.fire(['console'])
+    await new Ignite().load(Config.get('meta'))
 
     const events = process.eventNames()
 
