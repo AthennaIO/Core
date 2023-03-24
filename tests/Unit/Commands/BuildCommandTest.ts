@@ -19,6 +19,8 @@ export default class BuildCommandTest extends BaseCommandTest {
     const { stdout, stderr } = await Artisan.callInChild('build', this.artisan)
 
     assert.deepEqual(stderr, '')
+    assert.isTrue(stdout.includes('[ BUILDING APPLICATION ]'))
+    assert.isTrue(stdout.includes('Compiling all .ts files from your application'))
     assert.isTrue(stdout.includes('Application successfully compiled'))
     assert.isTrue(await File.exists(Path.src('Applications/Artisan.js')))
     assert.isTrue(await File.exists(Path.src('Applications/Artisan.d.ts')))
@@ -37,6 +39,8 @@ export default class BuildCommandTest extends BaseCommandTest {
     const { stdout, stderr } = await Artisan.callInChild('build', this.artisan)
 
     assert.deepEqual(stderr, '')
+    assert.isTrue(stdout.includes('[ BUILDING APPLICATION ]'))
+    assert.isTrue(stdout.includes('Compiling all .ts files from your application'))
     assert.isTrue(stdout.includes('Application successfully compiled'))
     assert.isTrue(await File.exists(Path.src('Applications/Artisan.js')))
     assert.isTrue(await File.exists(Path.src('Applications/Artisan.d.ts')))
@@ -50,6 +54,8 @@ export default class BuildCommandTest extends BaseCommandTest {
     const { stdout, stderr } = await Artisan.callInChild('build --clean', this.artisan)
 
     assert.deepEqual(stderr, '')
+    assert.isTrue(stdout.includes('[ CLEANING APPLICATION ]'))
+    assert.isTrue(stdout.includes('Cleaning all .js, .d.ts and .js.map files from your application'))
     assert.isTrue(stdout.includes('Application successfully cleaned'))
     assert.isFalse(await File.exists(Path.src('Applications/Artisan.js')))
     assert.isFalse(await File.exists(Path.src('Applications/Artisan.d.ts')))

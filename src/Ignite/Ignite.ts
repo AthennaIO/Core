@@ -66,6 +66,7 @@ export class Ignite {
       await this.setRcContentAndAppVars()
       this.verifyNodeEngineVersion()
       this.registerItselfToTheContainer()
+      this.setApplicationSignals()
 
       return this
     } catch (err) {
@@ -136,8 +137,6 @@ export class Ignite {
 
       await LoadHelper.regootProviders()
       await LoadHelper.preloadFiles()
-
-      this.setApplicationSignals()
     } catch (err) {
       await this.handleError(err)
     }
