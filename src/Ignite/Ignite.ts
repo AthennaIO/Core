@@ -58,18 +58,18 @@ export class Ignite {
         bootLogs: true,
         shutdownLogs: false,
         loadConfigSafe: true,
-        athennaRcPath: '../.athennarc.json',
+        configPath: './config',
+        athennaRcPath: './.athennarc.json',
         uncaughtExceptionHandler: this.handleError,
       })
 
-      if (!isAbsolute(this.options.athennaRcPath)) {
-        this.options.athennaRcPath = resolve(
-          Module.createDirname(this.meta),
-          this.options.athennaRcPath,
-        )
-      }
-
       this.setUncaughtExceptionHandler()
+      this.setApplicationRootPath()
+
+      this.options.envPath = this.resolvePath(this.options.envPath)
+      this.options.configPath = this.resolvePath(this.options.configPath)
+      this.options.athennaRcPath = this.resolvePath(this.options.athennaRcPath)
+
       await this.setRcContentAndAppVars()
       this.verifyNodeEngineVersion()
       this.registerItselfToTheContainer()
@@ -314,15 +314,11 @@ export class Ignite {
    */
   public async setRcContentAndAppVars() {
     const file = new File(this.options.athennaRcPath, '')
-    const pkgJsonFile = new File(Path.pwd('package.json'), '')
-
-    const pkgJson = pkgJsonFile.fileExists
-      ? await pkgJsonFile.getContentAsJson()
-      : {}
+    const pkgJson = await new File(
+      Path.originalPwd('package.json'),
+    ).getContentAsJson()
     const corePkgJson = await new File('../../package.json').getContentAsJson()
     const coreSemverVersion = this.parseVersion(corePkgJson.version)
-
-    this.setApplicationRootPath()
 
     process.env.APP_NAME = pkgJson.name
     process.env.APP_VERSION = this.parseVersion(pkgJson.version).toString()
@@ -360,6 +356,8 @@ export class Ignite {
         ...replaceableConfigs,
       })
 
+      this.options.athennaRcPath = file.path
+
       return
     }
 
@@ -376,7 +374,7 @@ export class Ignite {
     }
 
     athennaRc.isInPackageJson = true
-    this.options.athennaRcPath = Path.pwd('package.json')
+    this.options.athennaRcPath = Path.originalPwd('package.json')
 
     Config.set('rc', {
       ...athennaRc,
@@ -407,10 +405,7 @@ export class Ignite {
    * ```
    */
   public async setConfigurationFiles(): Promise<void> {
-    await Config.loadAll(
-      this.options.configPath || Path.config(),
-      this.options.loadConfigSafe,
-    )
+    await Config.loadAll(this.options.configPath, this.options.loadConfigSafe)
   }
 
   /**
@@ -462,5 +457,20 @@ export class Ignite {
         return this.version
       },
     }
+  }
+
+  /**
+   * Resolve some relative path from the root of the project.
+   */
+  private resolvePath(path: string): string {
+    if (!path) {
+      return path
+    }
+
+    if (!isAbsolute(path)) {
+      return resolve(Path.pwd(), path)
+    }
+
+    return path
   }
 }

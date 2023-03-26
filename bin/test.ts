@@ -8,7 +8,6 @@
  */
 
 import { assert } from '@japa/assert'
-import { Config } from '@athenna/config'
 import { Importer } from '@athenna/test'
 import { specReporter } from '@japa/spec-reporter'
 import { configure, processCliArgs, run } from '@japa/runner'
@@ -37,8 +36,6 @@ process.env.IS_TS = 'true'
 */
 
 process.env.CORE_TESTING = 'true'
-
-Config.set('meta', import.meta.url)
 
 /*
 |--------------------------------------------------------------------------
