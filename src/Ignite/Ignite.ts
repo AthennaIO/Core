@@ -8,11 +8,11 @@
  */
 
 import { Ioc } from '@athenna/ioc'
-import { resolve } from 'node:path'
 import { EnvHelper } from '@athenna/config'
 import { Http } from '#src/Applications/Http'
 import { Repl } from '#src/Applications/Repl'
 import { PrettyREPLServer } from 'pretty-repl'
+import { resolve, isAbsolute } from 'node:path'
 import { SemverNode } from '#src/Types/SemverNode'
 import { Artisan } from '#src/Applications/Artisan'
 import { LoadHelper } from '#src/Helpers/LoadHelper'
@@ -58,9 +58,16 @@ export class Ignite {
         bootLogs: true,
         shutdownLogs: false,
         loadConfigSafe: true,
-        athennaRcPath: Path.pwd('.athennarc.json'),
+        athennaRcPath: '../.athennarc.json',
         uncaughtExceptionHandler: this.handleError,
       })
+
+      if (!isAbsolute(this.options.athennaRcPath)) {
+        this.options.athennaRcPath = resolve(
+          Module.createDirname(this.meta),
+          this.options.athennaRcPath,
+        )
+      }
 
       this.setUncaughtExceptionHandler()
       await this.setRcContentAndAppVars()
