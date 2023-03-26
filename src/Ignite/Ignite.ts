@@ -58,19 +58,17 @@ export class Ignite {
         bootLogs: true,
         shutdownLogs: false,
         loadConfigSafe: true,
-        athennaRcPath: '.athennarc.json',
+        configPath: './config',
+        athennaRcPath: './.athennarc.json',
         uncaughtExceptionHandler: this.handleError,
       })
 
       this.setUncaughtExceptionHandler()
       this.setApplicationRootPath()
 
-      if (!isAbsolute(this.options.athennaRcPath)) {
-        this.options.athennaRcPath = resolve(
-          Path.pwd(),
-          this.options.athennaRcPath,
-        )
-      }
+      this.options.envPath = this.resolvePath(this.options.envPath)
+      this.options.configPath = this.resolvePath(this.options.configPath)
+      this.options.athennaRcPath = this.resolvePath(this.options.athennaRcPath)
 
       await this.setRcContentAndAppVars()
       this.verifyNodeEngineVersion()
@@ -407,10 +405,7 @@ export class Ignite {
    * ```
    */
   public async setConfigurationFiles(): Promise<void> {
-    await Config.loadAll(
-      this.options.configPath || Path.config(),
-      this.options.loadConfigSafe,
-    )
+    await Config.loadAll(this.options.configPath, this.options.loadConfigSafe)
   }
 
   /**
@@ -462,5 +457,20 @@ export class Ignite {
         return this.version
       },
     }
+  }
+
+  /**
+   * Resolve some relative path from the root of the project.
+   */
+  private resolvePath(path: string): string {
+    if (!path) {
+      return path
+    }
+
+    if (!isAbsolute(path)) {
+      return resolve(Path.pwd(), path)
+    }
+
+    return path
   }
 }
