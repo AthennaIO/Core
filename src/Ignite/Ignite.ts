@@ -58,18 +58,20 @@ export class Ignite {
         bootLogs: true,
         shutdownLogs: false,
         loadConfigSafe: true,
-        athennaRcPath: '../.athennarc.json',
+        athennaRcPath: '.athennarc.json',
         uncaughtExceptionHandler: this.handleError,
       })
 
+      this.setUncaughtExceptionHandler()
+      this.setApplicationRootPath()
+
       if (!isAbsolute(this.options.athennaRcPath)) {
         this.options.athennaRcPath = resolve(
-          Module.createDirname(this.meta),
+          Path.pwd(),
           this.options.athennaRcPath,
         )
       }
 
-      this.setUncaughtExceptionHandler()
       await this.setRcContentAndAppVars()
       this.verifyNodeEngineVersion()
       this.registerItselfToTheContainer()
@@ -314,15 +316,11 @@ export class Ignite {
    */
   public async setRcContentAndAppVars() {
     const file = new File(this.options.athennaRcPath, '')
-    const pkgJsonFile = new File(Path.pwd('package.json'), '')
-
-    const pkgJson = pkgJsonFile.fileExists
-      ? await pkgJsonFile.getContentAsJson()
-      : {}
+    const pkgJson = await new File(
+      Path.originalPwd('package.json'),
+    ).getContentAsJson()
     const corePkgJson = await new File('../../package.json').getContentAsJson()
     const coreSemverVersion = this.parseVersion(corePkgJson.version)
-
-    this.setApplicationRootPath()
 
     process.env.APP_NAME = pkgJson.name
     process.env.APP_VERSION = this.parseVersion(pkgJson.version).toString()
@@ -360,6 +358,8 @@ export class Ignite {
         ...replaceableConfigs,
       })
 
+      this.options.athennaRcPath = file.path
+
       return
     }
 
@@ -376,7 +376,7 @@ export class Ignite {
     }
 
     athennaRc.isInPackageJson = true
-    this.options.athennaRcPath = Path.pwd('package.json')
+    this.options.athennaRcPath = Path.originalPwd('package.json')
 
     Config.set('rc', {
       ...athennaRc,

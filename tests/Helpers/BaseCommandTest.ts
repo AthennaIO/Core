@@ -7,10 +7,11 @@
  * file that was distributed with this source code.
  */
 
+import { URL } from 'node:url'
 import { Config } from '@athenna/config'
 import { ViewProvider } from '@athenna/view'
-import { Exec, File, Folder } from '@athenna/common'
 import { LoggerProvider } from '@athenna/logger'
+import { Exec, File, Folder } from '@athenna/common'
 import { ExitFaker, AfterEach, BeforeEach } from '@athenna/test'
 import { ConsoleKernel, ArtisanProvider, COMMANDS_SETTINGS, CommanderHandler } from '@athenna/artisan'
 
@@ -23,6 +24,8 @@ export class BaseCommandTest {
     ExitFaker.fake()
 
     await Config.loadAll(Path.stubs('config'))
+
+    Config.set('meta', new URL('../../bin/test.ts', import.meta.url).href)
 
     new ViewProvider().register()
     new LoggerProvider().register()

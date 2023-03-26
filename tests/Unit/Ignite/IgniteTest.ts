@@ -18,9 +18,11 @@ import { Test, ExitFaker, TestContext } from '@athenna/test'
 export default class IgniteTest extends BaseTest {
   @Test()
   public async shouldBeAbleToIgniteTheApplicationWhenInstantiatingIgnite({ assert }: TestContext) {
+    const cwd = process.cwd()
     const ignite = await new Ignite().load(Config.get('meta'))
 
     assert.equal(ignite.meta, Config.get('meta'))
+    assert.equal(Config.get('rc.callPath'), cwd)
     assert.containsSubset(ignite.options, {
       bootLogs: true,
       shutdownLogs: false,
