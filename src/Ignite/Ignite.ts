@@ -220,6 +220,10 @@ export class Ignite {
    * ```
    */
   public setApplicationRootPath(): void {
+    if (!Config.exists('rc.callPath')) {
+      Config.set('rc.callPath', process.cwd())
+    }
+
     if (!process.env.CORE_TESTING) {
       const __dirname = Module.createDirname(import.meta.url)
 
@@ -303,7 +307,11 @@ export class Ignite {
    */
   public async setRcContentAndAppVars() {
     const file = new File(this.options.athennaRcPath, '')
-    const pkgJson = await new File(Path.pwd('package.json')).getContentAsJson()
+    const pkgJsonFile = new File(Path.pwd('package.json'), '')
+
+    const pkgJson = pkgJsonFile.fileExists
+      ? await pkgJsonFile.getContentAsJson()
+      : {}
     const corePkgJson = await new File('../../package.json').getContentAsJson()
     const coreSemverVersion = this.parseVersion(corePkgJson.version)
 
