@@ -29,6 +29,8 @@ export class BaseTest {
 
     await Config.loadAll(Path.stubs('config'))
 
+    Config.set('meta', 'file:///Users/jlenon7/Development/Athenna/Core/bin/test.ts')
+
     await new LoggerProvider().register()
     await new HttpRouteProvider().register()
     await new HttpServerProvider().register()
