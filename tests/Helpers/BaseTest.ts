@@ -7,12 +7,13 @@
  * file that was distributed with this source code.
  */
 
+import { URL } from 'node:url'
 import { LoadHelper } from '#src'
 import { File, Folder, Json } from '@athenna/common'
 import { Log, LoggerProvider } from '@athenna/logger'
+import { CALLED_MAP } from '#tests/Helpers/CalledMap'
 import { ExitFaker, BeforeEach, AfterEach } from '@athenna/test'
 import { HttpRouteProvider, HttpServerProvider } from '@athenna/http'
-import { CALLED_MAP } from './CalledMap.js'
 
 export class BaseTest {
   public originalEnv = Json.copy(process.env)
@@ -29,7 +30,7 @@ export class BaseTest {
 
     await Config.loadAll(Path.stubs('config'))
 
-    Config.set('meta', 'file:///Users/jlenon7/Development/Athenna/Core/bin/test.ts')
+    Config.set('meta', new URL('../../bin/test.ts', import.meta.url).href)
 
     await new LoggerProvider().register()
     await new HttpRouteProvider().register()

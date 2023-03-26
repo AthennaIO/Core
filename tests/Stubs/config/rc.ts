@@ -13,6 +13,6 @@ import { Path, File } from '@athenna/common'
 const athennaRc = new File(Path.pwd('package.json')).getContentAsJsonSync().athenna
 
 athennaRc.isInPackageJson = true
-athennaRc.meta = Config.get('meta', 'file:///Users/jlenon7/Development/Athenna/Core/bin/test.ts')
+athennaRc.meta = Config.get('meta', new URL('../../../bin/test.ts', import.meta.url).href)
 
 export default athennaRc
