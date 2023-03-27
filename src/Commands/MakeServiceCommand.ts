@@ -59,7 +59,7 @@ export class MakeServiceCommand extends BaseCommand {
    */
   private getDestinationPath(): string {
     let destination = Config.get(
-      'rc.commandsManifest.make:service.destination',
+      'rc.commands.make:service.destination',
       Path.app('Services'),
     )
 

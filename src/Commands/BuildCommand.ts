@@ -72,7 +72,7 @@ export class BuildCommand extends BaseCommand {
 
   private getTsConfig(): Promise<File> {
     const path = Config.get(
-      'rc.commandsManifest.build.tsconfig',
+      'rc.commands.build.tsconfig',
       '../../tmp/tsconfig.build.json',
     )
 

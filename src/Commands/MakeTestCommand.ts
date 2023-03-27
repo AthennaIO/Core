@@ -69,7 +69,7 @@ export class MakeTestCommand extends BaseCommand {
    */
   private getDestinationPath(): string {
     let destination = Config.get(
-      'rc.commandsManifest.make:test.destination',
+      'rc.commands.make:test.destination',
       this.isUnit ? Path.tests('Unit') : Path.tests('E2E'),
     )
 
