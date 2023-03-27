@@ -31,7 +31,7 @@ export default class MakeProviderCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldBeAbleToCreateAProviderFileInDifferentDestPath({ assert }: TestContext) {
-    Config.set('rc.commandsManifest.make:provider.destination', Path.stubs('storage/providers'))
+    Config.set('rc.commands.make:provider.destination', Path.stubs('storage/providers'))
 
     await Artisan.call('make:provider TestProvider')
 

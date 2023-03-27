@@ -85,15 +85,11 @@ export interface RcOptions {
   globalMiddlewares?: string[]
 
   /**
-   * Set the commands that Athenna needs to register when running an Artisan command.
-   */
-  commands?: string[]
-
-  /**
-   * Set the commands manifest where the key is the signature of your command and the
+   * Set the commands where the key is the signature of your command and the
    * value is the path to your command. If the command that you are running is inside
-   * the commandsManifest property, Athenna will import ONLY that specific command,
-   * ignoring the entire "commands" array.
+   * the commands property, Athenna will import ONLY that specific command,
+   * ignoring the entire "commands" array. Unless you set the "loadAllCommands" property
+   * to true.
    */
-  commandsManifest?: Record<string, string | any>
+  commands?: Record<string, string | any>
 }

@@ -331,7 +331,7 @@ export class Ignite {
       version: coreSemverVersion,
       athennaVersion: process.env.ATHENNA_VERSION,
       engines: pkgJson.engines || {},
-      commands: [],
+      commands: {},
       services: [],
       preloads: [],
       providers: [],
@@ -340,7 +340,6 @@ export class Ignite {
       namedMiddlewares: {},
       globalMiddlewares: {},
       environments: [],
-      commandsManifest: {},
     }
 
     const replaceableConfigs = {

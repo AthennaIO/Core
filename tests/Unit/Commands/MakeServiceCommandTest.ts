@@ -31,7 +31,7 @@ export default class MakeServiceCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldBeAbleToCreateAServiceFileInDifferentDestPath({ assert }: TestContext) {
-    Config.set('rc.commandsManifest.make:service.destination', Path.stubs('storage/services'))
+    Config.set('rc.commands.make:service.destination', Path.stubs('storage/services'))
 
     await Artisan.call('make:service TestService')
 

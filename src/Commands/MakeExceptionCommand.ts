@@ -51,7 +51,7 @@ export class MakeExceptionCommand extends BaseCommand {
    */
   private getDestinationPath(): string {
     let destination = Config.get(
-      'rc.commandsManifest.make:exception.destination',
+      'rc.commands.make:exception.destination',
       Path.app('Exceptions'),
     )
 

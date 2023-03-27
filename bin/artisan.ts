@@ -25,16 +25,26 @@ import { Ignite } from '#src'
 
 process.env.CORE_TESTING = 'false'
 
-Config.set('rc.commands', [
-  '#src/Commands/MakeExceptionCommand',
-  '#src/Commands/MakeFacadeCommand',
-  '#src/Commands/MakeProviderCommand',
-  '#src/Commands/MakeServiceCommand',
-  '#src/Commands/MakeTestCommand',
-  '#src/Commands/ServeCommand',
-  '#src/Commands/BuildCommand',
-  '#src/Commands/TestCommand',
-])
+Config.set('rc.commands', {
+  'make:exception': '#src/Commands/MakeExceptionCommand',
+  'make:facade': '#src/Commands/MakeFacadeCommand',
+  'make:provider': '#src/Commands/MakeProviderCommand',
+  'make:service': '#src/Commands/MakeServiceCommand',
+  'make:test': '#src/Commands/MakeTestCommand',
+  build: '#src/Commands/BuildCommand',
+  serve: {
+    entrypoint: '#bin/http',
+    path: '#src/Commands/ServeCommand',
+  },
+  test: {
+    entrypoint: '#bin/test',
+    path: '#src/Commands/TestCommand',
+  },
+  repl: {
+    entrypoint: '#bin/repl',
+    path: '#src/Commands/ReplCommand',
+  },
+})
 
 /*
 |--------------------------------------------------------------------------

@@ -26,7 +26,7 @@ export type ArtisanOptions = {
   /**
    * The path to the ConsoleKernel. The console kernel is responsible to
    * register the exception handler, register the commands or register a single
-   * command by it's path if exists inside "rc.commandsManifest". By default,
+   * command by it's path if exists inside "rc.commands". By default,
    * Athenna will use the built in Kernel. But you can do your own implementation
    * extending the "ConsoleKernel" class from Artisan and setting the path to it
    * here.

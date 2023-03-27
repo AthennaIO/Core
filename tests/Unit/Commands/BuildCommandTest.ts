@@ -18,6 +18,8 @@ export default class BuildCommandTest extends BaseCommandTest {
   public async shouldBeAbleToBuildTheApplication({ assert }: TestContext) {
     const { stdout, stderr } = await Artisan.callInChild('build', this.artisan)
 
+    console.log(stdout)
+
     assert.deepEqual(stderr, '')
     assert.isTrue(stdout.includes('[ BUILDING APPLICATION ]'))
     assert.isTrue(stdout.includes('Compiling all .ts files from your application'))

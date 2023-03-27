@@ -51,7 +51,7 @@ export class MakeFacadeCommand extends BaseCommand {
    */
   private getDestinationPath(): string {
     let destination = Config.get(
-      'rc.commandsManifest.make:facade.destination',
+      'rc.commands.make:facade.destination',
       Path.facades(),
     )
 

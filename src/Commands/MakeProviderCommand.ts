@@ -59,7 +59,7 @@ export class MakeProviderCommand extends BaseCommand {
    */
   private getDestinationPath(): string {
     let destination = Config.get(
-      'rc.commandsManifest.make:provider.destination',
+      'rc.commands.make:provider.destination',
       Path.providers(),
     )
 

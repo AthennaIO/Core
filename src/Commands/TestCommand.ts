@@ -39,7 +39,7 @@ export class TestCommand extends BaseCommand {
     }
 
     const entrypoint = Config.get(
-      'rc.commandsManifest.test.entrypoint',
+      'rc.commands.test.entrypoint',
       '#bootstrap/test',
     )
 

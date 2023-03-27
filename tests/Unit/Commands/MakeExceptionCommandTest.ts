@@ -25,7 +25,7 @@ export default class MakeExceptionCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldBeAbleToCreateAnExceptionFileInDifferentDestPath({ assert }: TestContext) {
-    Config.set('rc.commandsManifest.make:exception.destination', Path.stubs('storage/exceptions'))
+    Config.set('rc.commands.make:exception.destination', Path.stubs('storage/exceptions'))
 
     await Artisan.call('make:exception TestException')
 
