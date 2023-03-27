@@ -8,7 +8,7 @@
  */
 
 import { Module } from '@athenna/common'
-import { BaseCommand, CommandSettings, Option } from '@athenna/artisan'
+import { BaseCommand, Option } from '@athenna/artisan'
 
 export class ReplCommand extends BaseCommand {
   @Option({
@@ -17,12 +17,6 @@ export class ReplCommand extends BaseCommand {
     default: '',
   })
   public env: string
-
-  public static settings(): CommandSettings {
-    return {
-      stayAlive: true,
-    }
-  }
 
   public static signature(): string {
     return 'repl'

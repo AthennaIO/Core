@@ -15,7 +15,7 @@ import { BaseCommandTest } from '#tests/Helpers/BaseCommandTest'
 export default class MakeTestCommandTest extends BaseCommandTest {
   @Test()
   public async shouldBeAbleToCreateAnE2ETestFileAsClass({ assert }: TestContext) {
-    await Artisan.call('make:test TestTest')
+    await Artisan.call('make:test TestTest', false)
 
     const path = Path.tests('E2E/TestTest.ts')
     const file = await new File(path).load({ withContent: true })
@@ -29,7 +29,7 @@ export default class MakeTestCommandTest extends BaseCommandTest {
   public async shouldBeAbleToCreateATestFileInDifferentDestPath({ assert }: TestContext) {
     Config.set('rc.commands.make:test.destination', Path.stubs('storage/tests'))
 
-    await Artisan.call('make:test TestTest')
+    await Artisan.call('make:test TestTest', false)
 
     const path = Path.stubs('storage/tests/TestTest.ts')
 
@@ -39,7 +39,7 @@ export default class MakeTestCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldBeAbleToCreateAnUnitTestFileAsClass({ assert }: TestContext) {
-    await Artisan.call('make:test TestTest --unit')
+    await Artisan.call('make:test TestTest --unit', false)
 
     const path = Path.tests('Unit/TestTest.ts')
     const file = await new File(path).load({ withContent: true })
@@ -51,7 +51,7 @@ export default class MakeTestCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldBeAbleToCreateAnE2ETestFileAsFunction({ assert }: TestContext) {
-    await Artisan.call('make:test TestTest --function')
+    await Artisan.call('make:test TestTest --function', false)
 
     const path = Path.tests('E2E/TestTest.ts')
     const file = await new File(path).load({ withContent: true })
@@ -63,7 +63,7 @@ export default class MakeTestCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldBeAbleToCreateAnUnitTestFileAsFunction({ assert }: TestContext) {
-    await Artisan.call('make:test TestTest --unit --function')
+    await Artisan.call('make:test TestTest --unit --function', false)
 
     const path = Path.tests('Unit/TestTest.ts')
     const file = await new File(path).load({ withContent: true })
@@ -75,8 +75,8 @@ export default class MakeTestCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldThrowAnExceptionWhenTheFileAlreadyExists({ assert }: TestContext) {
-    await Artisan.call('make:test TestTest')
-    await Artisan.call('make:test TestTest')
+    await Artisan.call('make:test TestTest', false)
+    await Artisan.call('make:test TestTest', false)
 
     assert.isTrue(ExitFaker.faker.calledWith(1))
   }

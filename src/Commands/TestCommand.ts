@@ -8,7 +8,7 @@
  */
 
 import { Module } from '@athenna/common'
-import { BaseCommand, Option, CommandSettings } from '@athenna/artisan'
+import { BaseCommand, Option } from '@athenna/artisan'
 
 export class TestCommand extends BaseCommand {
   @Option({
@@ -17,12 +17,6 @@ export class TestCommand extends BaseCommand {
     default: 'test',
   })
   public env: string
-
-  public static settings(): CommandSettings {
-    return {
-      stayAlive: true,
-    }
-  }
 
   public static signature(): string {
     return 'test'

@@ -15,7 +15,7 @@ import { BaseCommandTest } from '#tests/Helpers/BaseCommandTest'
 export default class MakeFacadeCommandTest extends BaseCommandTest {
   @Test()
   public async shouldBeAbleToCreateAFacadeFile({ assert }: TestContext) {
-    await Artisan.call('make:facade TestFacade')
+    await Artisan.call('make:facade TestFacade', false)
 
     const path = Path.facades('TestFacade.ts')
 
@@ -27,7 +27,7 @@ export default class MakeFacadeCommandTest extends BaseCommandTest {
   public async shouldBeAbleToCreateAFacadeFileInDifferentDestPath({ assert }: TestContext) {
     Config.set('rc.commands.make:facade.destination', Path.stubs('storage/facades'))
 
-    await Artisan.call('make:facade TestFacade')
+    await Artisan.call('make:facade TestFacade', false)
 
     const path = Path.stubs('storage/facades/TestFacade.ts')
 
@@ -37,8 +37,8 @@ export default class MakeFacadeCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldThrowAnExceptionWhenTheFileAlreadyExists({ assert }: TestContext) {
-    await Artisan.call('make:facade TestFacade')
-    await Artisan.call('make:facade TestFacade')
+    await Artisan.call('make:facade TestFacade', false)
+    await Artisan.call('make:facade TestFacade', false)
 
     assert.isTrue(ExitFaker.faker.calledWith(1))
   }
