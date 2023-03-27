@@ -16,7 +16,7 @@ import { BaseCommandTest } from '#tests/Helpers/BaseCommandTest'
 export default class MakeServiceCommandTest extends BaseCommandTest {
   @Test()
   public async shouldBeAbleToCreateAServiceFile({ assert }: TestContext) {
-    await Artisan.call('make:service TestService')
+    await Artisan.call('make:service TestService', false)
 
     const path = Path.services('TestService.ts')
 
@@ -33,7 +33,7 @@ export default class MakeServiceCommandTest extends BaseCommandTest {
   public async shouldBeAbleToCreateAServiceFileInDifferentDestPath({ assert }: TestContext) {
     Config.set('rc.commands.make:service.destination', Path.stubs('storage/services'))
 
-    await Artisan.call('make:service TestService')
+    await Artisan.call('make:service TestService', false)
 
     const path = Path.stubs('storage/services/TestService.ts')
 
@@ -48,8 +48,8 @@ export default class MakeServiceCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldThrowAnExceptionWhenTheFileAlreadyExists({ assert }: TestContext) {
-    await Artisan.call('make:service TestService')
-    await Artisan.call('make:service TestService')
+    await Artisan.call('make:service TestService', false)
+    await Artisan.call('make:service TestService', false)
 
     assert.isTrue(ExitFaker.faker.calledWith(1))
   }

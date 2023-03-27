@@ -16,7 +16,7 @@ import { BaseCommandTest } from '#tests/Helpers/BaseCommandTest'
 export default class MakeProviderCommandTest extends BaseCommandTest {
   @Test()
   public async shouldBeAbleToCreateAProviderFile({ assert }: TestContext) {
-    await Artisan.call('make:provider TestProvider')
+    await Artisan.call('make:provider TestProvider', false)
 
     const path = Path.providers('TestProvider.ts')
 
@@ -33,7 +33,7 @@ export default class MakeProviderCommandTest extends BaseCommandTest {
   public async shouldBeAbleToCreateAProviderFileInDifferentDestPath({ assert }: TestContext) {
     Config.set('rc.commands.make:provider.destination', Path.stubs('storage/providers'))
 
-    await Artisan.call('make:provider TestProvider')
+    await Artisan.call('make:provider TestProvider', false)
 
     const path = Path.stubs('storage/providers/TestProvider.ts')
 
@@ -48,8 +48,8 @@ export default class MakeProviderCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldThrowAnExceptionWhenTheFileAlreadyExists({ assert }: TestContext) {
-    await Artisan.call('make:provider TestProvider')
-    await Artisan.call('make:provider TestProvider')
+    await Artisan.call('make:provider TestProvider', false)
+    await Artisan.call('make:provider TestProvider', false)
 
     assert.isTrue(ExitFaker.faker.calledWith(1))
   }

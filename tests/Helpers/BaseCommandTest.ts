@@ -13,7 +13,7 @@ import { ViewProvider } from '@athenna/view'
 import { LoggerProvider } from '@athenna/logger'
 import { Exec, File, Folder } from '@athenna/common'
 import { ExitFaker, AfterEach, BeforeEach } from '@athenna/test'
-import { ConsoleKernel, ArtisanProvider, COMMANDS_SETTINGS, CommanderHandler } from '@athenna/artisan'
+import { ConsoleKernel, ArtisanProvider, CommanderHandler } from '@athenna/artisan'
 
 export class BaseCommandTest {
   public artisan = Path.stubs('artisan.ts')
@@ -42,7 +42,6 @@ export class BaseCommandTest {
     Config.clear()
     ioc.reconstruct()
     ExitFaker.release()
-    COMMANDS_SETTINGS.clear()
 
     CommanderHandler.getCommander<any>()._events = {}
     CommanderHandler.getCommander<any>().commands = []

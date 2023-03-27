@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -62,10 +62,10 @@
     "semver": "^7.3.8"
   },
   "devDependencies": {
-    "@athenna/artisan": "^3.6.0",
+    "@athenna/artisan": "^3.7.0",
     "@athenna/common": "^3.5.0",
     "@athenna/config": "^3.3.0",
-    "@athenna/http": "^3.7.0",
+    "@athenna/http": "^3.8.0",
     "@athenna/ioc": "^3.2.0",
     "@athenna/logger": "^3.2.0",
     "@athenna/test": "^3.3.0",
@@ -232,14 +232,17 @@
       "make:test": "#src/Commands/MakeTestCommand",
       "build": "#src/Commands/BuildCommand",
       "serve": {
+        "stayAlive": true,
         "entrypoint": "#bin/http",
         "path": "#src/Commands/ServeCommand"
       },
       "test": {
+        "stayAlive": true,
         "entrypoint": "#bin/test",
         "path": "#src/Commands/TestCommand"
       },
       "repl": {
+        "stayAlive": true,
         "entrypoint": "#bin/repl",
         "path": "#src/Commands/ReplCommand"
       }
