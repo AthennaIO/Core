@@ -65,7 +65,7 @@ export class LoadHelper {
    */
   public static async shutdownProviders(): Promise<void> {
     await Exec.concurrently(this.providers, Provider => {
-      if (Config.is('rc.bootLogs', true)) {
+      if (Config.is('rc.shutdownLogs', true)) {
         Log.channelOrVanilla('application').success(
           `Provider ({yellow} ${Provider.name}) successfully shutdown`,
         )
