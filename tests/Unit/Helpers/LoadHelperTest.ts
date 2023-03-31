@@ -142,8 +142,8 @@ export default class LoadHelperTest extends BaseTest {
   }
 
   @Test()
-  public async shouldBeAbleToLogThatProvidersAreShutingdownIfRcBootLogsIsTrue({ assert }: TestContext) {
-    Config.set('rc.bootLogs', true)
+  public async shouldBeAbleToLogThatProvidersAreShutingdownIfRcShutdownLogsIsTrue({ assert }: TestContext) {
+    Config.set('rc.shutdownLogs', true)
 
     const mock = Log.getMock()
     const successFake = fake()
