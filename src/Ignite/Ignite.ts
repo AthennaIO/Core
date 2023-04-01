@@ -56,7 +56,7 @@ export class Ignite {
       this.options = Options.create(options, {
         beforePath: '',
         bootLogs: true,
-        shutdownLogs: false,
+        shutdownLogs: true,
         loadConfigSafe: true,
         configPath: './config',
         athennaRcPath: './.athennarc.json',
