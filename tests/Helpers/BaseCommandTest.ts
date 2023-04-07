@@ -8,7 +8,7 @@
  */
 
 import { URL } from 'node:url'
-import { Config } from '@athenna/config'
+import { Config, Rc } from '@athenna/config'
 import { ViewProvider } from '@athenna/view'
 import { LoggerProvider } from '@athenna/logger'
 import { Exec, File, Folder } from '@athenna/common'
@@ -32,6 +32,8 @@ export class BaseCommandTest {
     new ArtisanProvider().register()
 
     const kernel = new ConsoleKernel()
+
+    await Rc.setFile(Path.pwd('package.json'))
 
     await kernel.registerExceptionHandler()
     await kernel.registerCommands()

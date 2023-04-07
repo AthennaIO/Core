@@ -8,7 +8,7 @@
  */
 
 import { Ioc } from '@athenna/ioc'
-import { EnvHelper } from '@athenna/config'
+import { EnvHelper, Rc } from '@athenna/config'
 import { Http } from '#src/Applications/Http'
 import { Repl } from '#src/Applications/Repl'
 import { PrettyREPLServer } from 'pretty-repl'
@@ -357,6 +357,8 @@ export class Ignite {
 
       this.options.athennaRcPath = file.path
 
+      await Rc.setFile(this.options.athennaRcPath)
+
       return
     }
 
@@ -381,6 +383,8 @@ export class Ignite {
       ...Config.get('rc', {}),
       ...replaceableConfigs,
     })
+
+    await Rc.setFile(this.options.athennaRcPath)
   }
 
   /**
