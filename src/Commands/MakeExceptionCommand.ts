@@ -52,7 +52,7 @@ export class MakeExceptionCommand extends BaseCommand {
   private getDestinationPath(): string {
     let destination = Config.get(
       'rc.commands.make:exception.destination',
-      Path.app('Exceptions'),
+      Path.exceptions(),
     )
 
     if (!isAbsolute(destination)) {

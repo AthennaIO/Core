@@ -60,7 +60,10 @@ export class BuildCommand extends BaseCommand {
     const tsConfig = await this.getTsConfig()
 
     await this.logger.promiseSpinner(
-      () => Exec.command(`${Path.bin('tsc')} --project ${tsConfig.path}`),
+      () =>
+        Exec.command(
+          `${Path.nodeModulesBin('tsc')} --project ${tsConfig.path}`,
+        ),
       {
         stream: process.stdout,
         text: 'Compiling all .ts files from your application',

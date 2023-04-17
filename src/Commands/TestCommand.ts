@@ -34,7 +34,7 @@ export class TestCommand extends BaseCommand {
 
     const entrypoint = Config.get(
       'rc.commands.test.entrypoint',
-      '#bootstrap/test',
+      Path.bootstrap(`test.${Path.ext()}`),
     )
 
     process.argv.splice(2, 1)

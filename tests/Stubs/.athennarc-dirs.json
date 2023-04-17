@@ -1,0 +1,8 @@
+{
+  "directories": {
+    "controllers": "src/http/controllers",
+    "middlewares": "src/http/middlewares",
+    "interceptors": "src/http/interceptors",
+    "terminators": "src/http/terminators"
+  }
+}
