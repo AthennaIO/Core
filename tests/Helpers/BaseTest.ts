@@ -16,6 +16,7 @@ import { ExitFaker, BeforeEach, AfterEach } from '@athenna/test'
 import { HttpRouteProvider, HttpServerProvider } from '@athenna/http'
 
 export class BaseTest {
+  public originalDirs = Json.copy(Path.dirs)
   public originalEnv = Json.copy(process.env)
   public originalKill = Json.copy(process.kill)
   public originalPJson = new File(Path.pwd('package.json')).getContentAsJsonSync()
@@ -51,8 +52,8 @@ export class BaseTest {
     ExitFaker.release()
     LoadHelper.providers = []
     LoadHelper.alreadyPreloaded = []
-    Path.defaultBeforePath = ''
     process.kill = this.originalKill
+    Path.dirs = this.originalDirs
     process.env = Json.copy(this.originalEnv)
 
     process.removeAllListeners('SIGINT')

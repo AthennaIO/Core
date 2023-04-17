@@ -34,7 +34,7 @@ export class ReplCommand extends BaseCommand {
 
     const entrypoint = Config.get(
       'rc.commands.repl.entrypoint',
-      '#bootstrap/repl',
+      Path.bootstrap(`repl.${Path.ext()}`),
     )
 
     await Module.resolve(entrypoint, Config.get('rc.meta'))

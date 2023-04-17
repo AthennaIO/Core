@@ -34,7 +34,7 @@ export class ServeCommand extends BaseCommand {
 
     const entrypoint = Config.get(
       'rc.commands.serve.entrypoint',
-      '#bootstrap/main',
+      Path.bootstrap(`main.${Path.ext()}`),
     )
 
     await Module.resolve(entrypoint, Config.get('rc.meta'))

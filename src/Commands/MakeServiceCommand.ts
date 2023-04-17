@@ -60,7 +60,7 @@ export class MakeServiceCommand extends BaseCommand {
   private getDestinationPath(): string {
     let destination = Config.get(
       'rc.commands.make:service.destination',
-      Path.app('Services'),
+      Path.services(),
     )
 
     if (!isAbsolute(destination)) {

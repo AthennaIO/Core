@@ -28,7 +28,6 @@ export default class IgniteTest extends BaseTest {
       shutdownLogs: true,
       beforePath: '',
       envPath: undefined,
-      configPath: Path.config(),
       loadConfigSafe: true,
       athennaRcPath: Path.pwd('package.json'),
     })
@@ -54,7 +53,7 @@ export default class IgniteTest extends BaseTest {
     const ignite = await new Ignite().load(meta, { beforePath: '/dist' })
 
     assert.isFalse(Env('IS_TS', true))
-    assert.isTrue(Path.pwd().includes('dist'))
+    assert.isTrue(Path.app().includes('dist'))
     assert.equal(ignite.meta, meta)
     assert.containsSubset(ignite.options, { beforePath: '/dist' })
   }
@@ -106,10 +105,10 @@ export default class IgniteTest extends BaseTest {
   @Test()
   public async shouldBeAbleToFireTheIgniteClassLoadingAllTheRestOfTheApplication({ assert }: TestContext) {
     Config.set('rc.environments', ['other'])
+    Config.set('rc.directories', { config: 'tests/Stubs/igniteConfig' })
 
     const ignite = await new Ignite().load(Config.get('meta'), {
       envPath: Path.stubs('.env'),
-      configPath: Path.stubs('igniteConfig'),
     })
 
     await ignite.fire(['console'])
@@ -134,8 +133,9 @@ export default class IgniteTest extends BaseTest {
 
     process.env.OVERRIDE_ENV = 'true'
     Config.set('rc.environments', ['other'])
+    Config.set('rc.directories', { config: 'tests/Stubs/igniteConfig' })
 
-    const ignite = await new Ignite().load(Config.get('meta'), { configPath: Path.stubs('igniteConfig') })
+    const ignite = await new Ignite().load(Config.get('meta'))
 
     await ignite.fire(['console'])
 
@@ -152,7 +152,9 @@ export default class IgniteTest extends BaseTest {
 
   @Test()
   public async shouldBeAbleToHandleSyntaxErrorExceptionsOfConfigsUsingTheDefaultIgniteHandler({ assert }: TestContext) {
-    const ignite = await new Ignite().load(Config.get('meta'), { configPath: Path.stubs('syntaxErrorConfig') })
+    Config.set('rc.directories', { config: 'tests/Stubs/syntaxErrorConfig' })
+
+    const ignite = await new Ignite().load(Config.get('meta'))
 
     await ignite.fire(['console'])
 
@@ -300,5 +302,16 @@ export default class IgniteTest extends BaseTest {
     assert.isTrue(ioc.hasDependency('App/Services/WelcomeService'))
     assert.isTrue(ioc.hasDependency('decoratedWelcomeService'))
     assert.isTrue(ioc.hasDependency('App/Services/DecoratedWelcomeService'))
+  }
+
+  @Test()
+  public async shouldBeAbleToIgniteTheApplicationWithDifferentDirectoriesRegistered({ assert }: TestContext) {
+    await new Ignite().load(Config.get('meta'), { athennaRcPath: Path.stubs('.athennarc-dirs.json') })
+
+    assert.equal(Path.app(), Path.pwd('app'))
+    assert.equal(Path.controllers(), Path.pwd('src/http/controllers'))
+    assert.equal(Path.middlewares(), Path.pwd('src/http/middlewares'))
+    assert.equal(Path.interceptors(), Path.pwd('src/http/interceptors'))
+    assert.equal(Path.terminators(), Path.pwd('src/http/terminators'))
   }
 }

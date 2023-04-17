@@ -8,10 +8,10 @@
  */
 
 import { Ioc } from '@athenna/ioc'
-import { EnvHelper, Rc } from '@athenna/config'
 import { Http } from '#src/Applications/Http'
 import { Repl } from '#src/Applications/Repl'
 import { PrettyREPLServer } from 'pretty-repl'
+import { EnvHelper, Rc } from '@athenna/config'
 import { resolve, isAbsolute } from 'node:path'
 import { SemverNode } from '#src/Types/SemverNode'
 import { Artisan } from '#src/Applications/Artisan'
@@ -58,7 +58,6 @@ export class Ignite {
         bootLogs: true,
         shutdownLogs: true,
         loadConfigSafe: true,
-        configPath: './config',
         athennaRcPath: './.athennarc.json',
         uncaughtExceptionHandler: this.handleError,
       })
@@ -67,10 +66,14 @@ export class Ignite {
       this.setApplicationRootPath()
 
       this.options.envPath = this.resolvePath(this.options.envPath)
-      this.options.configPath = this.resolvePath(this.options.configPath)
       this.options.athennaRcPath = this.resolvePath(this.options.athennaRcPath)
 
       await this.setRcContentAndAppVars()
+
+      Path.mergeDirs(Config.get('rc.directories', {}))
+
+      this.setApplicationBeforePath()
+
       this.verifyNodeEngineVersion()
       this.registerItselfToTheContainer()
       this.setApplicationSignals()
@@ -196,34 +199,16 @@ export class Ignite {
    * where the application is running (JavaScript or TypeScript).
    *
    * This method will determine if the application is using TypeScript by the meta url.
-   * Also, if the application IS NOT using TypeScript, the "beforePath" (second argument
-   * of this method) will be defined as value of "Path.defaultBeforePath" method.
    *
    * Let's check this example when application is running in TypeScript environment:
    *
    * @example
    * ```ts
-   * const meta = import.meta.url // 'file:///Users/jlenon7/Development/Athenna/AthennaIO/artisan.ts'
-   *
-   * this.setApplicationRootPath(meta, '/build')
+   * this.setApplicationRootPath()
    *
    * console.log(Path.ext()) // ts
    * console.log(Path.pwd()) // /Users/jlenon7/Development/Athenna/AthennaIO
    * console.log(Path.config(`app.${Path.ext()}`)) // /Users/jlenon7/Development/Athenna/AthennaIO/config/app.ts
-   * ```
-   *
-   * Now let's suppose that we have transpiled our code to JavaScript inside "/build" folder. "Path.pwd"
-   * will end with "/build" at the end:
-   *
-   * @example
-   * ```ts
-   * const meta = import.meta.url // 'file:///Users/jlenon7/Development/Athenna/AthennaIO/build/artisan.js'
-   *
-   * this.setApplicationRootPath(meta, '/build')
-   *
-   * console.log(Path.ext()) // js
-   * console.log(Path.pwd()) // /Users/jlenon7/Development/Athenna/AthennaIO/build
-   * console.log(Path.config(`app.${Path.ext()}`)) // /Users/jlenon7/Development/Athenna/AthennaIO/build/config/app.js
    * ```
    */
   public setApplicationRootPath(): void {
@@ -241,8 +226,41 @@ export class Ignite {
      * If env IS_TS is already set, then we cant change it.
      */
     if (Env('IS_TS') === undefined) {
-      Path.resolveEnvironment(this.meta, this.options.beforePath)
+      if (this.meta.endsWith('.ts')) {
+        process.env.IS_TS = 'true'
+      } else {
+        process.env.IS_TS = 'false'
+      }
     }
+  }
+
+  /**
+   * Set the application before path, in all directories of Path class unless
+   * the nodeModules and nodeModulesBin directories.
+   *
+   * @example
+   * ```ts
+   * this.setApplicationBeforePath()
+   *
+   * console.log(Path.config(`app.${Path.ext()}`)) // /Users/jlenon7/Development/Athenna/AthennaIO/config/build/app.ts
+   * ```
+   */
+  public setApplicationBeforePath(): void {
+    if (Env('IS_TS') || !this.options.beforePath) {
+      return
+    }
+
+    Object.keys(Path.dirs).forEach(dir => {
+      if (dir === 'nodeModules') {
+        return
+      }
+
+      if (dir === 'nodeModulesBin') {
+        return
+      }
+
+      Path.dirs[dir] = this.options.beforePath + '/' + Path.dirs[dir]
+    })
   }
 
   /**
@@ -314,9 +332,7 @@ export class Ignite {
    */
   public async setRcContentAndAppVars() {
     const file = new File(this.options.athennaRcPath, '')
-    const pkgJson = await new File(
-      Path.originalPwd('package.json'),
-    ).getContentAsJson()
+    const pkgJson = await new File(Path.pwd('package.json')).getContentAsJson()
     const corePkgJson = await new File('../../package.json').getContentAsJson()
     const coreSemverVersion = this.parseVersion(corePkgJson.version)
 
@@ -327,11 +343,11 @@ export class Ignite {
     const athennaRc = {
       meta: this.meta,
       typescript: Env('IS_TS', false),
-      isInPackageJson: false,
-      version: coreSemverVersion,
+      version: process.env.APP_VERSION,
       athennaVersion: process.env.ATHENNA_VERSION,
       engines: pkgJson.engines || {},
       commands: {},
+      directories: {},
       services: [],
       preloads: [],
       providers: [],
@@ -374,8 +390,7 @@ export class Ignite {
       return
     }
 
-    athennaRc.isInPackageJson = true
-    this.options.athennaRcPath = Path.originalPwd('package.json')
+    this.options.athennaRcPath = Path.pwd('package.json')
 
     Config.set('rc', {
       ...athennaRc,
@@ -401,14 +416,14 @@ export class Ignite {
    *
    * @example
    * ```ts
-   * await this.setConfigurationFiles(Path.config())
+   * await this.setConfigurationFiles()
    *
-   * console.log(Path.config('user.database.url')) // some-url
-   * console.log(Path.config('customer.database.url')) // some-different-url
+   * console.log(Config('user.database.url')) // some-url
+   * console.log(Config('customer.database.url')) // some-different-url
    * ```
    */
   public async setConfigurationFiles(): Promise<void> {
-    await Config.loadAll(this.options.configPath, this.options.loadConfigSafe)
+    await Config.loadAll(Path.config(), this.options.loadConfigSafe)
   }
 
   /**

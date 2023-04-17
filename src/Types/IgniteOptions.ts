@@ -37,13 +37,6 @@ export type IgniteOptions = {
   envPath?: string
 
   /**
-   * The configuration files path.
-   *
-   * @default './config'
-   */
-  configPath?: string
-
-  /**
    * Load the configurations file safelly. If this option is true, Athenna
    * will not reload configuration files that are already loaded.
    *
