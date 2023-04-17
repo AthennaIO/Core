@@ -20,6 +20,7 @@ export class Http {
     options = Options.create(options, {
       host: Config.get('http.host', '127.0.0.1'),
       port: Config.get('http.port', 3000),
+      trace: Config.get('http.trace', false),
       routePath: Path.routes(`http.${Path.ext()}`),
       kernelPath: '@athenna/http/kernels/HttpKernel',
     })
@@ -75,7 +76,11 @@ export class Http {
     await kernel.registerHelmet()
     await kernel.registerSwagger()
     await kernel.registerRateLimit()
-    await kernel.registerRTracer()
+
+    if (options.trace) {
+      await kernel.registerRTracer()
+    }
+
     await kernel.registerLoggerTerminator()
     await kernel.registerRoutes(options.routePath)
 

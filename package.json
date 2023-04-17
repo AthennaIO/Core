@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",

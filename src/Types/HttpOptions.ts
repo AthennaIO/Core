@@ -25,6 +25,13 @@ export type HttpOptions = {
   port?: number
 
   /**
+   * Create a custom trace uuid to all new requests done to the server using AsyncLocalStorage.
+   *
+   * @default Config.get('http.trace', false)
+   */
+  trace?: boolean
+
+  /**
    * The path to the http routes.
    *
    * @default Path.routes(`http.${Path.ext()}`)
