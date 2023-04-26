@@ -109,14 +109,15 @@ export default class IgniteTest extends BaseTest {
 
     const ignite = await new Ignite().load(Config.get('meta'), {
       envPath: Path.stubs('.env'),
+      environments: ['console'],
     })
 
-    await ignite.fire(['console'])
+    await ignite.fire()
 
     assert.equal(Env('IGNITE_FIRED'), true)
     assert.equal(Env('NODE_ENV'), 'local')
     assert.isTrue(Config.is('ignite.fired', true))
-    assert.deepEqual(Config.get('rc.environments'), ['console'])
+    assert.deepEqual(Config.get('rc.environments'), ['other', 'console'])
     assert.deepEqual(Config.get('rc.providers'), [
       '#src/Providers/CoreProvider',
       '@athenna/http/providers/HttpRouteProvider',
@@ -135,14 +136,16 @@ export default class IgniteTest extends BaseTest {
     Config.set('rc.environments', ['other'])
     Config.set('rc.directories', { config: 'tests/Stubs/igniteConfig' })
 
-    const ignite = await new Ignite().load(Config.get('meta'))
+    const ignite = await new Ignite().load(Config.get('meta'), {
+      environments: ['console'],
+    })
 
-    await ignite.fire(['console'])
+    await ignite.fire()
 
     assert.isUndefined(Env('IGNITE_FIRED'))
     assert.equal(Env('ENV_LOCAL_LOADED'), true)
     assert.isTrue(Config.is('ignite.fired', true))
-    assert.deepEqual(Config.get('rc.environments'), ['console'])
+    assert.deepEqual(Config.get('rc.environments'), ['other', 'console'])
     assert.deepEqual(Config.get('rc.providers'), [
       '#src/Providers/CoreProvider',
       '@athenna/http/providers/HttpRouteProvider',
@@ -154,9 +157,11 @@ export default class IgniteTest extends BaseTest {
   public async shouldBeAbleToHandleSyntaxErrorExceptionsOfConfigsUsingTheDefaultIgniteHandler({ assert }: TestContext) {
     Config.set('rc.directories', { config: 'tests/Stubs/syntaxErrorConfig' })
 
-    const ignite = await new Ignite().load(Config.get('meta'))
+    const ignite = await new Ignite().load(Config.get('meta'), {
+      environments: ['console'],
+    })
 
-    await ignite.fire(['console'])
+    await ignite.fire()
 
     assert.isTrue(ExitFaker.faker.calledWith(1))
   }
@@ -219,9 +224,11 @@ export default class IgniteTest extends BaseTest {
 
   @Test()
   public async shouldBeAbleToExecuteDefaultSIGINTSignalOfIgnite({ assert }: TestContext) {
-    const ignite = await new Ignite().load(Config.get('meta'))
+    const ignite = await new Ignite().load(Config.get('meta'), {
+      environments: ['console'],
+    })
 
-    await ignite.fire(['console'])
+    await ignite.fire()
 
     process.emit('SIGINT')
 
@@ -234,9 +241,11 @@ export default class IgniteTest extends BaseTest {
     process.kill = processKillStub
     Config.set('rc.providers', ['#tests/Stubs/providers/ConsoleEnvProvider'])
 
-    const ignite = await new Ignite().load(Config.get('meta'))
+    const ignite = await new Ignite().load(Config.get('meta'), {
+      environments: ['console'],
+    })
 
-    await ignite.fire(['console'])
+    await ignite.fire()
 
     process.emit('SIGTERM', 'SIGTERM')
 
@@ -294,9 +303,11 @@ export default class IgniteTest extends BaseTest {
 
   @Test()
   public async shouldBeAbleToRegisterTheServicesDepsUsingTheCoreProvider({ assert }: TestContext) {
-    const ignite = await new Ignite().load(Config.get('meta'))
+    const ignite = await new Ignite().load(Config.get('meta'), {
+      environments: ['console'],
+    })
 
-    await ignite.fire(['console'])
+    await ignite.fire()
 
     assert.isTrue(ioc.hasDependency('welcomeService'))
     assert.isTrue(ioc.hasDependency('App/Services/WelcomeService'))

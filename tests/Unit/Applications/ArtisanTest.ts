@@ -11,6 +11,8 @@ import { fake } from 'sinon'
 import { Log } from '@athenna/logger'
 import { Config } from '@athenna/config'
 import { File, Path } from '@athenna/common'
+import { ViewProvider } from '@athenna/view'
+import { ArtisanProvider } from '@athenna/artisan'
 import { BaseTest } from '#tests/Helpers/BaseTest'
 import { Artisan } from '#src/Applications/Artisan'
 import { CALLED_MAP } from '#tests/Helpers/CalledMap'
@@ -20,16 +22,10 @@ import { ConsoleExceptionHandler } from '#tests/Stubs/handlers/ConsoleExceptionH
 
 export default class ArtisanTest extends BaseTest {
   @Test()
-  public async shouldBeAbleToLoadArtisanApplicationDefaults({ assert }: TestContext) {
-    await Artisan.load()
-
-    assert.isTrue(ioc.hasDependency('Athenna/Core/View'))
-    assert.isTrue(ioc.hasDependency('Athenna/Core/Artisan'))
-  }
-
-  @Test()
   public async shouldBeAbleToBootAnArtisanApplicationWithoutAnyOption({ assert }: TestContext) {
-    await Artisan.load()
+    new ViewProvider().register()
+    new ArtisanProvider().register()
+
     await Artisan.boot(['node', 'artisan'])
 
     assert.isTrue(ExitFaker.faker.called)
@@ -48,7 +44,9 @@ export default class ArtisanTest extends BaseTest {
       .withArgs('application')
       .returns({ success: args => successFake(args) })
 
-    await Artisan.load()
+    new ViewProvider().register()
+    new ArtisanProvider().register()
+
     await Artisan.boot(['node', 'artisan'])
 
     assert.isTrue(ExitFaker.faker.called)
@@ -58,7 +56,9 @@ export default class ArtisanTest extends BaseTest {
 
   @Test()
   public async shouldBeAbleToBootAnArtisanApplicationAndRegisterCommandsFromRoutes({ assert }: TestContext) {
-    await Artisan.load()
+    new ViewProvider().register()
+    new ArtisanProvider().register()
+
     await Artisan.boot(['node', 'artisan', 'test:generate'], {
       displayName: null,
       routePath: Path.stubs('routes/console.ts'),
@@ -70,7 +70,9 @@ export default class ArtisanTest extends BaseTest {
 
   @Test()
   public async shouldBeAbleToBootAnArtisanApplicationAndRegisterAConsoleKernel({ assert }: TestContext) {
-    await Artisan.load()
+    new ViewProvider().register()
+    new ArtisanProvider().register()
+
     await Artisan.boot(['node', 'artisan', 'test:generate'], {
       displayName: null,
       routePath: Path.stubs('routes/console.ts'),
@@ -84,7 +86,9 @@ export default class ArtisanTest extends BaseTest {
 
   @Test()
   public async shouldBeAbleToBootAnArtisanApplicationAndRegisterAConsoleExceptionHandler({ assert }: TestContext) {
-    await Artisan.load()
+    new ViewProvider().register()
+    new ArtisanProvider().register()
+
     await Artisan.boot(['node', 'artisan', 'test:generate'], {
       displayName: null,
       routePath: Path.stubs('routes/console.ts'),

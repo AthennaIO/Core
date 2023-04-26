@@ -37,7 +37,15 @@ export type IgniteOptions = {
   envPath?: string
 
   /**
-   * Load the configurations file safelly. If this option is true, Athenna
+   * The environment where the ignite application will run. Value in here will
+   * be merged with default environments applied by Athenna.
+   *
+   * @default []
+   */
+  environments?: string[]
+
+  /**
+   * Load the configurations file safely. If this option is true, Athenna
    * will not reload configuration files that are already loaded.
    *
    * @default false
@@ -45,7 +53,7 @@ export type IgniteOptions = {
   loadConfigSafe?: boolean
 
   /**
-   * The before path that will be used in all "Path" helper calls. This is extremelly
+   * The before path that will be used in all "Path" helper calls. This is extremely
    * useful when working with TypeScript and you need to build your code, just set
    * the "beforePath" as "/build" and Athenna will automatically add it if running
    * ".js" files.

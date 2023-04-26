@@ -57,6 +57,7 @@ export class Ignite {
         beforePath: '',
         bootLogs: true,
         shutdownLogs: true,
+        environments: [],
         loadConfigSafe: true,
         athennaRcPath: './.athennarc.json',
         uncaughtExceptionHandler: this.handleError,
@@ -88,11 +89,9 @@ export class Ignite {
    * Ignite the REPL application.
    */
   public async repl(): Promise<PrettyREPLServer> {
-    const environments = Config.get<string[]>('rc.environments', [])
+    this.options.environments.push('repl')
 
-    environments.push('repl')
-
-    await this.fire(environments)
+    await this.fire()
 
     this.options.uncaughtExceptionHandler = async error => {
       if (!Is.Exception(error)) {
@@ -116,7 +115,13 @@ export class Ignite {
    * Ignite the Artisan application.
    */
   public async artisan(argv: string[], options?: ArtisanOptions) {
-    await Artisan.load()
+    const { ViewProvider } = await import('@athenna/view')
+    const { ArtisanProvider } = await import('@athenna/artisan')
+
+    new ViewProvider().register()
+    new ArtisanProvider().register()
+
+    this.options.environments.push('console')
 
     return Artisan.boot(argv, options)
   }
@@ -125,11 +130,9 @@ export class Ignite {
    * Ignite the Http server application.
    */
   public async httpServer(options?: HttpOptions) {
-    const environments = Config.get<string[]>('rc.environments', [])
+    this.options.environments.push('http')
 
-    environments.push('http')
-
-    await this.fire(environments)
+    await this.fire()
 
     return Http.boot(options)
   }
@@ -138,12 +141,12 @@ export class Ignite {
    * Fire the application configuring the env variables file, configuration files
    * providers and preload files.
    */
-  public async fire(environments: string[]) {
+  public async fire() {
     try {
-      Config.set('rc.environments', environments)
-
       this.setEnvVariablesFile()
       await this.setConfigurationFiles()
+
+      Config.push('rc.environments', this.options.environments)
 
       await LoadHelper.regootProviders()
       await LoadHelper.preloadFiles()
