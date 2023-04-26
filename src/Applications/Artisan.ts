@@ -14,17 +14,6 @@ import { ArtisanOptions } from '#src/Types/ArtisanOptions'
 
 export class Artisan {
   /**
-   * Load the necessary stuff before booting Artisan.
-   */
-  public static async load() {
-    const { ViewProvider } = await import('@athenna/view')
-    const { ArtisanProvider } = await import('@athenna/artisan')
-
-    new ViewProvider().register()
-    new ArtisanProvider().register()
-  }
-
-  /**
    * Boot the Artisan application and execute the commands of argv.
    */
   public static async boot(
