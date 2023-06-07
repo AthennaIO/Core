@@ -58,7 +58,7 @@
     "#routes/*": "./routes/*.js"
   },
   "dependencies": {
-    "pretty-repl": "^3.1.1",
+    "pretty-repl": "^3.1.2",
     "semver": "^7.3.8"
   },
   "devDependencies": {
