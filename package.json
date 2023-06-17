@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "3.9.0",
+  "version": "3.10.0",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -59,13 +59,13 @@
   },
   "dependencies": {
     "pretty-repl": "^3.1.2",
-    "semver": "^7.3.8"
+    "semver": "^7.4.0"
   },
   "devDependencies": {
     "@athenna/artisan": "^3.9.0",
     "@athenna/common": "^3.6.0",
     "@athenna/config": "^3.7.1",
-    "@athenna/http": "^3.10.0",
+    "@athenna/http": "^3.11.0",
     "@athenna/ioc": "^3.4.0",
     "@athenna/logger": "^3.4.0",
     "@athenna/test": "^3.6.0",
