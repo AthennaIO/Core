@@ -59,7 +59,7 @@
   },
   "dependencies": {
     "pretty-repl": "^3.1.2",
-    "semver": "^7.4.0"
+    "semver": "^7.5.3"
   },
   "devDependencies": {
     "@athenna/artisan": "^3.9.0",
