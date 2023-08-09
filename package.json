@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "3.10.0",
+  "version": "4.0.0",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -20,9 +20,10 @@
     "http": "sh node bin/http.ts",
     "repl": "sh node bin/repl.ts",
     "artisan": "sh node bin/artisan.ts",
+    "build": "rimraf build && tsc --project bin/tsconfig.build.json",
     "lint:fix": "eslint \"{bin,src,tests}/**/*.ts\" --fix",
     "test": "npm run --silent lint:fix && sh node bin/test.ts",
-    "test:debug": "cross-env DEBUG=api:* sh node --inspect bin/test.ts",
+    "test:debug": "cross-env NODE_DEBUG=athenna:* sh node --inspect bin/test.ts",
     "test:coverage": "c8 npm run --silent test"
   },
   "files": [
@@ -30,29 +31,33 @@
     "src/*.d.ts",
     "src/**/*.js",
     "src/**/*.d.ts",
-    "templates"
+    "templates",
+    "configurer"
   ],
   "type": "module",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "exports": {
     ".": "./src/index.js",
-    "./providers/CoreProvider": "./src/Providers/CoreProvider.js",
-    "./commands/MakeExceptionCommand": "./src/Commands/MakeExceptionCommand.js",
-    "./commands/MakeFacadeCommand": "./src/Commands/MakeFacadeCommand.js",
-    "./commands/MakeProviderCommand": "./src/Commands/MakeProviderCommand.js",
-    "./commands/MakeServiceCommand": "./src/Commands/MakeServiceCommand.js",
-    "./commands/MakeTestCommand": "./src/Commands/MakeTestCommand.js",
-    "./commands/ReplCommand": "./src/Commands/ReplCommand.js",
-    "./commands/BuildCommand": "./src/Commands/BuildCommand.js",
-    "./commands/ServeCommand": "./src/Commands/ServeCommand.js",
-    "./commands/TestCommand": "./src/Commands/TestCommand.js"
+    "./types": "./src/types/index.js",
+    "./package.json": "./package.json",
+    "./providers/CoreProvider": "./src/providers/CoreProvider.js",
+    "./commands/MakeExceptionCommand": "./src/commands/MakeExceptionCommand.js",
+    "./commands/MakeFacadeCommand": "./src/commands/MakeFacadeCommand.js",
+    "./commands/MakeProviderCommand": "./src/commands/MakeProviderCommand.js",
+    "./commands/MakeServiceCommand": "./src/commands/MakeServiceCommand.js",
+    "./commands/MakeTestCommand": "./src/commands/MakeTestCommand.js",
+    "./commands/ReplCommand": "./src/commands/ReplCommand.js",
+    "./commands/ServeCommand": "./src/commands/ServeCommand.js",
+    "./commands/TestCommand": "./src/commands/TestCommand.js"
   },
   "imports": {
     "#bin/*": "./bin/*.js",
     "#bin": "./bin/index.js",
     "#src/*": "./src/*.js",
     "#src": "./src/index.js",
+    "#src/types": "./src/types/index.js",
+    "#src/debug": "./src/debug/index.js",
     "#tests/*": "./tests/*.js",
     "#tests": "./tests/index.js",
     "#routes/*": "./routes/*.js"
@@ -62,15 +67,14 @@
     "semver": "^7.5.3"
   },
   "devDependencies": {
-    "@athenna/artisan": "^3.9.0",
-    "@athenna/common": "^3.6.0",
-    "@athenna/config": "^3.7.1",
-    "@athenna/http": "^3.11.0",
-    "@athenna/ioc": "^3.4.0",
-    "@athenna/logger": "^3.4.0",
-    "@athenna/test": "^3.6.0",
-    "@athenna/view": "^3.3.0",
-    "@swc/core": "^1.3.27",
+    "@athenna/artisan": "^4.1.0",
+    "@athenna/common": "^4.3.0",
+    "@athenna/config": "^4.2.0",
+    "@athenna/http": "^4.2.0",
+    "@athenna/ioc": "^4.0.0",
+    "@athenna/logger": "^4.1.0",
+    "@athenna/test": "^4.2.0",
+    "@athenna/view": "^4.0.0",
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
     "c8": "^7.12.0",
@@ -97,15 +101,15 @@
       "src/**/*.ts"
     ],
     "exclude": [
-      "src/Types/*",
-      "src/Commands/*.ts",
-      "src/Applications/Repl.ts"
+      "src/types/*",
+      "src/commands/*.ts",
+      "src/applications/Repl.ts"
     ],
     "reporter": [
       "text-summary",
       "html"
     ],
-    "report-dir": "./tests/Coverage",
+    "report-dir": "./tests/coverage",
     "check-coverage": true
   },
   "husky": {
@@ -145,7 +149,7 @@
     ]
   },
   "eslintIgnore": [
-    "tests/Stubs/syntaxErrorConfig/*"
+    "tests/stubs/syntaxErrorConfig/*"
   ],
   "eslintConfig": {
     "env": {
@@ -202,39 +206,38 @@
       "terminator": "node_modules/@athenna/http/templates/terminator.edge"
     },
     "commands": {
-      "make:exception": "#src/Commands/MakeExceptionCommand",
-      "make:facade": "#src/Commands/MakeFacadeCommand",
-      "make:provider": "#src/Commands/MakeProviderCommand",
-      "make:service": "#src/Commands/MakeServiceCommand",
-      "make:test": "#src/Commands/MakeTestCommand",
-      "build": "#src/Commands/BuildCommand",
+      "make:exception": "#src/commands/MakeExceptionCommand",
+      "make:facade": "#src/commands/MakeFacadeCommand",
+      "make:provider": "#src/commands/MakeProviderCommand",
+      "make:service": "#src/commands/MakeServiceCommand",
+      "make:test": "#src/commands/MakeTestCommand",
       "serve": {
         "stayAlive": true,
         "entrypoint": "#bin/http",
-        "path": "#src/Commands/ServeCommand"
+        "path": "#src/commands/ServeCommand"
       },
       "test": {
         "stayAlive": true,
         "entrypoint": "#bin/test",
-        "path": "#src/Commands/TestCommand"
+        "path": "#src/commands/TestCommand"
       },
       "repl": {
         "stayAlive": true,
         "entrypoint": "#bin/repl",
-        "path": "#src/Commands/ReplCommand"
+        "path": "#src/commands/ReplCommand"
       }
     },
     "services": [
-      "#tests/Stubs/services/WelcomeService",
-      "#tests/Stubs/services/DecoratedWelcomeService"
+      "#tests/stubs/services/WelcomeService",
+      "#tests/stubs/services/DecoratedWelcomeService"
     ],
     "providers": [
-      "#src/Providers/CoreProvider",
+      "#src/providers/CoreProvider",
       "@athenna/http/providers/HttpRouteProvider",
       "@athenna/http/providers/HttpServerProvider"
     ],
     "preloads": [
-      "#tests/Stubs/routes/http"
+      "#tests/stubs/routes/http"
     ]
   }
 }

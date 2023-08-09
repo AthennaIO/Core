@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-export * from '#src/ignite/Ignite'
-export * from '#src/helpers/LoadHelper'
+import { CALLED_MAP } from '#tests/helpers/CalledMap'
 
-export * from '#src/annotations/Service'
-export * from '#src/providers/CoreProvider'
+CALLED_MAP.set('load.ts', true)
