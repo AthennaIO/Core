@@ -1,4 +1,4 @@
-#!/usr/bin/env node --input-type=module --experimental-import-meta-resolve
+#!/usr/bin/env node
 
 /**
  * @athenna/core
@@ -23,26 +23,19 @@ import { Ignite } from '#src'
 |
 */
 
-process.env.CORE_TESTING = 'false'
+process.env.CORE_TESTING = 'true'
 
-Config.set('rc.commands', {
-  'make:exception': '#src/commands/MakeExceptionCommand',
-  'make:facade': '#src/commands/MakeFacadeCommand',
-  'make:provider': '#src/commands/MakeProviderCommand',
-  'make:service': '#src/commands/MakeServiceCommand',
-  'make:test': '#src/commands/MakeTestCommand',
-  serve: {
-    entrypoint: '#bin/http',
-    path: '#src/commands/ServeCommand',
-  },
-  test: {
-    entrypoint: '#bin/test',
-    path: '#src/commands/TestCommand',
-  },
-  repl: {
-    entrypoint: '#bin/repl',
-    path: '#src/commands/ReplCommand',
-  },
+Config.set('rc.commands.test', {
+  path: '#src/commands/TestCommand',
+  entrypoint: '#tests/stubs/tests/main',
+})
+Config.set('rc.commands.repl', {
+  path: '#src/commands/ReplCommand',
+  entrypoint: '#tests/stubs/bootstrap/repl',
+})
+Config.set('rc.commands.serve', {
+  path: '#src/commands/ServeCommand',
+  entrypoint: '#tests/stubs/bootstrap/main',
 })
 
 /*

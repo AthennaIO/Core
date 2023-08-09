@@ -17,6 +17,6 @@
 # sh node --inspect bin/test.ts
 
 # Node.js executable with all arguments required to run the application.
-node="node --loader ts-node/esm --experimental-import-meta-resolve --no-warnings"
+node="node --loader=ts-node/esm --experimental-import-meta-resolve --no-warnings"
 
-$node $@
+$node "$@"

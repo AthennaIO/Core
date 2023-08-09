@@ -1,17 +1,4 @@
 import { Facade } from '@athenna/ioc'
-
-/*
-|--------------------------------------------------------------------------
-| Facades
-|--------------------------------------------------------------------------
-|
-| Athenna facades serve as "static proxies" to underlying classes in the
-| service container, providing the benefit of a terse, expressive syntax
-| while maintaining more testability and flexibility than traditional
-| static methods.
-|
-*/
-
-import { {{ namePascal }}Impl } from '#app/Services/{{ namePascal }}'
+import type { {{ namePascal }}Impl } from '#app/services/{{ namePascal }}'
 
 export const {{ namePascal }} = Facade.createFor<{{ namePascal }}>('App/Services/{{ namePascal }}')

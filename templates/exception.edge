@@ -1,18 +1,5 @@
 import { Exception } from '@athenna/common'
 
-/*
-|--------------------------------------------------------------------------
-| Exception
-|--------------------------------------------------------------------------
-|
-| The Exception class imported from `@athenna/common` allows defining a
-| status code, error code and help for every exception.
-|
-| @example
-| new {{ namePascal }}('Some exception happened')
-|
-*/
-
 export class {{ namePascal }} extends Exception {
   public constructor(message: string) {
     const status = 500

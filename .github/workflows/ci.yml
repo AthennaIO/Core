@@ -9,17 +9,6 @@ on:
       - develop
 
 jobs:
-  qodana:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: 'Qodana Scan'
-        uses: JetBrains/qodana-action@main
-        env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
-
   linux:
     runs-on: ubuntu-latest
     strategy:
@@ -43,7 +32,7 @@ jobs:
         run: npm run test:coverage
 
       - name: Test code compilation
-        run: sh scripts/build
+        run: npm run build
 
   windows:
     runs-on: windows-latest
@@ -66,4 +55,4 @@ jobs:
         run: npm run test:coverage
 
       - name: Test code compilation
-        run: sh scripts/build
+        run: npm run build

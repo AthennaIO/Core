@@ -1,0 +1,103 @@
+/**
+ * @athenna/core
+ *
+ * (c) João Lenon <lenon@athenna.io>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+import { fake } from 'sinon'
+import { Log } from '@athenna/logger'
+import { Config } from '@athenna/config'
+import { File, Path } from '@athenna/common'
+import { ViewProvider } from '@athenna/view'
+import { ExitFaker, Test } from '@athenna/test'
+import type { Context } from '@athenna/test/types'
+import { ArtisanProvider } from '@athenna/artisan'
+import { BaseTest } from '#tests/helpers/BaseTest'
+import { Artisan } from '#src/applications/Artisan'
+import { CALLED_MAP } from '#tests/helpers/CalledMap'
+import { ConsoleKernel } from '#tests/stubs/kernels/ConsoleKernel'
+import { ConsoleExceptionHandler } from '#tests/stubs/handlers/ConsoleExceptionHandler'
+
+export default class ArtisanTest extends BaseTest {
+  @Test()
+  public async shouldBeAbleToBootAnArtisanApplicationWithoutAnyOption({ assert }: Context) {
+    new ViewProvider().register()
+    new ArtisanProvider().register()
+
+    await Artisan.boot(['node', 'artisan'])
+
+    assert.isTrue(ExitFaker.faker.called)
+  }
+
+  @Test()
+  public async shouldBeAbleToLogThatTheConsoleKernelIsBootingIfRcBootLogsIsTrue({ assert }: Context) {
+    Config.set('rc.bootLogs', true)
+
+    const mock = Log.getMock()
+    const successFake = fake()
+
+    mock
+      .expects('channelOrVanilla')
+      .exactly(1)
+      .withArgs('application')
+      .returns({ success: args => successFake(args) })
+
+    new ViewProvider().register()
+    new ArtisanProvider().register()
+
+    await Artisan.boot(['node', 'artisan'])
+
+    assert.isTrue(ExitFaker.faker.called)
+    assert.isTrue(successFake.calledWith('Kernel ({yellow} ConsoleKernel) successfully booted'))
+    mock.verify()
+  }
+
+  @Test()
+  public async shouldBeAbleToBootAnArtisanApplicationAndRegisterCommandsFromRoutes({ assert }: Context) {
+    new ViewProvider().register()
+    new ArtisanProvider().register()
+
+    await Artisan.boot(['node', 'artisan', 'test:generate'], {
+      displayName: null,
+      routePath: Path.stubs('routes/console.ts'),
+    })
+
+    assert.isTrue(ExitFaker.faker.called)
+    assert.isTrue(await File.exists(Path.stubs('storage/Command.ts')))
+  }
+
+  @Test()
+  public async shouldBeAbleToBootAnArtisanApplicationAndRegisterAConsoleKernel({ assert }: Context) {
+    new ViewProvider().register()
+    new ArtisanProvider().register()
+
+    await Artisan.boot(['node', 'artisan', 'test:generate'], {
+      displayName: null,
+      routePath: Path.stubs('routes/console.ts'),
+      kernelPath: Path.stubs('kernels/ConsoleKernel.ts'),
+    })
+
+    assert.isTrue(ExitFaker.faker.called)
+    assert.isTrue(CALLED_MAP.get(ConsoleKernel.name))
+    assert.isTrue(await File.exists(Path.stubs('storage/Command.ts')))
+  }
+
+  @Test()
+  public async shouldBeAbleToBootAnArtisanApplicationAndRegisterAConsoleExceptionHandler({ assert }: Context) {
+    new ViewProvider().register()
+    new ArtisanProvider().register()
+
+    await Artisan.boot(['node', 'artisan', 'test:generate'], {
+      displayName: null,
+      routePath: Path.stubs('routes/console.ts'),
+      exceptionHandlerPath: Path.stubs('handlers/ConsoleExceptionHandler.ts'),
+    })
+
+    assert.isTrue(ExitFaker.faker.called)
+    assert.isTrue(CALLED_MAP.get(ConsoleExceptionHandler.name))
+    assert.isTrue(await File.exists(Path.stubs('storage/Command.ts')))
+  }
+}
