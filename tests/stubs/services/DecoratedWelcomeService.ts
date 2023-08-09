@@ -1,4 +1,4 @@
-import { Service } from '#src'
+import { Service } from '@athenna/ioc'
 
 @Service()
 export class DecoratedWelcomeService {

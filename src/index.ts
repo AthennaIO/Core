@@ -7,8 +7,9 @@
  * file that was distributed with this source code.
  */
 
+export * from './types/index.js'
+
 export * from '#src/ignite/Ignite'
 export * from '#src/helpers/LoadHelper'
 
-export * from '#src/annotations/Service'
 export * from '#src/providers/CoreProvider'

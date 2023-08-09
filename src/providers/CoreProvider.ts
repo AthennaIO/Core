@@ -22,7 +22,7 @@ export class CoreProvider extends ServiceProvider {
         Config.get('rc.meta'),
       )
 
-      if (Reflect.hasMetadata('provider:registered', Service)) {
+      if (Reflect.hasMetadata('ioc:registered', Service)) {
         return
       }
 

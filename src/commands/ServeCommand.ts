@@ -13,7 +13,7 @@ import { BaseCommand, Option } from '@athenna/artisan'
 export class ServeCommand extends BaseCommand {
   @Option({
     signature: '-e, --env <env>',
-    description: 'Change the evironment where the application will run.',
+    description: 'Change the environment where the application will run.',
     default: '',
   })
   public env: string

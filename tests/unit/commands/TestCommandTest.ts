@@ -7,9 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { Test } from '@athenna/test'
 import { Artisan } from '@athenna/artisan'
-import type { Context } from '@athenna/test/types'
+import { Test, type Context } from '@athenna/test'
 import { BaseCommandTest } from '#tests/helpers/BaseCommandTest'
 
 export default class TestCommandTest extends BaseCommandTest {

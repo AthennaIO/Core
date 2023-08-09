@@ -8,13 +8,12 @@
  */
 
 import { fake } from 'sinon'
-import { Test } from '@athenna/test'
 import { Log } from '@athenna/logger'
 import { Path } from '@athenna/common'
 import { Server } from '@athenna/http'
 import { Config } from '@athenna/config'
 import { Http } from '#src/applications/Http'
-import type { Context } from '@athenna/test/types'
+import { Test, type Context } from '@athenna/test'
 import { BaseTest } from '#tests/helpers/BaseTest'
 import { LoadHelper } from '#src/helpers/LoadHelper'
 import { CALLED_MAP } from '#tests/helpers/CalledMap'
