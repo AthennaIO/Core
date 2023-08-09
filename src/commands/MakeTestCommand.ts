@@ -70,7 +70,7 @@ export class MakeTestCommand extends BaseCommand {
   private getDestinationPath(): string {
     let destination = Config.get(
       'rc.commands.make:test.destination',
-      this.isUnit ? Path.tests('Unit') : Path.tests('E2E'),
+      this.isUnit ? Path.tests('unit') : Path.tests('e2e'),
     )
 
     if (!isAbsolute(destination)) {
