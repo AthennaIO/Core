@@ -104,7 +104,7 @@ export default class IgniteTest extends BaseTest {
   @Test()
   public async shouldBeAbleToFireTheIgniteClassLoadingAllTheRestOfTheApplication({ assert }: Context) {
     Config.set('rc.environments', ['other'])
-    Config.set('rc.directories', { config: 'tests/Stubs/igniteConfig' })
+    Config.set('rc.directories', { config: 'tests/stubs/igniteConfig' })
 
     const ignite = await new Ignite().load(Config.get('meta'), {
       envPath: Path.stubs('.env'),
@@ -133,7 +133,7 @@ export default class IgniteTest extends BaseTest {
 
     process.env.OVERRIDE_ENV = 'true'
     Config.set('rc.environments', ['other'])
-    Config.set('rc.directories', { config: 'tests/Stubs/igniteConfig' })
+    Config.set('rc.directories', { config: 'tests/stubs/igniteConfig' })
 
     const ignite = await new Ignite().load(Config.get('meta'), {
       environments: ['console'],
@@ -154,7 +154,7 @@ export default class IgniteTest extends BaseTest {
 
   @Test()
   public async shouldBeAbleToHandleSyntaxErrorExceptionsOfConfigsUsingTheDefaultIgniteHandler({ assert }: Context) {
-    Config.set('rc.directories', { config: 'tests/Stubs/syntaxErrorConfig' })
+    Config.set('rc.directories', { config: 'tests/stubs/syntaxErrorConfig' })
 
     const ignite = await new Ignite().load(Config.get('meta'), {
       environments: ['console'],
