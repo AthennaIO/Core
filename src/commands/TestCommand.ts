@@ -13,7 +13,7 @@ import { BaseCommand, Option } from '@athenna/artisan'
 export class TestCommand extends BaseCommand {
   @Option({
     signature: '-e, --env <env>',
-    description: 'Change the evironment where your tests wil run.',
+    description: 'Change the environment where your tests wil run.',
     default: 'test',
   })
   public env: string

@@ -10,10 +10,9 @@
 import { fake } from 'sinon'
 import { LoadHelper } from '#src'
 import { Log } from '@athenna/logger'
-import { BeforeEach, Test } from '@athenna/test'
-import type { Context } from '@athenna/test/types'
 import { BaseTest } from '#tests/helpers/BaseTest'
 import { CALLED_MAP } from '#tests/helpers/CalledMap'
+import { Test, BeforeEach, type Context } from '@athenna/test'
 
 export default class LoadHelperTest extends BaseTest {
   @BeforeEach()

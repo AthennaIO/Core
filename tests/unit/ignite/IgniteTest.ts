@@ -11,10 +11,9 @@ import { fake } from 'sinon'
 import { Ignite } from '#src'
 import { Server } from '@athenna/http'
 import { pathToFileURL } from 'node:url'
-import { ExitFaker, Test } from '@athenna/test'
 import { BaseTest } from '#tests/helpers/BaseTest'
 import { Exec, File, Json } from '@athenna/common'
-import type { Context } from '@athenna/test/types'
+import { Test, ExitFaker, type Context } from '@athenna/test'
 
 export default class IgniteTest extends BaseTest {
   @Test()
