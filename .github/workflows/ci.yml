@@ -32,7 +32,7 @@ jobs:
         run: npm run test:coverage
 
       - name: Test code compilation
-        run: sh scripts/build
+        run: npm run build
 
   windows:
     runs-on: windows-latest
@@ -55,4 +55,4 @@ jobs:
         run: npm run test:coverage
 
       - name: Test code compilation
-        run: sh scripts/build
+        run: npm run build
