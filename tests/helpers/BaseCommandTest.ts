@@ -53,7 +53,7 @@ export class BaseCommandTest {
     await Folder.safeRemove(Path.config())
     await Folder.safeRemove(Path.providers())
     await Folder.safeRemove(Path.resources())
-    await Folder.safeRemove(Path.tests('E2E'))
+    await Folder.safeRemove(Path.tests('e2e'))
 
     await File.safeRemove(Path.pwd('.env'))
     await File.safeRemove(Path.pwd('.env.test'))
