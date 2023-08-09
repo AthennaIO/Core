@@ -2,9 +2,7 @@
   "ts-node": {
     "esm": true,
     "transpileOnly": true,
-    "ignoreDiagnostics": [
-      5104
-    ]
+    "ignoreDiagnostics": [5104]
   },
   "compilerOptions": {
     "strict": false,
@@ -24,25 +22,12 @@
     "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true,
     "paths": {
-      "#bin/*": [
-        "./bin/*.ts"
-      ],
-      "#src/*": [
-        "./src/*.ts"
-      ],
-      "#tests/*": [
-        "./tests/*.ts"
-      ],
-      "#src/types": [
-        "./src/types/index.ts"
-      ]
+      "#bin/*": ["./bin/*.ts"],
+      "#src/*": ["./src/*.ts"],
+      "#tests/*": ["./tests/*.ts"],
+      "#src/types": ["./src/types/index.ts"]
     }
   },
-  "include": [
-    "./**/*"
-  ],
-  "exclude": [
-    "build",
-    "node_modules"
-  ]
+  "include": ["./**/*"],
+  "exclude": ["build", "node_modules"]
 }
