@@ -26,7 +26,7 @@ export default class IgniteTest extends BaseTest {
     assert.containsSubset(ignite.options, {
       bootLogs: true,
       shutdownLogs: true,
-      beforePath: '',
+      beforePath: 'build',
       envPath: undefined,
       loadConfigSafe: true,
       athennaRcPath: Path.pwd('package.json'),

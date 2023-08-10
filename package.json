@@ -70,7 +70,7 @@
     "@athenna/artisan": "^4.2.0",
     "@athenna/common": "^4.4.0",
     "@athenna/config": "^4.3.0",
-    "@athenna/http": "^4.3.0",
+    "@athenna/http": "^4.4.0",
     "@athenna/ioc": "^4.1.0",
     "@athenna/logger": "^4.2.0",
     "@athenna/test": "^4.3.0",

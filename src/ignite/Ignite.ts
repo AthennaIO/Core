@@ -57,7 +57,7 @@ export class Ignite {
 
       this.meta = meta
       this.options = Options.create(options, {
-        beforePath: '',
+        beforePath: 'build',
         bootLogs: true,
         shutdownLogs: true,
         environments: [],
