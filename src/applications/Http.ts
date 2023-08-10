@@ -8,7 +8,7 @@
  */
 
 import { Log } from '@athenna/logger'
-import { ServerImpl } from '@athenna/http'
+import type { ServerImpl } from '@athenna/http'
 import { Is, Module, Options } from '@athenna/common'
 import type { HttpOptions } from '#src/types/HttpOptions'
 

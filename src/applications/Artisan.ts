@@ -8,8 +8,8 @@
  */
 
 import { Log } from '@athenna/logger'
-import { ArtisanImpl } from '@athenna/artisan'
 import { Module, Options } from '@athenna/common'
+import type { ArtisanImpl } from '@athenna/artisan'
 import type { ArtisanOptions } from '#src/types/ArtisanOptions'
 
 export class Artisan {
