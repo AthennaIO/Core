@@ -37,6 +37,11 @@ Config.set('rc.commands.serve', {
   path: '#src/commands/ServeCommand',
   entrypoint: '#tests/stubs/bootstrap/main',
 })
+Config.set('rc.commands.build', {
+  path: '#src/commands/BuildCommand',
+  tsconfig: './tests/stubs/tsconfig.json',
+  metaFiles: ['app/hello.edge', 'LICENSE.md', '.env'],
+})
 
 /*
 |--------------------------------------------------------------------------

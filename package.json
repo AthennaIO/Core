@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -49,7 +49,8 @@
     "./commands/MakeTestCommand": "./src/commands/MakeTestCommand.js",
     "./commands/ReplCommand": "./src/commands/ReplCommand.js",
     "./commands/ServeCommand": "./src/commands/ServeCommand.js",
-    "./commands/TestCommand": "./src/commands/TestCommand.js"
+    "./commands/TestCommand": "./src/commands/TestCommand.js",
+    "./commands/BuildCommand": "./src/commands/BuildCommand.js"
   },
   "imports": {
     "#bin/*": "./bin/*.js",
@@ -79,6 +80,7 @@
     "@typescript-eslint/parser": "^5.56.0",
     "c8": "^7.12.0",
     "commitizen": "^4.2.6",
+    "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.36.0",
@@ -92,6 +94,7 @@
     "lint-staged": "^12.5.0",
     "prettier": "^2.8.7",
     "reflect-metadata": "^0.1.13",
+    "rimraf": "^5.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.2"
   },
@@ -225,6 +228,15 @@
         "stayAlive": true,
         "entrypoint": "#bin/repl",
         "path": "#src/commands/ReplCommand"
+      },
+      "build": {
+        "path": "#src/commands/BuildCommand",
+        "tsconfig": "./tests/stubs/tsconfig.json",
+        "metaFiles": [
+          "app/hello.edge",
+          "LICENSE.md",
+          ".env"
+        ]
       }
     },
     "services": [
