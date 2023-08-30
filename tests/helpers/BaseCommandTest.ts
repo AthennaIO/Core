@@ -61,6 +61,7 @@ export class BaseCommandTest {
     await File.safeRemove(Path.pwd('docker-compose.yml'))
     await File.safeRemove(Path.tests('unit/TestTest.ts'))
     await Folder.safeRemove(Path.stubs('storage'))
+    await Folder.safeRemove(Path.stubs('build'))
     await Folder.safeRemove(Path.pwd('tmp'))
 
     await new File(Path.pwd('package.json')).setContent(this.originalPJson)

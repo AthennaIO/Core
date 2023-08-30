@@ -39,7 +39,7 @@ export type ArtisanOptions = {
    * The path to the exception handler of console commands. The exception
    * handler is responsible to handle all the exception that are throwed
    * in Artisan commands. By default, Athenna will use the built in exception
-   * handler. But you can do your own implementantion extending the
+   * handler. But you can do your own implementation extending the
    * "ConsoleExceptionHandler" class from Artisan and setting the path to it
    * here.
    *
