@@ -43,6 +43,7 @@ Config.set('rc.commands', {
     entrypoint: '#bin/repl',
     path: '#src/commands/ReplCommand',
   },
+  greet: '#tests/stubs/commands/GreetCommand',
 })
 
 /*
@@ -52,7 +53,7 @@ Config.set('rc.commands', {
 |
 | Here is where your application will bootstrap. Ignite class will be res
 | ponsible to bootstrap your application partial or complete. Is not reco
-| mmended to bootstrap the Athenna application completelly by calling the
+| mmended to bootstrap the Athenna application completely by calling the
 | "fire" method, you should always let the type of application determine if
 | the application should be fully bootstrapped or not.
 |

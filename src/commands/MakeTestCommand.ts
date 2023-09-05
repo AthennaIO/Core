@@ -25,6 +25,20 @@ export class MakeTestCommand extends BaseCommand {
   public isUnit: boolean
 
   @Option({
+    description: 'Create a REST API test.',
+    signature: '-r, --rest',
+    default: false,
+  })
+  public isRest: boolean
+
+  @Option({
+    description: 'Create a CLI test.',
+    signature: '-c, --cli',
+    default: false,
+  })
+  public isCli: boolean
+
+  @Option({
     description: 'Create the test as function instead of class.',
     signature: '--function',
     default: false,
@@ -44,8 +58,12 @@ export class MakeTestCommand extends BaseCommand {
 
     let template = 'test'
 
+    if (this.isCli) template = 'test-cli'
+    else if (this.isRest) template = 'test-rest'
+    else if (this.isUnit) template = 'test' // This is necessary to avoid multiple options case.
+
     if (this.isFunction) {
-      template = 'testFn'
+      template = 'test-fn'
     }
 
     const file = await this.generator

@@ -7,27 +7,25 @@
  * file that was distributed with this source code.
  */
 
+import { pathToFileURL } from 'node:url'
 import { Options } from '@athenna/common'
 import { BeforeAll } from '@athenna/test'
-import { Artisan } from '@athenna/artisan'
 import { Ignite, type IgniteOptions } from '@athenna/core'
+import { TestCommand } from '@athenna/artisan/testing/plugins'
 
 export class BaseCliTest {
   public ignite: Ignite
   public igniteOptions: IgniteOptions = {}
+  public artisanPath: string = Path.bootstrap(`artisan.${Path.ext()}`)
 
   @BeforeAll()
   public async baseBeforeAll() {
+    TestCommand.setArtisanPath(this.artisanPath)
+
     this.ignite = await new Ignite().load(
-      import.meta.url,
+      pathToFileURL(Path.bootstrap(`test.${Path.ext()}`)).href,
       this.getIgniteOptions(),
     )
-  }
-
-  public async execute(
-    command: string,
-  ): Promise<{ stdout: string; stderr: string }> {
-    return Artisan.callInChild(command, Path.bootstrap('artisan.ts'))
   }
 
   private getIgniteOptions() {

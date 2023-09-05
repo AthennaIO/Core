@@ -1,0 +1,11 @@
+import { Test, type Context } from '@athenna/test'
+import { BaseRestTest } from '@athenna/core/testing/BaseRestTest'
+
+export default class {{ namePascal }} extends BaseRestTest {
+  @Test()
+  public async shouldBeAbleToExecuteRestApiRequests({ request }: Context) {
+    const response = await request.get('/')
+
+    response.assertStatusCode(200)
+  }
+}

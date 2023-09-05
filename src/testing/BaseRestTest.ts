@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { pathToFileURL } from 'node:url'
 import { Options } from '@athenna/common'
 import { ServerImpl } from '@athenna/http'
 import { AfterAll, BeforeAll } from '@athenna/test'
@@ -21,7 +22,7 @@ export class BaseRestTest {
   @BeforeAll()
   public async baseBeforeAll() {
     this.ignite = await new Ignite().load(
-      import.meta.url,
+      pathToFileURL(Path.bootstrap(`test.${Path.ext()}`)).href,
       this.getIgniteOptions(),
     )
 

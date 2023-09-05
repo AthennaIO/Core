@@ -8,7 +8,7 @@
  */
 
 import { Module } from '@athenna/common'
-import { BaseCommand, Option } from '@athenna/artisan'
+import { Option, BaseCommand, Commander } from '@athenna/artisan'
 
 export class TestCommand extends BaseCommand {
   @Option({
@@ -24,6 +24,10 @@ export class TestCommand extends BaseCommand {
 
   public static description(): string {
     return 'Run the tests of your application.'
+  }
+
+  public static commander(commander: Commander) {
+    return commander.allowUnknownOption()
   }
 
   // TODO Verify if this command still makes sense to exist.
