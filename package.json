@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -50,7 +50,9 @@
     "./commands/ReplCommand": "./src/commands/ReplCommand.js",
     "./commands/ServeCommand": "./src/commands/ServeCommand.js",
     "./commands/TestCommand": "./src/commands/TestCommand.js",
-    "./commands/BuildCommand": "./src/commands/BuildCommand.js"
+    "./commands/BuildCommand": "./src/commands/BuildCommand.js",
+    "./testing/BaseCliTest": "./src/testing/BaseCliTest.js",
+    "./testing/BaseRestTest": "./src/testing/BaseRestTest.js"
   },
   "imports": {
     "#bin/*": "./bin/*.js",
@@ -105,6 +107,7 @@
     ],
     "exclude": [
       "src/types/*",
+      "src/testing/*.ts",
       "src/commands/*.ts",
       "src/applications/Repl.ts"
     ],
