@@ -7,12 +7,16 @@
  * file that was distributed with this source code.
  */
 
+import { request } from '@athenna/http/testing/plugins'
+import { command } from '@athenna/artisan/testing/plugins'
 import { Runner, assert, specReporter } from '@athenna/test'
 
 process.env.CORE_TESTING = 'true'
 
 await Runner.setTsEnv()
   .addPlugin(assert())
+  .addPlugin(request())
+  .addPlugin(command())
   .addReporter(specReporter())
   .addPath('tests/unit/**/*.ts')
   .setCliArgs(process.argv.slice(2))

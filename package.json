@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -70,8 +70,8 @@
     "semver": "^7.5.4"
   },
   "devDependencies": {
-    "@athenna/artisan": "^4.2.0",
-    "@athenna/common": "^4.4.0",
+    "@athenna/artisan": "^4.8.0",
+    "@athenna/common": "^4.9.2",
     "@athenna/config": "^4.3.0",
     "@athenna/http": "^4.4.0",
     "@athenna/ioc": "^4.1.0",
@@ -204,7 +204,9 @@
       "provider": "./templates/provider.edge",
       "service": "./templates/service.edge",
       "test": "./templates/test.edge",
-      "testFn": "./templates/testFn.edge",
+      "test-cli": "./templates/test-cli.edge",
+      "test-rest": "./templates/test-rest.edge",
+      "test-fn": "./templates/test-fn.edge",
       "command": "node_modules/@athenna/artisan/templates/command.edge",
       "controller": "node_modules/@athenna/http/templates/controller.edge",
       "middleware": "node_modules/@athenna/http/templates/middleware.edge",
