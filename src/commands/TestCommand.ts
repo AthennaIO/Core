@@ -27,7 +27,22 @@ export class TestCommand extends BaseCommand {
   }
 
   public static commander(commander: Commander) {
-    return commander.allowUnknownOption()
+    return commander
+      .allowUnknownOption()
+      .option(
+        '--tests',
+        'Specify test titles: --tests="shouldBeOk,shouldNotBeOk"',
+      )
+      .option(
+        '--groups',
+        'Specify group titles: --groups="AppControllerTest,AppServiceTest"',
+      )
+      .option(
+        '--files',
+        'Specify files to match and run: --files="AppControllerTest.ts,AppServiceTest.ts"',
+      )
+      .option('--force-exit', 'Enable/disable force exit')
+      .option('--timeout', 'Define timeout for all tests: --timeout 3000')
   }
 
   // TODO Verify if this command still makes sense to exist.
