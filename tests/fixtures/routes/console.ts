@@ -10,7 +10,7 @@
 import { Artisan } from '@athenna/artisan'
 
 Artisan.route('test:generate', async function () {
-  await this.generator.path(Path.stubs('storage/Command.ts')).template('command').make()
+  await this.generator.path(Path.fixtures('storage/Command.ts')).template('command').make()
 })
   .description('hello')
   .showHelpAfterError()

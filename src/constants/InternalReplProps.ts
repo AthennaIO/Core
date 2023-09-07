@@ -51,5 +51,5 @@ export const INTERNAL_REPL_PROPS = [
   '__importDefault',
   '__classPrivateFieldGet',
   '__classPrivateFieldSet',
-  '__classPrivateFieldIn',
+  '__classPrivateFieldIn'
 ]

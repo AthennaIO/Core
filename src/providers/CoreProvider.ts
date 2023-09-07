@@ -19,7 +19,7 @@ export class CoreProvider extends ServiceProvider {
     await Exec.concurrently(services, async path => {
       const Service = await Module.resolve(
         `${path}?version=${Math.random()}`,
-        Config.get('rc.meta'),
+        Config.get('rc.meta')
       )
 
       if (Reflect.hasMetadata('ioc:registered', Service)) {

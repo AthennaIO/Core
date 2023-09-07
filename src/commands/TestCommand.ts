@@ -14,7 +14,7 @@ export class TestCommand extends BaseCommand {
   @Option({
     signature: '-e, --env <env>',
     description: 'Change the environment where your tests wil run.',
-    default: 'test',
+    default: 'test'
   })
   public env: string
 
@@ -31,21 +31,21 @@ export class TestCommand extends BaseCommand {
       .allowUnknownOption()
       .option(
         '--tests',
-        'Specify test titles: --tests="shouldBeOk,shouldNotBeOk"',
+        'Specify test titles: --tests="shouldBeOk,shouldNotBeOk"'
       )
       .option(
         '--groups',
-        'Specify group titles: --groups="AppControllerTest,AppServiceTest"',
+        'Specify group titles: --groups="AppControllerTest,AppServiceTest"'
       )
       .option(
         '--files',
-        'Specify files to match and run: --files="AppControllerTest.ts,AppServiceTest.ts"',
+        'Specify files to match and run: --files="AppControllerTest.ts,AppServiceTest.ts"'
       )
+      .option('--tags', 'Specify tags to match and run: --tags="unit"')
       .option('--force-exit', 'Enable/disable force exit')
       .option('--timeout', 'Define timeout for all tests: --timeout 3000')
   }
 
-  // TODO Verify if this command still makes sense to exist.
   public async handle(): Promise<void> {
     if (this.env !== '') {
       process.env.NODE_ENV = this.env
@@ -53,7 +53,7 @@ export class TestCommand extends BaseCommand {
 
     const entrypoint = Config.get(
       'rc.commands.test.entrypoint',
-      Path.bootstrap(`test.${Path.ext()}`),
+      Path.bootstrap(`test.${Path.ext()}`)
     )
 
     process.argv.splice(2, 1)

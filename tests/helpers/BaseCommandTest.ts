@@ -16,14 +16,14 @@ import { AfterEach, BeforeEach, ExitFaker } from '@athenna/test'
 import { ArtisanProvider, CommanderHandler, ConsoleKernel } from '@athenna/artisan'
 
 export class BaseCommandTest {
-  public artisan = Path.stubs('artisan.ts')
+  public artisan = Path.fixtures('artisan.ts')
   public originalPJson = new File(Path.pwd('package.json')).getContentAsStringSync()
 
   @BeforeEach()
   public async beforeEach() {
     ExitFaker.fake()
 
-    await Config.loadAll(Path.stubs('config'))
+    await Config.loadAll(Path.fixtures('config'))
 
     Config.set('meta', new URL('../../bin/test.ts', import.meta.url).href)
 
@@ -60,8 +60,8 @@ export class BaseCommandTest {
     await File.safeRemove(Path.pwd('.env.example'))
     await File.safeRemove(Path.pwd('docker-compose.yml'))
     await File.safeRemove(Path.tests('unit/TestTest.ts'))
-    await Folder.safeRemove(Path.stubs('storage'))
-    await Folder.safeRemove(Path.stubs('build'))
+    await Folder.safeRemove(Path.fixtures('storage'))
+    await Folder.safeRemove(Path.fixtures('build'))
     await Folder.safeRemove(Path.pwd('tmp'))
 
     await new File(Path.pwd('package.json')).setContent(this.originalPJson)

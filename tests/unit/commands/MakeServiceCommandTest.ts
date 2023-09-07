@@ -31,19 +31,19 @@ export default class MakeServiceCommandTest extends BaseCommandTest {
 
   @Test()
   public async shouldBeAbleToCreateAServiceFileInDifferentDestPath({ assert }: Context) {
-    Config.set('rc.commands.make:service.destination', Path.stubs('storage/services'))
+    Config.set('rc.commands.make:service.destination', Path.fixtures('storage/services'))
 
     await Artisan.call('make:service TestService', false)
 
-    const path = Path.stubs('storage/services/TestService.ts')
+    const path = Path.fixtures('storage/services/TestService.ts')
 
     assert.isTrue(await File.exists(path))
     assert.isTrue(ExitFaker.faker.calledOnceWith(0))
 
     const { athenna } = await new File(Path.pwd('package.json')).getContentAsJson()
 
-    assert.containsSubset(Config.get('rc.services'), ['#tests/stubs/storage/services/TestService'])
-    assert.containsSubset(athenna.services, ['#tests/stubs/storage/services/TestService'])
+    assert.containsSubset(Config.get('rc.services'), ['#tests/fixtures/storage/services/TestService'])
+    assert.containsSubset(athenna.services, ['#tests/fixtures/storage/services/TestService'])
   }
 
   @Test()

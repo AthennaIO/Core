@@ -18,12 +18,12 @@ export class Artisan {
    */
   public static async boot(
     argv: string[],
-    options?: ArtisanOptions,
+    options?: ArtisanOptions
   ): Promise<ArtisanImpl> {
     options = Options.create(options, {
       displayName: null,
       routePath: Path.routes(`console.${Path.ext()}`),
-      kernelPath: '@athenna/artisan/kernels/ConsoleKernel',
+      kernelPath: '@athenna/artisan/kernels/ConsoleKernel'
     })
 
     const artisan = ioc.safeUse('Athenna/Core/Artisan')
@@ -41,7 +41,7 @@ export class Artisan {
   private static async resolveKernel(argv: string[], options?: ArtisanOptions) {
     const Kernel = await Module.resolve(
       options.kernelPath,
-      Config.get('rc.meta'),
+      Config.get('rc.meta')
     )
 
     const kernel = new Kernel()
@@ -52,7 +52,7 @@ export class Artisan {
 
     if (Config.is('rc.bootLogs', true)) {
       Log.channelOrVanilla('application').success(
-        `Kernel ({yellow} ${Kernel.name}) successfully booted`,
+        `Kernel ({yellow} ${Kernel.name}) successfully booted`
       )
     }
   }

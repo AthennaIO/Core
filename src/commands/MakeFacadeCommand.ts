@@ -13,7 +13,7 @@ import { BaseCommand, Argument } from '@athenna/artisan'
 
 export class MakeFacadeCommand extends BaseCommand {
   @Argument({
-    description: 'The facade name.',
+    description: 'The facade name.'
   })
   public name: string
 
@@ -35,7 +35,7 @@ export class MakeFacadeCommand extends BaseCommand {
       .make()
 
     this.logger.success(
-      `Facade ({yellow} "${file.name}") successfully created.`,
+      `Facade ({yellow} "${file.name}") successfully created.`
     )
   }
 
@@ -52,7 +52,7 @@ export class MakeFacadeCommand extends BaseCommand {
   private getDestinationPath(): string {
     let destination = Config.get(
       'rc.commands.make:facade.destination',
-      Path.facades(),
+      Path.facades()
     )
 
     if (!isAbsolute(destination)) {

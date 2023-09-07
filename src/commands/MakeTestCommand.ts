@@ -13,35 +13,35 @@ import { BaseCommand, Argument, Option } from '@athenna/artisan'
 
 export class MakeTestCommand extends BaseCommand {
   @Argument({
-    description: 'The test name.',
+    description: 'The test name.'
   })
   public name: string
 
   @Option({
     description: 'Create an unitary test.',
     signature: '-u, --unit',
-    default: false,
+    default: false
   })
   public isUnit: boolean
 
   @Option({
     description: 'Create a REST API test.',
     signature: '-r, --rest',
-    default: false,
+    default: false
   })
   public isRest: boolean
 
   @Option({
     description: 'Create a CLI test.',
     signature: '-c, --cli',
-    default: false,
+    default: false
   })
   public isCli: boolean
 
   @Option({
     description: 'Create the test as function instead of class.',
     signature: '--function',
-    default: false,
+    default: false
   })
   public isFunction: boolean
 
@@ -88,7 +88,7 @@ export class MakeTestCommand extends BaseCommand {
   private getDestinationPath(): string {
     let destination = Config.get(
       'rc.commands.make:test.destination',
-      this.isUnit ? Path.tests('unit') : Path.tests('e2e'),
+      this.isUnit ? Path.tests('unit') : Path.tests('e2e')
     )
 
     if (!isAbsolute(destination)) {

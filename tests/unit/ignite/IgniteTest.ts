@@ -29,7 +29,7 @@ export default class IgniteTest extends BaseTest {
       beforePath: 'build',
       envPath: undefined,
       loadConfigSafe: true,
-      athennaRcPath: Path.pwd('package.json'),
+      athennaRcPath: Path.pwd('package.json')
     })
     assert.isTrue(ioc.hasDependency('Athenna/Core/Ignite'))
   }
@@ -46,10 +46,10 @@ export default class IgniteTest extends BaseTest {
 
   @Test()
   public async shouldBeAbleToIgniteTheApplicationRunningJavascriptCompiledCodeWhenInstantiatingIgnite({
-    assert,
+    assert
   }: Context) {
     delete process.env.IS_TS
-    const meta = pathToFileURL(Path.stubs('main.js')).href
+    const meta = pathToFileURL(Path.fixtures('main.js')).href
     const ignite = await new Ignite().load(meta, { beforePath: '/dist' })
 
     assert.isFalse(Env('IS_TS', true))
@@ -61,11 +61,11 @@ export default class IgniteTest extends BaseTest {
   @Test()
   public async shouldBeAbleToIgniteTheApplicationLoadingADifferentRcFileWhenInstantiatingIgnite({ assert }: Context) {
     Config.delete('rc')
-    const ignite = await new Ignite().load(Config.get('meta'), { athennaRcPath: Path.stubs('.athennarc.json') })
+    const ignite = await new Ignite().load(Config.get('meta'), { athennaRcPath: Path.fixtures('.athennarc.json') })
 
     assert.equal(ignite.meta, Config.get('meta'))
     assert.deepEqual(Config.get('rc.providers'), [])
-    assert.containsSubset(ignite.options, { athennaRcPath: Path.stubs('.athennarc.json') })
+    assert.containsSubset(ignite.options, { athennaRcPath: Path.fixtures('.athennarc.json') })
   }
 
   @Test()
@@ -103,11 +103,11 @@ export default class IgniteTest extends BaseTest {
   @Test()
   public async shouldBeAbleToFireTheIgniteClassLoadingAllTheRestOfTheApplication({ assert }: Context) {
     Config.set('rc.environments', ['other'])
-    Config.set('rc.directories', { config: 'tests/stubs/igniteConfig' })
+    Config.set('rc.directories', { config: 'tests/fixtures/igniteConfig' })
 
     const ignite = await new Ignite().load(Config.get('meta'), {
-      envPath: Path.stubs('.env'),
-      environments: ['console'],
+      envPath: Path.fixtures('.env'),
+      environments: ['console']
     })
 
     await ignite.fire()
@@ -119,23 +119,23 @@ export default class IgniteTest extends BaseTest {
     assert.deepEqual(Config.get('rc.providers'), [
       '#src/providers/CoreProvider',
       '@athenna/http/providers/HttpRouteProvider',
-      '@athenna/http/providers/HttpServerProvider',
+      '@athenna/http/providers/HttpServerProvider'
     ])
   }
 
   @Test()
   public async shouldBeAbleToFireTheIgniteClassLoadingAllTheRestOfTheApplicationResolvingTheEnvByNODE_ENV({
-    assert,
+    assert
   }: Context) {
-    await new File(Path.stubs('.env')).copy(Path.pwd('.env'))
-    await new File(Path.stubs('.env.local')).copy(Path.pwd('.env.local'))
+    await new File(Path.fixtures('.env')).copy(Path.pwd('.env'))
+    await new File(Path.fixtures('.env.local')).copy(Path.pwd('.env.local'))
 
     process.env.OVERRIDE_ENV = 'true'
     Config.set('rc.environments', ['other'])
-    Config.set('rc.directories', { config: 'tests/stubs/igniteConfig' })
+    Config.set('rc.directories', { config: 'tests/fixtures/igniteConfig' })
 
     const ignite = await new Ignite().load(Config.get('meta'), {
-      environments: ['console'],
+      environments: ['console']
     })
 
     await ignite.fire()
@@ -147,16 +147,16 @@ export default class IgniteTest extends BaseTest {
     assert.deepEqual(Config.get('rc.providers'), [
       '#src/providers/CoreProvider',
       '@athenna/http/providers/HttpRouteProvider',
-      '@athenna/http/providers/HttpServerProvider',
+      '@athenna/http/providers/HttpServerProvider'
     ])
   }
 
   @Test()
   public async shouldBeAbleToHandleSyntaxErrorExceptionsOfConfigsUsingTheDefaultIgniteHandler({ assert }: Context) {
-    Config.set('rc.directories', { config: 'tests/stubs/syntaxErrorConfig' })
+    Config.set('rc.directories', { config: 'tests/fixtures/syntaxErrorConfig' })
 
     const ignite = await new Ignite().load(Config.get('meta'), {
-      environments: ['console'],
+      environments: ['console']
     })
 
     await ignite.fire()
@@ -182,7 +182,7 @@ export default class IgniteTest extends BaseTest {
 
     Config.set('app.signals', {
       SIGINT: () => (SIGINT = true),
-      SIGTERM: () => (SIGTERM = true),
+      SIGTERM: () => (SIGTERM = true)
     })
 
     await new Ignite().load(Config.get('meta'))
@@ -201,14 +201,14 @@ export default class IgniteTest extends BaseTest {
 
     Config.set('app.signals', {
       SIGINT: () => (SIGINT = true),
-      SIGTERM: () => (SIGTERM = true),
+      SIGTERM: () => (SIGTERM = true)
     })
 
     const ignite = await new Ignite().load(Config.get('meta'))
 
     Config.set('app.signals', {
       SIGINT: () => (SIGINT = false),
-      SIGTERM: () => (SIGTERM = false),
+      SIGTERM: () => (SIGTERM = false)
     })
 
     await ignite.load(Config.get('meta'))
@@ -223,7 +223,7 @@ export default class IgniteTest extends BaseTest {
   @Test()
   public async shouldBeAbleToExecuteDefaultSIGINTSignalOfIgnite({ assert }: Context) {
     const ignite = await new Ignite().load(Config.get('meta'), {
-      environments: ['console'],
+      environments: ['console']
     })
 
     await ignite.fire()
@@ -237,10 +237,10 @@ export default class IgniteTest extends BaseTest {
   public async shouldBeAbleToExecuteDefaultSIGTERMSignalOfIgnite({ assert }: Context) {
     const processKillStub = fake()
     process.kill = processKillStub
-    Config.set('rc.providers', ['#tests/stubs/providers/ConsoleEnvProvider'])
+    Config.set('rc.providers', ['#tests/fixtures/providers/ConsoleEnvProvider'])
 
     const ignite = await new Ignite().load(Config.get('meta'), {
-      environments: ['console'],
+      environments: ['console']
     })
 
     await ignite.fire()
@@ -258,7 +258,7 @@ export default class IgniteTest extends BaseTest {
     Config.set('app.signals', {
       SIGINT: null, // will set the default signal
       IGNORE: undefined,
-      SIGTERM: undefined, // will set the default signal
+      SIGTERM: undefined // will set the default signal
     })
 
     await new Ignite().load(Config.get('meta'))
@@ -274,9 +274,9 @@ export default class IgniteTest extends BaseTest {
   public async shouldBeAbleToIgniteTheArtisanApplicationFromIgniteClass({ assert }: Context) {
     const ignite = await new Ignite().load(Config.get('meta'))
 
-    await ignite.artisan(['node', 'artisan', 'test:generate'], { routePath: Path.stubs('routes/console.ts') })
+    await ignite.artisan(['node', 'artisan', 'test:generate'], { routePath: Path.fixtures('routes/console.ts') })
 
-    assert.isTrue(await File.exists(Path.stubs('storage/Command.ts')))
+    assert.isTrue(await File.exists(Path.fixtures('storage/Command.ts')))
   }
 
   @Test()
@@ -302,7 +302,7 @@ export default class IgniteTest extends BaseTest {
   @Test()
   public async shouldBeAbleToRegisterTheServicesDepsUsingTheCoreProvider({ assert }: Context) {
     const ignite = await new Ignite().load(Config.get('meta'), {
-      environments: ['console'],
+      environments: ['console']
     })
 
     await ignite.fire()
@@ -315,7 +315,7 @@ export default class IgniteTest extends BaseTest {
 
   @Test()
   public async shouldBeAbleToIgniteTheApplicationWithDifferentDirectoriesRegistered({ assert }: Context) {
-    await new Ignite().load(Config.get('meta'), { athennaRcPath: Path.stubs('.athennarc-dirs.json') })
+    await new Ignite().load(Config.get('meta'), { athennaRcPath: Path.fixtures('.athennarc-dirs.json') })
 
     assert.equal(Path.app(), Path.pwd('app'))
     assert.equal(Path.controllers(), Path.pwd('src/http/controllers'))

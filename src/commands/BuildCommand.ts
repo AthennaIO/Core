@@ -49,12 +49,12 @@ export class BuildCommand extends BaseCommand {
             task.fail()
             throw error
           })
-      },
+      }
     )
 
     tasks.add('Compile the application', async task => {
       await Exec.command(
-        `${Path.nodeModulesBin('tsc')} --project ${tsConfigPath}`,
+        `${Path.nodeModulesBin('tsc')} --project ${tsConfigPath}`
       )
         .then(() => task.complete())
         .catch(error => {
@@ -66,7 +66,7 @@ export class BuildCommand extends BaseCommand {
     if (metaFiles.length) {
       tasks.add(`Copy meta files: ${Color.gray(metaFiles)}`, async task => {
         await Exec.command(
-          `${Path.nodeModulesBin('copyfiles')} ${metaFiles} ${buildDir}`,
+          `${Path.nodeModulesBin('copyfiles')} ${metaFiles} ${buildDir}`
         )
           .then(() => task.complete())
           .catch(error => {

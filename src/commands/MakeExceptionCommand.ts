@@ -13,7 +13,7 @@ import { BaseCommand, Argument } from '@athenna/artisan'
 
 export class MakeExceptionCommand extends BaseCommand {
   @Argument({
-    description: 'The exception name.',
+    description: 'The exception name.'
   })
   public name: string
 
@@ -35,7 +35,7 @@ export class MakeExceptionCommand extends BaseCommand {
       .make()
 
     this.logger.success(
-      `Exception ({yellow} "${file.name}") successfully created.`,
+      `Exception ({yellow} "${file.name}") successfully created.`
     )
   }
 
@@ -52,7 +52,7 @@ export class MakeExceptionCommand extends BaseCommand {
   private getDestinationPath(): string {
     let destination = Config.get(
       'rc.commands.make:exception.destination',
-      Path.exceptions(),
+      Path.exceptions()
     )
 
     if (!isAbsolute(destination)) {

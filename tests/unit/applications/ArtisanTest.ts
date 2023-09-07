@@ -17,8 +17,8 @@ import { BaseTest } from '#tests/helpers/BaseTest'
 import { Artisan } from '#src/applications/Artisan'
 import { CALLED_MAP } from '#tests/helpers/CalledMap'
 import { Test, ExitFaker, type Context } from '@athenna/test'
-import { ConsoleKernel } from '#tests/stubs/kernels/ConsoleKernel'
-import { ConsoleExceptionHandler } from '#tests/stubs/handlers/ConsoleExceptionHandler'
+import { ConsoleKernel } from '#tests/fixtures/kernels/ConsoleKernel'
+import { ConsoleExceptionHandler } from '#tests/fixtures/handlers/ConsoleExceptionHandler'
 
 export default class ArtisanTest extends BaseTest {
   @Test()
@@ -61,11 +61,11 @@ export default class ArtisanTest extends BaseTest {
 
     await Artisan.boot(['node', 'artisan', 'test:generate'], {
       displayName: null,
-      routePath: Path.stubs('routes/console.ts'),
+      routePath: Path.fixtures('routes/console.ts')
     })
 
     assert.isTrue(ExitFaker.faker.called)
-    assert.isTrue(await File.exists(Path.stubs('storage/Command.ts')))
+    assert.isTrue(await File.exists(Path.fixtures('storage/Command.ts')))
   }
 
   @Test()
@@ -75,13 +75,13 @@ export default class ArtisanTest extends BaseTest {
 
     await Artisan.boot(['node', 'artisan', 'test:generate'], {
       displayName: null,
-      routePath: Path.stubs('routes/console.ts'),
-      kernelPath: Path.stubs('kernels/ConsoleKernel.ts'),
+      routePath: Path.fixtures('routes/console.ts'),
+      kernelPath: Path.fixtures('kernels/ConsoleKernel.ts')
     })
 
     assert.isTrue(ExitFaker.faker.called)
     assert.isTrue(CALLED_MAP.get(ConsoleKernel.name))
-    assert.isTrue(await File.exists(Path.stubs('storage/Command.ts')))
+    assert.isTrue(await File.exists(Path.fixtures('storage/Command.ts')))
   }
 
   @Test()
@@ -91,12 +91,12 @@ export default class ArtisanTest extends BaseTest {
 
     await Artisan.boot(['node', 'artisan', 'test:generate'], {
       displayName: null,
-      routePath: Path.stubs('routes/console.ts'),
-      exceptionHandlerPath: Path.stubs('handlers/ConsoleExceptionHandler.ts'),
+      routePath: Path.fixtures('routes/console.ts'),
+      exceptionHandlerPath: Path.fixtures('handlers/ConsoleExceptionHandler.ts')
     })
 
     assert.isTrue(ExitFaker.faker.called)
     assert.isTrue(CALLED_MAP.get(ConsoleExceptionHandler.name))
-    assert.isTrue(await File.exists(Path.stubs('storage/Command.ts')))
+    assert.isTrue(await File.exists(Path.fixtures('storage/Command.ts')))
   }
 }

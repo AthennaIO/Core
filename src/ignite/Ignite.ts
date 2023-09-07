@@ -11,7 +11,7 @@ import type {
   ArtisanOptions,
   HttpOptions,
   IgniteOptions,
-  SemverNode,
+  SemverNode
 } from '#src/types'
 
 import { Ioc } from '@athenna/ioc'
@@ -63,7 +63,7 @@ export class Ignite {
         environments: [],
         loadConfigSafe: true,
         athennaRcPath: './.athennarc.json',
-        uncaughtExceptionHandler: this.handleError,
+        uncaughtExceptionHandler: this.handleError
       })
 
       this.setUncaughtExceptionHandler()
@@ -361,12 +361,12 @@ export class Ignite {
       middlewares: [],
       namedMiddlewares: {},
       globalMiddlewares: {},
-      environments: [],
+      environments: []
     }
 
     const replaceableConfigs = {
       bootLogs: this.options.bootLogs,
-      shutdownLogs: this.options.shutdownLogs,
+      shutdownLogs: this.options.shutdownLogs
     }
 
     if (file.fileExists) {
@@ -374,7 +374,7 @@ export class Ignite {
         ...athennaRc,
         ...file.getContentAsJsonSync(),
         ...Config.get('rc', {}),
-        ...replaceableConfigs,
+        ...replaceableConfigs
       })
 
       this.options.athennaRcPath = file.path
@@ -388,7 +388,7 @@ export class Ignite {
       Config.set('rc', {
         ...athennaRc,
         ...Config.get('rc', {}),
-        ...replaceableConfigs,
+        ...replaceableConfigs
       })
 
       this.options.athennaRcPath = null
@@ -402,7 +402,7 @@ export class Ignite {
       ...athennaRc,
       ...pkgJson.athenna,
       ...Config.get('rc', {}),
-      ...replaceableConfigs,
+      ...replaceableConfigs
     })
 
     await Rc.setFile(this.options.athennaRcPath)
@@ -467,7 +467,7 @@ export class Ignite {
         version: null,
         toString() {
           return this.version
-        },
+        }
       }
     }
 
@@ -479,7 +479,7 @@ export class Ignite {
       version: parsed.version,
       toString() {
         return this.version
-      },
+      }
     }
   }
 
