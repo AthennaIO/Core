@@ -14,7 +14,7 @@ export class NotSatisfiedNodeVersion extends Exception {
     super({
       status: 500,
       message: `The installed Node.js version "${nodeVersion}" does not satisfy the expected version "${nodeEngineVersion}" defined inside package.json file`,
-      help: `Try upgrading your Node.js version to the engine specified ${nodeEngineVersion}. You can go to the Node.js download page (https://nodejs.org/en/download/) or use NVM (https://github.com/nvm-sh/nvm) to update your version.`,
+      help: `Try upgrading your Node.js version to the engine specified ${nodeEngineVersion}. You can go to the Node.js download page (https://nodejs.org/en/download/) or use NVM (https://github.com/nvm-sh/nvm) to update your version.`
     })
   }
 }

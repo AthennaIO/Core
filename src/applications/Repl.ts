@@ -26,7 +26,7 @@ export class Repl {
         gray: () => null,
         green: () => null,
         purple: () => null,
-        yellow: () => null,
+        yellow: () => null
       }
     }
 
@@ -36,7 +36,7 @@ export class Repl {
       gray: m => process.stdout.write(Color.gray(m + '\n')),
       green: m => process.stdout.write(Color.green(m + '\n')),
       purple: m => process.stdout.write(Color.purple(m + '\n')),
-      yellow: m => process.stdout.write(Color.yellow(m + '\n')),
+      yellow: m => process.stdout.write(Color.yellow(m + '\n'))
     }
   }
 
@@ -56,7 +56,7 @@ export class Repl {
     Repl.log.gray("const { User } = await import('#app/Models/User')\n")
 
     Repl.log.write(
-      `${Color.yellow.bold('To see all commands available type:')} .help\n`,
+      `${Color.yellow.bold('To see all commands available type:')} .help\n`
     )
 
     repl.setPrompt(Repl.getPrompt())
@@ -117,24 +117,22 @@ export class Repl {
 
         if (nodeInternals.length) {
           Repl.log.write(
-            `${Color.green.bold('\nFROM NODE:')}\n\n${nodeInternals.join(
-              '\n',
-            )}`,
+            `${Color.green.bold('\nFROM NODE:')}\n\n${nodeInternals.join('\n')}`
           )
         }
 
         if (athennaInternals.length) {
           Repl.log.write(
             `${Color.purple.bold('\nFROM ATHENNA:')}\n\n${athennaInternals.join(
-              '\n',
-            )}`,
+              '\n'
+            )}`
           )
         }
 
         Repl.log.write('')
 
         this.displayPrompt()
-      },
+      }
     })
   }
 
@@ -144,7 +142,7 @@ export class Repl {
   private static defineCleanCommand(repl: PrettyREPLServer) {
     repl.defineCommand('clean', {
       help: `Clean any property of REPL global context. Example: .clean ${Color.gray(
-        '(propertyName)',
+        '(propertyName)'
       )}`,
       action(property) {
         this.clearBufferedCommand()
@@ -154,7 +152,7 @@ export class Repl {
         if (!property) {
           Repl.log.red('You have not provided any property to remove.')
           Repl.log.write(
-            `Try like this: .clean ${Color.gray('(propertyName)')}\n`,
+            `Try like this: .clean ${Color.gray('(propertyName)')}\n`
           )
 
           return this.displayPrompt()
@@ -162,10 +160,10 @@ export class Repl {
 
         if (!repl.context[property]) {
           Repl.log.red(
-            `The property "${property}" doesn't exist inside REPL global context.`,
+            `The property "${property}" doesn't exist inside REPL global context.`
           )
           Repl.log.red(
-            'Use the ".ls" command to check the properties available in REPL global context.',
+            'Use the ".ls" command to check the properties available in REPL global context.'
           )
 
           return this.displayPrompt()
@@ -174,11 +172,11 @@ export class Repl {
         delete repl.context[property]
 
         Repl.log.green(
-          `Property "${property}" successfully removed from REPL global context.\n`,
+          `Property "${property}" successfully removed from REPL global context.\n`
         )
 
         this.displayPrompt()
-      },
+      }
     })
   }
 }

@@ -120,9 +120,9 @@ build
 *.js
 *.d.ts
 *.js.map
-!tests/stubs/**/*.js
-!tests/stubs/**/*.d.ts
-!tests/stubs/**/*.js.map
+!tests/fixtures/**/*.js
+!tests/fixtures/**/*.d.ts
+!tests/fixtures/**/*.js.map
 
 # IDE
 .idea
@@ -133,7 +133,7 @@ build
 .env
 .env.testing
 .env.production
-!tests/stubs/.env
+!tests/fixtures/**/.env**
 
 # MacOS folder mapper file
 .DS_Store

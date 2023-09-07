@@ -14,7 +14,7 @@ export class ReplCommand extends BaseCommand {
   @Option({
     signature: '-e, --env <env>',
     description: 'Change the environment where the application will run.',
-    default: '',
+    default: ''
   })
   public env: string
 
@@ -26,7 +26,6 @@ export class ReplCommand extends BaseCommand {
     return 'Start a new REPL session with Athenna application loaded.'
   }
 
-  // TODO Verify if this command still makes sense to exist.
   public async handle(): Promise<void> {
     if (this.env !== '') {
       process.env.NODE_ENV = this.env
@@ -34,7 +33,7 @@ export class ReplCommand extends BaseCommand {
 
     const entrypoint = Config.get(
       'rc.commands.repl.entrypoint',
-      Path.bootstrap(`repl.${Path.ext()}`),
+      Path.bootstrap(`repl.${Path.ext()}`)
     )
 
     await Module.resolve(entrypoint, Config.get('rc.meta'))

@@ -33,17 +33,17 @@ Config.set('rc.commands', {
   'make:test': '#src/commands/MakeTestCommand',
   serve: {
     entrypoint: '#bin/http',
-    path: '#src/commands/ServeCommand',
+    path: '#src/commands/ServeCommand'
   },
   test: {
     entrypoint: '#bin/test',
-    path: '#src/commands/TestCommand',
+    path: '#src/commands/TestCommand'
   },
   repl: {
     entrypoint: '#bin/repl',
-    path: '#src/commands/ReplCommand',
+    path: '#src/commands/ReplCommand'
   },
-  greet: '#tests/stubs/commands/GreetCommand',
+  greet: '#tests/fixtures/commands/GreetCommand'
 })
 
 /*

@@ -23,7 +23,7 @@ export class BaseRestTest {
   public async baseBeforeAll() {
     this.ignite = await new Ignite().load(
       pathToFileURL(Path.bootstrap(`test.${Path.ext()}`)).href,
-      this.getIgniteOptions(),
+      this.getIgniteOptions()
     )
 
     this.restServer = await this.ignite.httpServer(this.getRestOptions())
@@ -42,7 +42,7 @@ export class BaseRestTest {
     return Options.create(this.igniteOptions, {
       bootLogs: false,
       loadConfigSafe: false,
-      environments: ['test'],
+      environments: ['test']
     })
   }
 }

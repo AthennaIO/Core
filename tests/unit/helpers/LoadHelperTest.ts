@@ -18,11 +18,11 @@ export default class LoadHelperTest extends BaseTest {
   @BeforeEach()
   public setProviders() {
     Config.set('rc.providers', [
-      '#tests/stubs/providers/ReplEnvProvider',
-      '#tests/stubs/providers/HttpEnvProvider',
-      '#tests/stubs/providers/WorkerEnvProvider',
-      '#tests/stubs/providers/ConsoleEnvProvider',
-      '#tests/stubs/providers/HttpAndConsoleEnvProvider',
+      '#tests/fixtures/providers/ReplEnvProvider',
+      '#tests/fixtures/providers/HttpEnvProvider',
+      '#tests/fixtures/providers/WorkerEnvProvider',
+      '#tests/fixtures/providers/ConsoleEnvProvider',
+      '#tests/fixtures/providers/HttpAndConsoleEnvProvider'
     ])
   }
 
@@ -72,12 +72,12 @@ export default class LoadHelperTest extends BaseTest {
   public async shouldLoadProviderIfHisFirstIndexOfEnvironmentMethodIsAnAstheristic({ assert }: Context) {
     Config.set('rc.environments', [])
     Config.set('rc.providers', [
-      '#tests/stubs/providers/AllEnvProvider',
-      '#tests/stubs/providers/ReplEnvProvider',
-      '#tests/stubs/providers/HttpEnvProvider',
-      '#tests/stubs/providers/WorkerEnvProvider',
-      '#tests/stubs/providers/ConsoleEnvProvider',
-      '#tests/stubs/providers/HttpAndConsoleEnvProvider',
+      '#tests/fixtures/providers/AllEnvProvider',
+      '#tests/fixtures/providers/ReplEnvProvider',
+      '#tests/fixtures/providers/HttpEnvProvider',
+      '#tests/fixtures/providers/WorkerEnvProvider',
+      '#tests/fixtures/providers/ConsoleEnvProvider',
+      '#tests/fixtures/providers/HttpAndConsoleEnvProvider'
     ])
 
     await LoadHelper.loadBootableProviders()
@@ -208,7 +208,7 @@ export default class LoadHelperTest extends BaseTest {
 
   @Test()
   public async shouldBeAbleToPreloadFiles({ assert }: Context) {
-    Config.set('rc.preloads', ['#tests/stubs/routes/load'])
+    Config.set('rc.preloads', ['#tests/fixtures/routes/load'])
 
     await LoadHelper.preloadFiles()
 
@@ -218,7 +218,7 @@ export default class LoadHelperTest extends BaseTest {
   @Test()
   public async shouldBeAbleToLogPreloadFilesThatAreBeingImportedIfRcBootLogsIsTrue({ assert }: Context) {
     Config.set('rc.bootLogs', true)
-    Config.set('rc.preloads', ['#tests/stubs/routes/load'])
+    Config.set('rc.preloads', ['#tests/fixtures/routes/load'])
 
     const mock = Log.getMock()
     const successFake = fake()
@@ -238,14 +238,14 @@ export default class LoadHelperTest extends BaseTest {
 
   @Test()
   public async shouldNotPreloadFilesThatHasBeenAlreadyLoaded({ assert }: Context) {
-    Config.set('rc.preloads', ['#tests/stubs/routes/load'])
+    Config.set('rc.preloads', ['#tests/fixtures/routes/load'])
 
     await LoadHelper.preloadFiles()
 
-    assert.deepEqual(LoadHelper.alreadyPreloaded, ['#tests/stubs/routes/load'])
+    assert.deepEqual(LoadHelper.alreadyPreloaded, ['#tests/fixtures/routes/load'])
 
     await LoadHelper.preloadFiles()
 
-    assert.deepEqual(LoadHelper.alreadyPreloaded, ['#tests/stubs/routes/load'])
+    assert.deepEqual(LoadHelper.alreadyPreloaded, ['#tests/fixtures/routes/load'])
   }
 }

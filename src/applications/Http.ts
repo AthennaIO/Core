@@ -22,7 +22,7 @@ export class Http {
       port: Config.get('http.port', 3000),
       trace: Config.get('http.trace', false),
       routePath: Path.routes(`http.${Path.ext()}`),
-      kernelPath: '@athenna/http/kernels/HttpKernel',
+      kernelPath: '@athenna/http/kernels/HttpKernel'
     })
 
     const server = ioc.safeUse('Athenna/Core/HttpServer')
@@ -49,7 +49,7 @@ export class Http {
       }
 
       Log.channelOrVanilla('application').success(
-        `Http server started on ({yellow} ${path})`,
+        `Http server started on ({yellow} ${path})`
       )
     })
 
@@ -64,7 +64,7 @@ export class Http {
   private static async resolveKernel(options?: HttpOptions) {
     const Kernel = await Module.resolve(
       options.kernelPath,
-      Config.get('rc.meta'),
+      Config.get('rc.meta')
     )
 
     const kernel = new Kernel()
@@ -86,7 +86,7 @@ export class Http {
 
     if (Config.is('rc.bootLogs', true)) {
       Log.channelOrVanilla('application').success(
-        `Kernel ({yellow} ${Kernel.name}) successfully booted`,
+        `Kernel ({yellow} ${Kernel.name}) successfully booted`
       )
     }
   }

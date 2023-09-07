@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "4.7.0",
+  "version": "4.8.0",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -70,14 +70,14 @@
     "semver": "^7.5.4"
   },
   "devDependencies": {
-    "@athenna/artisan": "^4.8.0",
-    "@athenna/common": "^4.9.2",
-    "@athenna/config": "^4.3.0",
-    "@athenna/http": "^4.4.0",
-    "@athenna/ioc": "^4.1.0",
-    "@athenna/logger": "^4.2.0",
-    "@athenna/test": "^4.3.0",
-    "@athenna/view": "^4.1.0",
+    "@athenna/artisan": "^4.9.0",
+    "@athenna/common": "^4.10.1",
+    "@athenna/config": "^4.4.0",
+    "@athenna/http": "^4.5.0",
+    "@athenna/ioc": "^4.2.0",
+    "@athenna/logger": "^4.3.0",
+    "@athenna/test": "^4.5.0",
+    "@athenna/view": "^4.2.0",
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
     "c8": "^7.12.0",
@@ -140,7 +140,7 @@
   },
   "prettier": {
     "singleQuote": true,
-    "trailingComma": "all",
+    "trailingComma": "none",
     "arrowParens": "avoid",
     "endOfLine": "lf",
     "semi": false,
@@ -155,7 +155,7 @@
     ]
   },
   "eslintIgnore": [
-    "tests/stubs/syntaxErrorConfig/*"
+    "tests/fixtures/syntaxErrorConfig/*"
   ],
   "eslintConfig": {
     "env": {
@@ -236,7 +236,7 @@
       },
       "build": {
         "path": "#src/commands/BuildCommand",
-        "tsconfig": "./tests/stubs/tsconfig.json",
+        "tsconfig": "./tests/fixtures/tsconfig.json",
         "metaFiles": [
           "app/hello.edge",
           "LICENSE.md",
@@ -245,8 +245,8 @@
       }
     },
     "services": [
-      "#tests/stubs/services/WelcomeService",
-      "#tests/stubs/services/DecoratedWelcomeService"
+      "#tests/fixtures/services/WelcomeService",
+      "#tests/fixtures/services/DecoratedWelcomeService"
     ],
     "providers": [
       "#src/providers/CoreProvider",
@@ -254,7 +254,7 @@
       "@athenna/http/providers/HttpServerProvider"
     ],
     "preloads": [
-      "#tests/stubs/routes/http"
+      "#tests/fixtures/routes/http"
     ]
   }
 }

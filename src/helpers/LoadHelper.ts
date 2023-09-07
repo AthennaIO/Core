@@ -34,8 +34,8 @@ export class LoadHelper {
     if (Config.is('rc.bootLogs', true)) {
       this.providers.forEach(Provider =>
         Log.channelOrVanilla('application').success(
-          `Provider ({yellow} ${Provider.name}) successfully booted`,
-        ),
+          `Provider ({yellow} ${Provider.name}) successfully booted`
+        )
       )
     }
   }
@@ -46,7 +46,7 @@ export class LoadHelper {
   public static async bootProviders(): Promise<void> {
     await Exec.concurrently(
       this.providers,
-      Provider => new Provider().boot() as Promise<void>,
+      Provider => new Provider().boot() as Promise<void>
     )
   }
 
@@ -56,7 +56,7 @@ export class LoadHelper {
   public static async registerProviders(): Promise<void> {
     await Exec.concurrently(
       this.providers,
-      Provider => new Provider().register() as Promise<void>,
+      Provider => new Provider().register() as Promise<void>
     )
   }
 
@@ -67,7 +67,7 @@ export class LoadHelper {
     await Exec.concurrently(this.providers, Provider => {
       if (Config.is('rc.shutdownLogs', true)) {
         Log.channelOrVanilla('application').success(
-          `Provider ({yellow} ${Provider.name}) successfully shutdown`,
+          `Provider ({yellow} ${Provider.name}) successfully shutdown`
         )
       }
 
@@ -86,7 +86,7 @@ export class LoadHelper {
 
       if (Config.is('rc.bootLogs', true)) {
         Log.channelOrVanilla('application').success(
-          `File ({yellow} ${parse(path).base}) successfully preloaded`,
+          `File ({yellow} ${parse(path).base}) successfully preloaded`
         )
       }
 

@@ -13,7 +13,7 @@ import { BaseCommand, Argument } from '@athenna/artisan'
 
 export class MakeProviderCommand extends BaseCommand {
   @Argument({
-    description: 'The provider name.',
+    description: 'The provider name.'
   })
   public name: string
 
@@ -35,7 +35,7 @@ export class MakeProviderCommand extends BaseCommand {
       .make()
 
     this.logger.success(
-      `Provider ({yellow} "${file.name}") successfully created.`,
+      `Provider ({yellow} "${file.name}") successfully created.`
     )
 
     const importPath = this.getImportPath(file.name)
@@ -43,7 +43,7 @@ export class MakeProviderCommand extends BaseCommand {
     await this.rc.pushTo('providers', importPath).save()
 
     this.logger.success(
-      `Athenna RC updated: ({dim,yellow} [ providers += "${importPath}" ])`,
+      `Athenna RC updated: ({dim,yellow} [ providers += "${importPath}" ])`
     )
   }
 
@@ -60,7 +60,7 @@ export class MakeProviderCommand extends BaseCommand {
   private getDestinationPath(): string {
     let destination = Config.get(
       'rc.commands.make:provider.destination',
-      Path.providers(),
+      Path.providers()
     )
 
     if (!isAbsolute(destination)) {

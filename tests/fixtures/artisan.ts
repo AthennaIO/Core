@@ -27,20 +27,20 @@ process.env.CORE_TESTING = 'true'
 
 Config.set('rc.commands.test', {
   path: '#src/commands/TestCommand',
-  entrypoint: '#tests/stubs/tests/main',
+  entrypoint: '#tests/fixtures/tests/main'
 })
 Config.set('rc.commands.repl', {
   path: '#src/commands/ReplCommand',
-  entrypoint: '#tests/stubs/bootstrap/repl',
+  entrypoint: '#tests/fixtures/bootstrap/repl'
 })
 Config.set('rc.commands.serve', {
   path: '#src/commands/ServeCommand',
-  entrypoint: '#tests/stubs/bootstrap/main',
+  entrypoint: '#tests/fixtures/bootstrap/main'
 })
 Config.set('rc.commands.build', {
   path: '#src/commands/BuildCommand',
-  tsconfig: './tests/stubs/tsconfig.json',
-  metaFiles: ['app/hello.edge', 'LICENSE.md', '.env'],
+  tsconfig: './tests/fixtures/tsconfig.json',
+  metaFiles: ['app/hello.edge', 'LICENSE.md', '.env']
 })
 
 /*

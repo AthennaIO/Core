@@ -29,7 +29,7 @@ export class BaseTest {
     process.env.CORE_TESTING = 'true'
     process.env.ARTISAN_TESTING = 'true'
 
-    await Config.loadAll(Path.stubs('config'))
+    await Config.loadAll(Path.fixtures('config'))
 
     Config.set('meta', new URL('../../bin/test.ts', import.meta.url).href)
 
@@ -61,7 +61,7 @@ export class BaseTest {
 
     await File.safeRemove(Path.pwd('.env'))
     await File.safeRemove(Path.pwd('.env.local'))
-    await Folder.safeRemove(Path.stubs('storage'))
+    await Folder.safeRemove(Path.fixtures('storage'))
 
     await new File(Path.pwd('package.json')).setContent(JSON.stringify(this.originalPJson, null, 2).concat('\n'))
   }

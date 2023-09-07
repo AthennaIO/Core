@@ -17,8 +17,8 @@ import { Test, type Context } from '@athenna/test'
 import { BaseTest } from '#tests/helpers/BaseTest'
 import { LoadHelper } from '#src/helpers/LoadHelper'
 import { CALLED_MAP } from '#tests/helpers/CalledMap'
-import { HttpKernel } from '#tests/stubs/kernels/HttpKernel'
-import { HttpExceptionHandler } from '#tests/stubs/handlers/HttpExceptionHandler'
+import { HttpKernel } from '#tests/fixtures/kernels/HttpKernel'
+import { HttpExceptionHandler } from '#tests/fixtures/handlers/HttpExceptionHandler'
 
 export default class HttpTest extends BaseTest {
   @Test()
@@ -83,7 +83,7 @@ export default class HttpTest extends BaseTest {
   @Test()
   public async shouldBeAbleToBootAHttpApplicationAndRegisterAHttpKernel({ assert }: Context) {
     await Http.boot({
-      kernelPath: Path.stubs('kernels/HttpKernel.ts'),
+      kernelPath: Path.fixtures('kernels/HttpKernel.ts')
     })
 
     assert.isTrue(CALLED_MAP.get(HttpKernel.name))
@@ -92,7 +92,7 @@ export default class HttpTest extends BaseTest {
   @Test()
   public async shouldBeAbleToBootAHttpApplicationAndRegisterADifferentExceptionHandler({ assert }: Context) {
     await Http.boot({
-      exceptionHandlerPath: Path.stubs('handlers/HttpExceptionHandler.ts'),
+      exceptionHandlerPath: Path.fixtures('handlers/HttpExceptionHandler.ts')
     })
 
     assert.isTrue(CALLED_MAP.get(HttpExceptionHandler.name))
@@ -101,7 +101,7 @@ export default class HttpTest extends BaseTest {
   @Test()
   public async shouldBeAbleToBootAHttpApplicationAndRegisterADifferentRouteFile({ assert }: Context) {
     await Http.boot({
-      routePath: Path.stubs('routes/http.ts'),
+      routePath: Path.fixtures('routes/http.ts')
     })
 
     const response = await Server.request().get('/hello')

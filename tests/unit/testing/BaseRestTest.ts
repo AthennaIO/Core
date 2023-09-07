@@ -4,7 +4,7 @@ import type { HttpOptions } from '#src/index'
 
 export default class BaseRestTest extends InternalBaseRestTest {
   public restOptions: HttpOptions = {
-    routePath: Path.stubs('routes/http.ts'),
+    routePath: Path.fixtures('routes/http.ts')
   }
 
   @Test()

@@ -24,7 +24,7 @@ export class BaseCliTest {
 
     this.ignite = await new Ignite().load(
       pathToFileURL(Path.bootstrap(`test.${Path.ext()}`)).href,
-      this.getIgniteOptions(),
+      this.getIgniteOptions()
     )
   }
 
@@ -32,7 +32,7 @@ export class BaseCliTest {
     return Options.create(this.igniteOptions, {
       bootLogs: false,
       loadConfigSafe: false,
-      environments: ['test'],
+      environments: ['test']
     })
   }
 }
