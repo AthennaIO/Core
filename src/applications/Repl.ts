@@ -11,7 +11,7 @@ import figlet from 'figlet'
 import chalkRainbow from 'chalk-rainbow'
 
 import { Color } from '@athenna/common'
-import { type PrettyREPLServer, start } from 'pretty-repl'
+import type { PrettyREPLServer } from 'pretty-repl'
 import { INTERNAL_REPL_PROPS } from '#src/constants/InternalReplProps'
 
 export class Repl {
@@ -44,6 +44,8 @@ export class Repl {
    * Boot the Repl application and session.
    */
   public static async boot(): Promise<PrettyREPLServer> {
+    const { start } = await import('pretty-repl')
+
     const repl = start({ prompt: '' }).on('exit', Repl.handleExit)
 
     if (!Env('CORE_TESTING', false)) {

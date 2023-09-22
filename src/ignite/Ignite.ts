@@ -190,7 +190,7 @@ export class Ignite {
   public setUncaughtExceptionHandler(): void {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    if (Is.Array(process._events.uncaughtException)) {
+    if (Is.Array(process?._events?.uncaughtException)) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       process._events.uncaughtException.splice(1, 1)
@@ -360,7 +360,7 @@ export class Ignite {
       controllers: [],
       middlewares: [],
       namedMiddlewares: {},
-      globalMiddlewares: {},
+      globalMiddlewares: [],
       environments: []
     }
 
@@ -443,6 +443,12 @@ export class Ignite {
    * Handle an error turning it pretty and logging as fatal.
    */
   private async handleError(error: any) {
+    if (process.versions.bun) {
+      console.error(error)
+
+      process.exit(1)
+    }
+
     if (!Is.Exception(error)) {
       error = error.toAthennaException()
     }

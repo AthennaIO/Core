@@ -9,7 +9,7 @@
 
 import { File } from '@athenna/common'
 import { Artisan } from '@athenna/artisan'
-import { Test, ExitFaker, type Context } from '@athenna/test'
+import { Test, type Context } from '@athenna/test'
 import { BaseCommandTest } from '#tests/helpers/BaseCommandTest'
 
 export default class MakeFacadeCommandTest extends BaseCommandTest {
@@ -20,7 +20,7 @@ export default class MakeFacadeCommandTest extends BaseCommandTest {
     const path = Path.facades('TestFacade.ts')
 
     assert.isTrue(await File.exists(path))
-    assert.isTrue(ExitFaker.faker.calledOnceWith(0))
+    assert.isTrue(this.processExitMock.calledOnceWith(0))
   }
 
   @Test()
@@ -32,7 +32,7 @@ export default class MakeFacadeCommandTest extends BaseCommandTest {
     const path = Path.fixtures('storage/facades/TestFacade.ts')
 
     assert.isTrue(await File.exists(path))
-    assert.isTrue(ExitFaker.faker.calledOnceWith(0))
+    assert.isTrue(this.processExitMock.calledOnceWith(0))
   }
 
   @Test()
@@ -40,6 +40,6 @@ export default class MakeFacadeCommandTest extends BaseCommandTest {
     await Artisan.call('make:facade TestFacade', false)
     await Artisan.call('make:facade TestFacade', false)
 
-    assert.isTrue(ExitFaker.faker.calledWith(1))
+    assert.isTrue(this.processExitMock.calledWith(1))
   }
 }

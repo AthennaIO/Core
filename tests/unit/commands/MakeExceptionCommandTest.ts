@@ -9,7 +9,7 @@
 
 import { File } from '@athenna/common'
 import { Artisan } from '@athenna/artisan'
-import { Test, ExitFaker, type Context } from '@athenna/test'
+import { Test, type Context } from '@athenna/test'
 import { BaseCommandTest } from '#tests/helpers/BaseCommandTest'
 
 export default class MakeExceptionCommandTest extends BaseCommandTest {
@@ -20,7 +20,7 @@ export default class MakeExceptionCommandTest extends BaseCommandTest {
     const path = Path.exceptions('TestException.ts')
 
     assert.isTrue(await File.exists(path))
-    assert.isTrue(ExitFaker.faker.calledOnceWith(0))
+    assert.isTrue(this.processExitMock.calledOnceWith(0))
   }
 
   @Test()
@@ -32,7 +32,7 @@ export default class MakeExceptionCommandTest extends BaseCommandTest {
     const path = Path.fixtures('storage/exceptions/TestException.ts')
 
     assert.isTrue(await File.exists(path))
-    assert.isTrue(ExitFaker.faker.calledOnceWith(0))
+    assert.isTrue(this.processExitMock.calledOnceWith(0))
   }
 
   @Test()
@@ -40,6 +40,6 @@ export default class MakeExceptionCommandTest extends BaseCommandTest {
     await Artisan.call('make:exception TestException', false)
     await Artisan.call('make:exception TestException', false)
 
-    assert.isTrue(ExitFaker.faker.calledWith(1))
+    assert.isTrue(this.processExitMock.calledWith(1))
   }
 }

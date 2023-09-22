@@ -79,7 +79,7 @@ export class LoadHelper {
    * Preload all the files inside "rc.preloads" configuration by importing.
    */
   public static async preloadFiles(): Promise<void> {
-    await Exec.concurrently(Config.get('rc.preloads'), path => {
+    await Exec.concurrently(Config.get('rc.preloads', []), path => {
       if (this.alreadyPreloaded.includes(path)) {
         return
       }
@@ -99,7 +99,7 @@ export class LoadHelper {
    * the providers have the same value of "rc.s".
    */
   public static async loadBootableProviders(): Promise<void> {
-    const paths = Config.get('rc.providers')
+    const paths = Config.get('rc.providers', [])
     const providers = await Exec.concurrently(paths, this.resolvePath)
 
     this.providers = providers.filter(Provider => {

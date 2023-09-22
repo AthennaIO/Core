@@ -7,12 +7,11 @@
  * file that was distributed with this source code.
  */
 
-import { fake } from 'sinon'
 import { LoadHelper } from '#src'
 import { Log } from '@athenna/logger'
 import { BaseTest } from '#tests/helpers/BaseTest'
 import { CALLED_MAP } from '#tests/helpers/CalledMap'
-import { Test, BeforeEach, type Context } from '@athenna/test'
+import { Test, BeforeEach, type Context, Mock } from '@athenna/test'
 
 export default class LoadHelperTest extends BaseTest {
   @BeforeEach()
@@ -90,16 +89,16 @@ export default class LoadHelperTest extends BaseTest {
     await LoadHelper.loadBootableProviders()
     await LoadHelper.registerProviders()
 
-    assert.isFalse(ioc.hasDependency('ReplEnvBoot'))
-    assert.isFalse(ioc.hasDependency('HttpEnvBoot'))
-    assert.isFalse(ioc.hasDependency('WorkerEnvBoot'))
-    assert.isFalse(ioc.hasDependency('ConsoleEnvBoot'))
-    assert.isFalse(ioc.hasDependency('HttpAndConsoleEnvBoot'))
-    assert.isTrue(ioc.hasDependency('ReplEnvRegister'))
-    assert.isTrue(ioc.hasDependency('HttpEnvRegister'))
-    assert.isTrue(ioc.hasDependency('WorkerEnvRegister'))
-    assert.isTrue(ioc.hasDependency('ConsoleEnvRegister'))
-    assert.isTrue(ioc.hasDependency('HttpAndConsoleEnvRegister'))
+    assert.isFalse(ioc.has('ReplEnvBoot'))
+    assert.isFalse(ioc.has('HttpEnvBoot'))
+    assert.isFalse(ioc.has('WorkerEnvBoot'))
+    assert.isFalse(ioc.has('ConsoleEnvBoot'))
+    assert.isFalse(ioc.has('HttpAndConsoleEnvBoot'))
+    assert.isTrue(ioc.has('ReplEnvRegister'))
+    assert.isTrue(ioc.has('HttpEnvRegister'))
+    assert.isTrue(ioc.has('WorkerEnvRegister'))
+    assert.isTrue(ioc.has('ConsoleEnvRegister'))
+    assert.isTrue(ioc.has('HttpAndConsoleEnvRegister'))
   }
 
   @Test()
@@ -107,16 +106,16 @@ export default class LoadHelperTest extends BaseTest {
     await LoadHelper.loadBootableProviders()
     await LoadHelper.bootProviders()
 
-    assert.isTrue(ioc.hasDependency('ReplEnvBoot'))
-    assert.isTrue(ioc.hasDependency('HttpEnvBoot'))
-    assert.isTrue(ioc.hasDependency('WorkerEnvBoot'))
-    assert.isTrue(ioc.hasDependency('ConsoleEnvBoot'))
-    assert.isTrue(ioc.hasDependency('HttpAndConsoleEnvBoot'))
-    assert.isFalse(ioc.hasDependency('ReplEnvRegister'))
-    assert.isFalse(ioc.hasDependency('HttpEnvRegister'))
-    assert.isFalse(ioc.hasDependency('WorkerEnvRegister'))
-    assert.isFalse(ioc.hasDependency('ConsoleEnvRegister'))
-    assert.isFalse(ioc.hasDependency('HttpAndConsoleEnvRegister'))
+    assert.isTrue(ioc.has('ReplEnvBoot'))
+    assert.isTrue(ioc.has('HttpEnvBoot'))
+    assert.isTrue(ioc.has('WorkerEnvBoot'))
+    assert.isTrue(ioc.has('ConsoleEnvBoot'))
+    assert.isTrue(ioc.has('HttpAndConsoleEnvBoot'))
+    assert.isFalse(ioc.has('ReplEnvRegister'))
+    assert.isFalse(ioc.has('HttpEnvRegister'))
+    assert.isFalse(ioc.has('WorkerEnvRegister'))
+    assert.isFalse(ioc.has('ConsoleEnvRegister'))
+    assert.isFalse(ioc.has('HttpAndConsoleEnvRegister'))
   }
 
   @Test()
@@ -124,86 +123,77 @@ export default class LoadHelperTest extends BaseTest {
     await LoadHelper.loadBootableProviders()
     await LoadHelper.shutdownProviders()
 
-    assert.isFalse(ioc.hasDependency('ReplEnvBoot'))
-    assert.isFalse(ioc.hasDependency('HttpEnvBoot'))
-    assert.isFalse(ioc.hasDependency('WorkerEnvBoot'))
-    assert.isFalse(ioc.hasDependency('ConsoleEnvBoot'))
-    assert.isFalse(ioc.hasDependency('HttpAndConsoleEnvBoot'))
-    assert.isFalse(ioc.hasDependency('ReplEnvRegister'))
-    assert.isFalse(ioc.hasDependency('HttpEnvRegister'))
-    assert.isFalse(ioc.hasDependency('WorkerEnvRegister'))
-    assert.isFalse(ioc.hasDependency('ConsoleEnvRegister'))
-    assert.isFalse(ioc.hasDependency('HttpAndConsoleEnvRegister'))
-    assert.isTrue(ioc.hasDependency('ReplEnvShutdown'))
-    assert.isTrue(ioc.hasDependency('HttpEnvShutdown'))
-    assert.isTrue(ioc.hasDependency('WorkerEnvShutdown'))
-    assert.isTrue(ioc.hasDependency('ConsoleEnvShutdown'))
-    assert.isTrue(ioc.hasDependency('HttpAndConsoleEnvShutdown'))
+    assert.isFalse(ioc.has('ReplEnvBoot'))
+    assert.isFalse(ioc.has('HttpEnvBoot'))
+    assert.isFalse(ioc.has('WorkerEnvBoot'))
+    assert.isFalse(ioc.has('ConsoleEnvBoot'))
+    assert.isFalse(ioc.has('HttpAndConsoleEnvBoot'))
+    assert.isFalse(ioc.has('ReplEnvRegister'))
+    assert.isFalse(ioc.has('HttpEnvRegister'))
+    assert.isFalse(ioc.has('WorkerEnvRegister'))
+    assert.isFalse(ioc.has('ConsoleEnvRegister'))
+    assert.isFalse(ioc.has('HttpAndConsoleEnvRegister'))
+    assert.isTrue(ioc.has('ReplEnvShutdown'))
+    assert.isTrue(ioc.has('HttpEnvShutdown'))
+    assert.isTrue(ioc.has('WorkerEnvShutdown'))
+    assert.isTrue(ioc.has('ConsoleEnvShutdown'))
+    assert.isTrue(ioc.has('HttpAndConsoleEnvShutdown'))
   }
 
   @Test()
   public async shouldBeAbleToLogThatProvidersAreShutingdownIfRcShutdownLogsIsTrue({ assert }: Context) {
     Config.set('rc.shutdownLogs', true)
 
-    const mock = Log.getMock()
-    const successFake = fake()
-
-    mock
-      .expects('channelOrVanilla')
-      .exactly(5)
-      .withArgs('application')
-      .returns({ success: args => successFake(args) })
+    const successFake = Mock.sandbox.fake()
+    const mock = Log.when('channelOrVanilla').return({
+      success: args => successFake(args)
+    })
 
     await LoadHelper.loadBootableProviders()
     await LoadHelper.shutdownProviders()
 
-    assert.isTrue(successFake.calledWith('Provider ({yellow} ReplEnvProvider) successfully shutdown'))
-    assert.isTrue(successFake.calledWith('Provider ({yellow} HttpEnvProvider) successfully shutdown'))
-    assert.isTrue(successFake.calledWith('Provider ({yellow} WorkerEnvProvider) successfully shutdown'))
-    assert.isTrue(successFake.calledWith('Provider ({yellow} ConsoleEnvProvider) successfully shutdown'))
-    assert.isTrue(successFake.calledWith('Provider ({yellow} HttpAndConsoleEnvProvider) successfully shutdown'))
-
-    mock.verify()
+    assert.calledWith(successFake, 'Provider ({yellow} ReplEnvProvider) successfully shutdown')
+    assert.calledWith(successFake, 'Provider ({yellow} HttpEnvProvider) successfully shutdown')
+    assert.calledWith(successFake, 'Provider ({yellow} WorkerEnvProvider) successfully shutdown')
+    assert.calledWith(successFake, 'Provider ({yellow} ConsoleEnvProvider) successfully shutdown')
+    assert.calledWith(successFake, 'Provider ({yellow} HttpAndConsoleEnvProvider) successfully shutdown')
+    assert.calledTimesWith(mock, 5, 'application')
   }
 
   @Test()
   public async shouldBeAbleToRegootProviders({ assert }: Context) {
     await LoadHelper.regootProviders()
 
-    assert.isTrue(ioc.hasDependency('ReplEnvBoot'))
-    assert.isTrue(ioc.hasDependency('HttpEnvBoot'))
-    assert.isTrue(ioc.hasDependency('WorkerEnvBoot'))
-    assert.isTrue(ioc.hasDependency('ConsoleEnvBoot'))
-    assert.isTrue(ioc.hasDependency('HttpAndConsoleEnvBoot'))
-    assert.isTrue(ioc.hasDependency('ReplEnvRegister'))
-    assert.isTrue(ioc.hasDependency('HttpEnvRegister'))
-    assert.isTrue(ioc.hasDependency('WorkerEnvRegister'))
-    assert.isTrue(ioc.hasDependency('ConsoleEnvRegister'))
-    assert.isTrue(ioc.hasDependency('HttpAndConsoleEnvRegister'))
+    assert.isTrue(ioc.has('ReplEnvBoot'))
+    assert.isTrue(ioc.has('HttpEnvBoot'))
+    assert.isTrue(ioc.has('WorkerEnvBoot'))
+    assert.isTrue(ioc.has('ConsoleEnvBoot'))
+    assert.isTrue(ioc.has('HttpAndConsoleEnvBoot'))
+    assert.isTrue(ioc.has('ReplEnvRegister'))
+    assert.isTrue(ioc.has('HttpEnvRegister'))
+    assert.isTrue(ioc.has('WorkerEnvRegister'))
+    assert.isTrue(ioc.has('ConsoleEnvRegister'))
+    assert.isTrue(ioc.has('HttpAndConsoleEnvRegister'))
   }
 
   @Test()
   public async shouldBeAbleToLogThatProvidersAreRegootingIfRcBootLogsIsTrue({ assert }: Context) {
     Config.set('rc.bootLogs', true)
 
-    const mock = Log.getMock()
-    const successFake = fake()
-
-    mock
-      .expects('channelOrVanilla')
-      .exactly(5)
-      .withArgs('application')
-      .returns({ success: args => successFake(args) })
+    const successFake = Mock.sandbox.fake()
+    const mock = Log.when('channelOrVanilla').return({
+      success: args => successFake(args)
+    })
 
     await LoadHelper.regootProviders()
 
-    assert.isTrue(successFake.calledWith('Provider ({yellow} ReplEnvProvider) successfully booted'))
-    assert.isTrue(successFake.calledWith('Provider ({yellow} HttpEnvProvider) successfully booted'))
-    assert.isTrue(successFake.calledWith('Provider ({yellow} WorkerEnvProvider) successfully booted'))
-    assert.isTrue(successFake.calledWith('Provider ({yellow} ConsoleEnvProvider) successfully booted'))
-    assert.isTrue(successFake.calledWith('Provider ({yellow} HttpAndConsoleEnvProvider) successfully booted'))
+    assert.calledWith(successFake, 'Provider ({yellow} ReplEnvProvider) successfully booted')
+    assert.calledWith(successFake, 'Provider ({yellow} HttpEnvProvider) successfully booted')
+    assert.calledWith(successFake, 'Provider ({yellow} WorkerEnvProvider) successfully booted')
+    assert.calledWith(successFake, 'Provider ({yellow} ConsoleEnvProvider) successfully booted')
+    assert.calledWith(successFake, 'Provider ({yellow} HttpAndConsoleEnvProvider) successfully booted')
 
-    mock.verify()
+    assert.calledTimesWith(mock, 5, 'application')
   }
 
   @Test()
@@ -220,20 +210,15 @@ export default class LoadHelperTest extends BaseTest {
     Config.set('rc.bootLogs', true)
     Config.set('rc.preloads', ['#tests/fixtures/routes/load'])
 
-    const mock = Log.getMock()
-    const successFake = fake()
-
-    mock
-      .expects('channelOrVanilla')
-      .exactly(1)
-      .withArgs('application')
-      .returns({ success: args => successFake(args) })
+    const successFake = Mock.sandbox.fake()
+    const mock = Log.when('channelOrVanilla').return({
+      success: args => successFake(args)
+    })
 
     await LoadHelper.preloadFiles()
 
-    assert.isTrue(successFake.calledWith('File ({yellow} load) successfully preloaded'))
-
-    mock.verify()
+    assert.calledTimesWith(mock, 1, 'application')
+    assert.calledWith(successFake, 'File ({yellow} load) successfully preloaded')
   }
 
   @Test()
