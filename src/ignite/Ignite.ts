@@ -436,7 +436,7 @@ export class Ignite {
    * Register this Ignite instance inside the IoC container.
    */
   public registerItselfToTheContainer(): void {
-    this.container.instance('Athenna/Core/Ignite', this, false)
+    this.container.instance('Athenna/Core/Ignite', this)
   }
 
   /**
