@@ -7,13 +7,12 @@
  * file that was distributed with this source code.
  */
 
-import { fake } from 'sinon'
 import { Log } from '@athenna/logger'
 import { Path } from '@athenna/common'
 import { Server } from '@athenna/http'
 import { Config } from '@athenna/config'
 import { Http } from '#src/applications/Http'
-import { Test, type Context } from '@athenna/test'
+import { Test, type Context, Mock } from '@athenna/test'
 import { BaseTest } from '#tests/helpers/BaseTest'
 import { LoadHelper } from '#src/helpers/LoadHelper'
 import { CALLED_MAP } from '#tests/helpers/CalledMap'
@@ -34,39 +33,33 @@ export default class HttpTest extends BaseTest {
   public async shouldNotLogThatTheHttpServerHasStartedIfRcBootLogsIsFalse({ assert }: Context) {
     Config.set('rc.bootLogs', false)
 
-    const mock = Log.getMock()
-
-    mock.expects('channelOrVanilla').exactly(0)
+    const mock = Log.when('channelOrVanilla').return(undefined)
 
     await Http.boot()
 
+    assert.isTrue(mock.notCalled)
     assert.isTrue(Server.isListening)
     assert.equal(Server.getPort(), 3000)
     assert.equal(Server.getHost(), '127.0.0.1')
-    mock.verify()
   }
 
   @Test()
   public async shouldBeAbleToLogThatTheHttpServerHasStartedIfRcBootLogsIsTrue({ assert }: Context) {
     Config.set('rc.bootLogs', true)
 
-    const mock = Log.getMock()
-    const successFake = fake()
-
-    mock
-      .expects('channelOrVanilla')
-      .exactly(2)
-      .withArgs('application')
-      .returns({ success: args => successFake(args) })
+    const successFake = Mock.sandbox.fake()
+    const mock = Log.when('channelOrVanilla').return({
+      success: args => successFake(args)
+    })
 
     await Http.boot()
 
     assert.isTrue(Server.isListening)
     assert.equal(Server.getPort(), 3000)
     assert.equal(Server.getHost(), '127.0.0.1')
-    assert.isTrue(successFake.calledWith('Kernel ({yellow} HttpKernel) successfully booted'))
-    assert.isTrue(successFake.calledWith('Http server started on ({yellow} 127.0.0.1:3000)'))
-    mock.verify()
+    assert.calledTimesWith(mock, 2, 'application')
+    assert.calledWith(successFake, 'Kernel ({yellow} HttpKernel) successfully booted')
+    assert.calledWith(successFake, 'Http server started on ({yellow} 127.0.0.1:3000)')
   }
 
   @Test()

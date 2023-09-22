@@ -10,18 +10,20 @@
 import { URL } from 'node:url'
 import { Config, Rc } from '@athenna/config'
 import { ViewProvider } from '@athenna/view'
-import { LoggerProvider } from '@athenna/logger'
 import { File, Folder } from '@athenna/common'
-import { AfterEach, BeforeEach, ExitFaker } from '@athenna/test'
+import { LoggerProvider } from '@athenna/logger'
+import { AfterEach, BeforeEach, Mock, type Stub } from '@athenna/test'
 import { ArtisanProvider, CommanderHandler, ConsoleKernel } from '@athenna/artisan'
 
 export class BaseCommandTest {
   public artisan = Path.fixtures('artisan.ts')
+  public processExitMock: Stub
   public originalPJson = new File(Path.pwd('package.json')).getContentAsStringSync()
 
   @BeforeEach()
   public async beforeEach() {
-    ExitFaker.fake()
+    Mock.restoreAll()
+    this.processExitMock = Mock.when(process, 'exit').return(undefined)
 
     await Config.loadAll(Path.fixtures('config'))
 
@@ -43,7 +45,7 @@ export class BaseCommandTest {
   public async afterEach() {
     Config.clear()
     ioc.reconstruct()
-    ExitFaker.release()
+    this.processExitMock.restore()
 
     CommanderHandler.getCommander<any>()._events = {}
     CommanderHandler.getCommander<any>().commands = []

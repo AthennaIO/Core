@@ -9,13 +9,14 @@
 
 import { URL } from 'node:url'
 import { LoadHelper } from '#src'
+import { LoggerProvider } from '@athenna/logger'
 import { File, Folder, Json } from '@athenna/common'
-import { Log, LoggerProvider } from '@athenna/logger'
 import { CALLED_MAP } from '#tests/helpers/CalledMap'
-import { AfterEach, BeforeEach, ExitFaker } from '@athenna/test'
+import { AfterEach, BeforeEach, Mock, type Stub } from '@athenna/test'
 import { HttpRouteProvider, HttpServerProvider } from '@athenna/http'
 
 export class BaseTest {
+  public processExitMock: Stub
   public originalDirs = Json.copy(Path.dirs)
   public originalEnv = Json.copy(process.env)
   public originalKill = Json.copy(process.kill)
@@ -23,7 +24,8 @@ export class BaseTest {
 
   @BeforeEach()
   public async beforeEach() {
-    ExitFaker.fake()
+    Mock.restoreAll()
+    this.processExitMock = Mock.when(process, 'exit').return(undefined)
 
     process.env.IS_TS = 'true'
     process.env.CORE_TESTING = 'true'
@@ -40,8 +42,6 @@ export class BaseTest {
 
   @AfterEach()
   public async afterEach() {
-    Log.getMock().restore()
-    Log.restoreAllMethods()
     await new LoggerProvider().shutdown()
     await new HttpRouteProvider().shutdown()
     await new HttpServerProvider().shutdown()
@@ -49,7 +49,8 @@ export class BaseTest {
     Config.clear()
     CALLED_MAP.clear()
     ioc.reconstruct()
-    ExitFaker.release()
+    Mock.restoreAll()
+    this.processExitMock.restore()
     LoadHelper.providers = []
     LoadHelper.alreadyPreloaded = []
     process.kill = this.originalKill

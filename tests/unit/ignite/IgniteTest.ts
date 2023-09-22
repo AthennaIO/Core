@@ -7,13 +7,12 @@
  * file that was distributed with this source code.
  */
 
-import { fake } from 'sinon'
 import { Ignite } from '#src'
 import { Server } from '@athenna/http'
 import { pathToFileURL } from 'node:url'
 import { BaseTest } from '#tests/helpers/BaseTest'
 import { Exec, File, Json } from '@athenna/common'
-import { Test, ExitFaker, type Context } from '@athenna/test'
+import { Test, type Context, Mock } from '@athenna/test'
 
 export default class IgniteTest extends BaseTest {
   @Test()
@@ -31,7 +30,7 @@ export default class IgniteTest extends BaseTest {
       loadConfigSafe: true,
       athennaRcPath: Path.pwd('package.json')
     })
-    assert.isTrue(ioc.hasDependency('Athenna/Core/Ignite'))
+    assert.isTrue(ioc.has('Athenna/Core/Ignite'))
   }
 
   @Test()
@@ -88,7 +87,7 @@ export default class IgniteTest extends BaseTest {
 
     await new Ignite().load(Config.get('meta'))
 
-    assert.isFalse(ExitFaker.faker.called)
+    assert.isFalse(this.processExitMock.called)
   }
 
   @Test()
@@ -97,7 +96,7 @@ export default class IgniteTest extends BaseTest {
 
     await new Ignite().load(Config.get('meta'))
 
-    assert.isTrue(ExitFaker.faker.calledWith(1))
+    assert.isTrue(this.processExitMock.calledWith(1))
   }
 
   @Test()
@@ -161,7 +160,7 @@ export default class IgniteTest extends BaseTest {
 
     await ignite.fire()
 
-    assert.isTrue(ExitFaker.faker.calledWith(1))
+    assert.isTrue(this.processExitMock.calledWith(1))
   }
 
   @Test()
@@ -230,13 +229,13 @@ export default class IgniteTest extends BaseTest {
 
     process.emit('SIGINT')
 
-    assert.isTrue(ExitFaker.faker.called)
+    assert.isTrue(this.processExitMock.called)
   }
 
   @Test()
   public async shouldBeAbleToExecuteDefaultSIGTERMSignalOfIgnite({ assert }: Context) {
-    const processKillStub = fake()
-    process.kill = processKillStub
+    const processKillFake = Mock.sandbox.fake()
+    process.kill = processKillFake
     Config.set('rc.providers', ['#tests/fixtures/providers/ConsoleEnvProvider'])
 
     const ignite = await new Ignite().load(Config.get('meta'), {
@@ -249,8 +248,8 @@ export default class IgniteTest extends BaseTest {
 
     await Exec.sleep(100)
 
-    assert.isTrue(ioc.hasDependency('ConsoleEnvShutdown'))
-    assert.isTrue(processKillStub.calledWith(process.pid, 'SIGTERM'))
+    assert.isTrue(ioc.has('ConsoleEnvShutdown'))
+    assert.calledWith(processKillFake, process.pid, 'SIGTERM')
   }
 
   @Test()
@@ -307,10 +306,10 @@ export default class IgniteTest extends BaseTest {
 
     await ignite.fire()
 
-    assert.isTrue(ioc.hasDependency('welcomeService'))
-    assert.isTrue(ioc.hasDependency('App/Services/WelcomeService'))
-    assert.isTrue(ioc.hasDependency('decoratedWelcomeService'))
-    assert.isTrue(ioc.hasDependency('App/Services/DecoratedWelcomeService'))
+    assert.isTrue(ioc.has('welcomeService'))
+    assert.isTrue(ioc.has('App/Services/WelcomeService'))
+    assert.isTrue(ioc.has('decoratedWelcomeService'))
+    assert.isTrue(ioc.has('App/Services/DecoratedWelcomeService'))
   }
 
   @Test()

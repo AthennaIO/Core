@@ -9,27 +9,15 @@
 
 import 'reflect-metadata'
 
-import { Exec, Module } from '@athenna/common'
 import { ServiceProvider } from '@athenna/ioc'
 
 export class CoreProvider extends ServiceProvider {
   public async register() {
     const services = Config.get<string[]>('rc.services', [])
 
-    await Exec.concurrently(services, async path => {
-      const Service = await Module.resolve(
-        `${path}?version=${Math.random()}`,
-        Config.get('rc.meta')
-      )
-
-      if (Reflect.hasMetadata('ioc:registered', Service)) {
-        return
-      }
-
-      const createCamelAlias = true
-      const alias = `App/Services/${Service.name}`
-
-      ioc.bind(alias, Service, createCamelAlias)
+    await ioc.loadModules(services, {
+      addCamelAlias: true,
+      metaUrl: Config.get('rc.meta')
     })
   }
 }

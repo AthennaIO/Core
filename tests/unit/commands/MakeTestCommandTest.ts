@@ -9,7 +9,7 @@
 
 import { File } from '@athenna/common'
 import { Artisan } from '@athenna/artisan'
-import { Test, ExitFaker, type Context } from '@athenna/test'
+import { Test, type Context } from '@athenna/test'
 import { BaseCommandTest } from '#tests/helpers/BaseCommandTest'
 
 export default class MakeTestCommandTest extends BaseCommandTest {
@@ -22,7 +22,7 @@ export default class MakeTestCommandTest extends BaseCommandTest {
 
     assert.isTrue(file.fileExists)
     assert.isTrue(file.content.toString().includes('export default class TestTest'))
-    assert.isTrue(ExitFaker.faker.calledOnceWith(0))
+    assert.isTrue(this.processExitMock.calledOnceWith(0))
   }
 
   @Test()
@@ -34,7 +34,7 @@ export default class MakeTestCommandTest extends BaseCommandTest {
     const path = Path.fixtures('storage/tests/TestTest.ts')
 
     assert.isTrue(await File.exists(path))
-    assert.isTrue(ExitFaker.faker.calledOnceWith(0))
+    assert.isTrue(this.processExitMock.calledOnceWith(0))
   }
 
   @Test()
@@ -46,7 +46,7 @@ export default class MakeTestCommandTest extends BaseCommandTest {
 
     assert.isTrue(file.fileExists)
     assert.isTrue(file.content.toString().includes('export default class TestTest'))
-    assert.isTrue(ExitFaker.faker.calledOnceWith(0))
+    assert.isTrue(this.processExitMock.calledOnceWith(0))
   }
 
   @Test()
@@ -58,7 +58,7 @@ export default class MakeTestCommandTest extends BaseCommandTest {
 
     assert.isTrue(file.fileExists)
     assert.isTrue(file.content.toString().includes("test.group('TestTest'"))
-    assert.isTrue(ExitFaker.faker.calledOnceWith(0))
+    assert.isTrue(this.processExitMock.calledOnceWith(0))
   }
 
   @Test()
@@ -70,7 +70,7 @@ export default class MakeTestCommandTest extends BaseCommandTest {
 
     assert.isTrue(file.fileExists)
     assert.isTrue(file.content.toString().includes("test.group('TestTest'"))
-    assert.isTrue(ExitFaker.faker.calledOnceWith(0))
+    assert.isTrue(this.processExitMock.calledOnceWith(0))
   }
 
   @Test()
@@ -78,6 +78,6 @@ export default class MakeTestCommandTest extends BaseCommandTest {
     await Artisan.call('make:test TestTest', false)
     await Artisan.call('make:test TestTest', false)
 
-    assert.isTrue(ExitFaker.faker.calledWith(1))
+    assert.isTrue(this.processExitMock.calledWith(1))
   }
 }
