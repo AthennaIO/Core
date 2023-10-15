@@ -52,7 +52,7 @@ export type HttpOptions = {
    * The path to the exception handler of http server requests. The exception
    * handler is responsible to handle all the exception that are throwed
    * inside route handlers. By default, Athenna will use the built in exception
-   * handler. But you can do your own implementantion extending the
+   * handler. But you can do your own implementation extending the
    * "HttpExceptionHandler" class from Http and setting the path to it here.
    *
    * @default '@athenna/http/handlers/HttpExceptionHandler'

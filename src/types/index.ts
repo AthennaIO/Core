@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-export * from '#src/types/ArtisanOptions'
+export * from '#src/types/ConsoleOptions'
 export * from '#src/types/HttpOptions'
 export * from '#src/types/IgniteOptions'
 export * from '#src/types/RcOptions'

@@ -8,14 +8,15 @@
  */
 
 import { LoadHelper } from '#src'
-import { Log } from '@athenna/logger'
-import { BaseTest } from '#tests/helpers/BaseTest'
+import { Log, LoggerProvider } from '@athenna/logger'
 import { CALLED_MAP } from '#tests/helpers/CalledMap'
-import { Test, BeforeEach, type Context, Mock } from '@athenna/test'
+import { Test, BeforeEach, type Context, Mock, AfterEach } from '@athenna/test'
 
-export default class LoadHelperTest extends BaseTest {
+export default class LoadHelperTest {
   @BeforeEach()
-  public setProviders() {
+  public beforeEach() {
+    new LoggerProvider().register()
+    Config.set('rc.parentURL', Path.toHref(Path.pwd() + '/'))
     Config.set('rc.providers', [
       '#tests/fixtures/providers/ReplEnvProvider',
       '#tests/fixtures/providers/HttpEnvProvider',
@@ -23,6 +24,14 @@ export default class LoadHelperTest extends BaseTest {
       '#tests/fixtures/providers/ConsoleEnvProvider',
       '#tests/fixtures/providers/HttpAndConsoleEnvProvider'
     ])
+  }
+
+  @AfterEach()
+  public async afterEach() {
+    Config.clear()
+    ioc.reconstruct()
+    LoadHelper.providers = []
+    LoadHelper.alreadyPreloaded = []
   }
 
   @Test()
@@ -141,12 +150,12 @@ export default class LoadHelperTest extends BaseTest {
   }
 
   @Test()
-  public async shouldBeAbleToLogThatProvidersAreShutingdownIfRcShutdownLogsIsTrue({ assert }: Context) {
+  public async shouldBeAbleToLogThatProvidersAreShutingDownIfRcShutdownLogsIsTrue({ assert }: Context) {
     Config.set('rc.shutdownLogs', true)
 
-    const successFake = Mock.sandbox.fake()
+    const successFake = Mock.fake()
     const mock = Log.when('channelOrVanilla').return({
-      success: args => successFake(args)
+      success: successFake
     })
 
     await LoadHelper.loadBootableProviders()
@@ -180,9 +189,9 @@ export default class LoadHelperTest extends BaseTest {
   public async shouldBeAbleToLogThatProvidersAreRegootingIfRcBootLogsIsTrue({ assert }: Context) {
     Config.set('rc.bootLogs', true)
 
-    const successFake = Mock.sandbox.fake()
+    const successFake = Mock.fake()
     const mock = Log.when('channelOrVanilla').return({
-      success: args => successFake(args)
+      success: successFake
     })
 
     await LoadHelper.regootProviders()
@@ -210,9 +219,9 @@ export default class LoadHelperTest extends BaseTest {
     Config.set('rc.bootLogs', true)
     Config.set('rc.preloads', ['#tests/fixtures/routes/load'])
 
-    const successFake = Mock.sandbox.fake()
+    const successFake = Mock.fake()
     const mock = Log.when('channelOrVanilla').return({
-      success: args => successFake(args)
+      success: successFake
     })
 
     await LoadHelper.preloadFiles()

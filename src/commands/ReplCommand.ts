@@ -28,6 +28,7 @@ export class ReplCommand extends BaseCommand {
 
   public async handle(): Promise<void> {
     if (this.env !== '') {
+      process.env.APP_ENV = this.env
       process.env.NODE_ENV = this.env
     }
 
@@ -36,6 +37,6 @@ export class ReplCommand extends BaseCommand {
       Path.bootstrap(`repl.${Path.ext()}`)
     )
 
-    await Module.resolve(entrypoint, Config.get('rc.meta'))
+    await Module.resolve(entrypoint, Config.get('rc.parentURL'))
   }
 }

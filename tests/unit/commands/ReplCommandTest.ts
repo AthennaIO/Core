@@ -7,24 +7,54 @@
  * file that was distributed with this source code.
  */
 
-import { Artisan } from '@athenna/artisan'
 import { Test, type Context } from '@athenna/test'
 import { BaseCommandTest } from '#tests/helpers/BaseCommandTest'
 
 export default class ReplCommandTest extends BaseCommandTest {
   @Test()
-  public async shouldBeAbleToRunTheReplApplication({ assert }: Context) {
-    const { stdout, stderr } = await Artisan.callInChild('repl', this.artisan)
+  public async shouldBeAbleToExecuteReplCommand({ command }: Context) {
+    const output = await command.run('repl')
 
-    assert.deepEqual(stderr, '')
-    assert.isTrue(stdout.includes('running repl session'))
+    output.assertSucceeded()
+    output.assertLogged('Hello from #bin/repl!')
   }
 
   @Test()
-  public async shouldBeAbleToRunTheReplApplicationWithDifferentNodeEnv({ assert }: Context) {
-    const { stdout, stderr } = await Artisan.callInChild('repl --env heyhey', this.artisan)
+  public async shouldBeAbleToExecuteReplCommandWithADifferentEnv({ command }: Context) {
+    const output = await command.run('repl --env=test-hello')
 
-    assert.deepEqual(stderr, '')
-    assert.isTrue(stdout.includes('heyhey'))
+    output.assertSucceeded()
+    output.assertLogged('Hello from #bin/repl!')
+    output.assertLogged('test-hello\ntest-hello')
+  }
+
+  @Test()
+  public async shouldBeAbleToExecuteReplCommandUsingAImportAliasPathEntry({ command }: Context) {
+    const output = await command.run('repl', {
+      path: Path.fixtures('consoles/import-alias-path-entry.ts')
+    })
+
+    output.assertSucceeded()
+    output.assertLogged('Hello from #tests/fixtures/entrypoints/repl!')
+  }
+
+  @Test()
+  public async shouldBeAbleToExecuteReplCommandUsingAnAbsolutePathEntry({ command }: Context) {
+    const output = await command.run('repl', {
+      path: Path.fixtures('consoles/absolute-path-entry.ts')
+    })
+
+    output.assertSucceeded()
+    output.assertLogged('Hello from #tests/fixtures/entrypoints/repl!')
+  }
+
+  @Test()
+  public async shouldBeAbleToExecuteReplCommandUsingARelativePathEntry({ command }: Context) {
+    const output = await command.run('repl', {
+      path: Path.fixtures('consoles/relative-path-entry.ts')
+    })
+
+    output.assertSucceeded()
+    output.assertLogged('Hello from #tests/fixtures/entrypoints/repl!')
   }
 }

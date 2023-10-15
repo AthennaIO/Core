@@ -1,33 +1,4 @@
 {
-  "ts-node": {
-    "esm": true,
-    "transpileOnly": true,
-    "ignoreDiagnostics": [5104]
-  },
-  "compilerOptions": {
-    "strict": false,
-    "rootDir": ".",
-    "baseUrl": ".",
-    "outDir": "build",
-    "module": "NodeNext",
-    "target": "ESNext",
-    "moduleResolution": "NodeNext",
-    "declaration": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "removeComments": false,
-    "resolveJsonModule": true,
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
-    "verbatimModuleSyntax": true,
-    "forceConsistentCasingInFileNames": true,
-    "paths": {
-      "#bin/*": ["./bin/*.ts"],
-      "#src/*": ["./src/*.ts"],
-      "#tests/*": ["./tests/*.ts"],
-      "#src/types": ["./src/types/index.ts"]
-    }
-  },
-  "include": ["./**/*"],
-  "exclude": ["build", "node_modules"]
+  "extends": "@athenna/tsconfig/tsconfig.lib.json",
+  "compilerOptions": {}
 }

@@ -7,39 +7,44 @@
  * file that was distributed with this source code.
  */
 
-import { File } from '@athenna/common'
-import { Artisan } from '@athenna/artisan'
+import { File, Path } from '@athenna/common'
 import { Test, type Context } from '@athenna/test'
 import { BaseCommandTest } from '#tests/helpers/BaseCommandTest'
 
 export default class MakeFacadeCommandTest extends BaseCommandTest {
   @Test()
-  public async shouldBeAbleToCreateAFacadeFile({ assert }: Context) {
-    await Artisan.call('make:facade TestFacade', false)
+  public async shouldBeAbleToCreateAFacadeFile({ assert, command }: Context) {
+    const output = await command.run('make:facade TestFacade')
 
-    const path = Path.facades('TestFacade.ts')
+    output.assertSucceeded()
+    output.assertLogged('[ MAKING FACADE ]')
+    output.assertLogged('[  success  ] Facade "TestFacade" successfully created.')
 
-    assert.isTrue(await File.exists(path))
-    assert.isTrue(this.processExitMock.calledOnceWith(0))
+    assert.isTrue(await File.exists(Path.facades('TestFacade.ts')))
   }
 
   @Test()
-  public async shouldBeAbleToCreateAFacadeFileInDifferentDestPath({ assert }: Context) {
-    Config.set('rc.commands.make:facade.destination', Path.fixtures('storage/facades'))
+  public async shouldBeAbleToCreateAFacadeFileWithADifferentDestPath({ assert, command }: Context) {
+    const output = await command.run('make:facade TestFacade', {
+      path: Path.fixtures('consoles/console-mock-dest-import.ts')
+    })
 
-    await Artisan.call('make:facade TestFacade', false)
+    output.assertSucceeded()
+    output.assertLogged('[ MAKING FACADE ]')
+    output.assertLogged('[  success  ] Facade "TestFacade" successfully created.')
 
-    const path = Path.fixtures('storage/facades/TestFacade.ts')
-
-    assert.isTrue(await File.exists(path))
-    assert.isTrue(this.processExitMock.calledOnceWith(0))
+    assert.isTrue(await File.exists(Path.fixtures('storage/facades/TestFacade.ts')))
   }
 
   @Test()
-  public async shouldThrowAnExceptionWhenTheFileAlreadyExists({ assert }: Context) {
-    await Artisan.call('make:facade TestFacade', false)
-    await Artisan.call('make:facade TestFacade', false)
+  public async shouldThrowAnFacadeWhenTheFileAlreadyExists({ command }: Context) {
+    await command.run('make:facade TestFacade')
+    const output = await command.run('make:facade TestFacade')
 
-    assert.isTrue(this.processExitMock.calledWith(1))
+    output.assertFailed()
+    output.assertLogged('[ MAKING FACADE ]')
+    output.assertLogged('The file')
+    output.assertLogged('TestFacade.ts')
+    output.assertLogged('already exists')
   }
 }

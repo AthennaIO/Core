@@ -17,7 +17,7 @@ export class CoreProvider extends ServiceProvider {
 
     await ioc.loadModules(services, {
       addCamelAlias: true,
-      metaUrl: Config.get('rc.meta')
+      parentURL: Config.get('rc.parentURL')
     })
   }
 }

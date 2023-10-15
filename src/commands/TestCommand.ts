@@ -48,6 +48,7 @@ export class TestCommand extends BaseCommand {
 
   public async handle(): Promise<void> {
     if (this.env !== '') {
+      process.env.APP_ENV = this.env
       process.env.NODE_ENV = this.env
     }
 
@@ -58,6 +59,6 @@ export class TestCommand extends BaseCommand {
 
     process.argv.splice(2, 1)
 
-    await Module.resolve(entrypoint, Config.get('rc.meta'))
+    await Module.resolve(entrypoint, Config.get('rc.parentURL'))
   }
 }

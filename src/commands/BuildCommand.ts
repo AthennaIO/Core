@@ -1,5 +1,5 @@
 /**
- * @athenna/artisan
+ * @athenna/core
  *
  * (c) João Lenon <lenon@athenna.io>
  *
@@ -7,9 +7,13 @@
  * file that was distributed with this source code.
  */
 
+import { rimraf } from 'rimraf'
+import { tsc } from '@athenna/tsconfig/tsc'
+import { Path, Color } from '@athenna/common'
 import { BaseCommand } from '@athenna/artisan'
+import { copyfiles } from '@athenna/tsconfig/copyfiles'
 import { isAbsolute, join, parse, sep } from 'node:path'
-import { Exec, Path, File, Color } from '@athenna/common'
+import { UndefinedOutDirException } from '#src/exceptions/UndefinedOutDirException'
 
 export class BuildCommand extends BaseCommand {
   public static signature(): string {
@@ -29,51 +33,32 @@ export class BuildCommand extends BaseCommand {
       tsConfigPath = join(Path.pwd(), tsConfigPath)
     }
 
-    const tsConfig = await new File(tsConfigPath).getContentAsJson()
-    const metaFiles = Config.get('rc.commands.build.metaFiles', []).join(' ')
-    const buildDir =
-      parse(tsConfigPath).dir + sep + tsConfig.compilerOptions.outDir
+    const include = Config.get<string[]>('rc.commands.build.include', [])
 
-    if (metaFiles.includes(' .env ')) {
-      metaFiles.replace(' .env ', '')
+    if (include.includes('.env')) {
+      include.splice(include.indexOf('.env'), 1)
     }
+
+    const compiler = Color.yellow.bold('tsc')
+    const includedFiles = Color.gray(include.join(', '))
+
+    const outDir = this.getOutDir(tsConfigPath)
+    const outDirName = Color.yellow.bold(parse(outDir).name)
 
     const tasks = this.logger.task()
 
-    tasks.add(
-      `Delete old ${Color.yellow.bold(parse(buildDir).name)} folder`,
-      async task => {
-        await Exec.command(`${Path.nodeModulesBin('rimraf')} ${buildDir}`)
-          .then(() => task.complete())
-          .catch(error => {
-            task.fail()
-            throw error
-          })
-      }
+    tasks.addPromise(`Deleting old ${outDirName} folder`, () => rimraf(outDir))
+
+    tasks.addPromise(
+      `Compiling the application with ${compiler} compiler`,
+      () => tsc(tsConfigPath)
     )
 
-    tasks.add('Compile the application', async task => {
-      await Exec.command(
-        `${Path.nodeModulesBin('tsc')} --project ${tsConfigPath}`
+    if (include.length) {
+      tasks.addPromise(
+        `Copying included paths to ${outDirName} folder: ${includedFiles}`,
+        () => copyfiles(include, outDir)
       )
-        .then(() => task.complete())
-        .catch(error => {
-          task.fail()
-          throw error
-        })
-    })
-
-    if (metaFiles.length) {
-      tasks.add(`Copy meta files: ${Color.gray(metaFiles)}`, async task => {
-        await Exec.command(
-          `${Path.nodeModulesBin('copyfiles')} ${metaFiles} ${buildDir}`
-        )
-          .then(() => task.complete())
-          .catch(error => {
-            task.fail()
-            throw error
-          })
-      })
     }
 
     await tasks.run()
@@ -81,5 +66,15 @@ export class BuildCommand extends BaseCommand {
     console.log()
 
     this.logger.success('Application successfully compiled')
+  }
+
+  private getOutDir(tsConfigPath: string): string {
+    if (!Config.exists('rc.commands.build.outDir')) {
+      throw new UndefinedOutDirException()
+    }
+
+    return (
+      parse(tsConfigPath).dir + sep + Config.get('rc.commands.build.outDir')
+    )
   }
 }

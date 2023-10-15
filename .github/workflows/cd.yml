@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v1
         with:
-          node-version: '18.x'
+          node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
@@ -24,17 +24,8 @@ jobs:
       - name: Compile code
         run: npm run build
 
-      - name: Copy README to build
-        run: cp README.md build/README.md | true
-
-      - name: Copy LICENSE to build
-        run: cp LICENSE.md build/LICENSE.md | true
-
-      - name: Copy templates to build
-        run: cp -r templates build/templates | true
-
-      - name: Copy configurer to build
-        run: cp -r configurer build/configurer | true
+      - name: Install production dependencies
+        run: cd build && npm ci --omit=dev
 
       - name: Automatic GitHub Release
         uses: justincy/github-action-npm-release@2.0.1

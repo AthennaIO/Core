@@ -7,21 +7,64 @@
  * file that was distributed with this source code.
  */
 
-import { Ignite } from '#src'
-import { Server } from '@athenna/http'
-import { pathToFileURL } from 'node:url'
-import { BaseTest } from '#tests/helpers/BaseTest'
-import { Exec, File, Json } from '@athenna/common'
-import { Test, type Context, Mock } from '@athenna/test'
+import { Ignite, LoadHelper } from '#src'
+import { Rc } from '@athenna/config'
+import { sep, resolve } from 'node:path'
+import { Repl } from '#src/applications/Repl'
+import { Http } from '#src/applications/Http'
+import { Console } from '#src/applications/Console'
+import { Log, LoggerProvider } from '@athenna/logger'
+import { Exception, File, Json, Module } from '@athenna/common'
+import { Test, type Context, BeforeEach, Mock, AfterEach } from '@athenna/test'
+import { NotSatisfiedNodeVersion } from '#src/exceptions/NotSatisfiedNodeVersion'
 
-export default class IgniteTest extends BaseTest {
+export default class IgniteTest {
+  public oldEnv: NodeJS.ProcessEnv
+  public oldDirs: Record<string, string>
+
+  @BeforeEach()
+  public async beforeEach() {
+    this.oldDirs = Json.copy(Path.dirs)
+    this.oldEnv = Json.copy(process.env)
+    Mock.when(process, 'chdir').return(undefined)
+    new LoggerProvider().register()
+  }
+
+  @AfterEach()
+  public async afterEach() {
+    Mock.restoreAll()
+    process.removeAllListeners('SIGINT')
+    process.removeAllListeners('SIGTERM')
+    process.removeListener('uncaughtException', Repl.handleError)
+    process.removeListener('uncaughtException', new Ignite().handleError)
+    Config.clear()
+    ioc.reconstruct()
+    LoadHelper.providers = []
+    LoadHelper.alreadyPreloaded = []
+    Path.dirs = this.oldDirs
+    process.env = this.oldEnv
+  }
+
   @Test()
-  public async shouldBeAbleToIgniteTheApplicationWhenInstantiatingIgnite({ assert }: Context) {
-    const cwd = process.cwd()
-    const ignite = await new Ignite().load(Config.get('meta'))
+  public async shouldSaveTheParentURLInIgniteAndInConfigWhenBootingTheAppFoundation({ assert }: Context) {
+    const parentURL = Path.toHref(Path.pwd() + '/')
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'))
 
-    assert.equal(ignite.meta, Config.get('meta'))
-    assert.equal(Config.get('rc.callPath'), cwd)
+    assert.equal(parentURL, ignite.parentURL)
+    assert.equal(parentURL, Config.get('rc.parentURL'))
+  }
+
+  @Test()
+  public async shouldSaveTheApplicationCWDInConfigWhenBootingTheAppFoundation({ assert }: Context) {
+    await new Ignite().load(Path.toHref(Path.pwd() + '/'))
+
+    assert.equal(Config.get('rc.callPath'), process.cwd())
+  }
+
+  @Test()
+  public async shouldSaveTheIgniteConfigUsedWhenBootingTheAppFoundation({ assert }: Context) {
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'))
+
     assert.containsSubset(ignite.options, {
       bootLogs: true,
       shutdownLogs: true,
@@ -30,296 +73,717 @@ export default class IgniteTest extends BaseTest {
       loadConfigSafe: true,
       athennaRcPath: Path.pwd('package.json')
     })
+  }
+
+  @Test()
+  public async shouldRegisterIgniteInstanceUsedInAthennaContainer({ assert }: Context) {
+    await new Ignite().load(Path.toHref(Path.pwd() + '/'))
+
     assert.isTrue(ioc.has('Athenna/Core/Ignite'))
   }
 
   @Test()
-  public async shouldBeAbleToIgniteTheApplicationRunningTypescriptWhenInstantiatingIgnite({ assert }: Context) {
-    const ignite = await new Ignite().load(Config.get('meta'), { beforePath: '/dist' })
+  public async shouldAutomaticallyResolveTheProcessCWDOfTheUserProjectUsingChdir({ assert }: Context) {
+    await new Ignite().load(Path.toHref(Path.pwd() + '/'))
 
-    assert.isTrue(Env('IS_TS', false))
-    assert.isFalse(Path.pwd().includes('dist'))
-    assert.equal(ignite.meta, Config.get('meta'))
-    assert.containsSubset(ignite.options, { beforePath: '/dist' })
+    const __dirname = Module.createDirname(import.meta.url)
+
+    assert.calledWith(process.chdir, resolve(__dirname, '..', '..', '..', '..', '..', '..'))
   }
 
   @Test()
-  public async shouldBeAbleToIgniteTheApplicationRunningJavascriptCompiledCodeWhenInstantiatingIgnite({
+  public async shouldAutomaticallyResolveIfApplicationIsUsingTypeScriptOrNot({ assert }: Context) {
+    process.env.IS_TS = undefined
+
+    await new Ignite().load(Path.toHref(Path.pwd() + '/main.ts'))
+
+    assert.equal(process.env.IS_TS, 'true')
+  }
+
+  @Test()
+  public async shouldAutomaticallyResolveIfApplicationIsUsingJavaScriptOrNot({ assert }: Context) {
+    process.env.IS_TS = undefined
+
+    await new Ignite().load(Path.toHref(Path.pwd() + '/main.js'))
+
+    assert.equal(process.env.IS_TS, 'false')
+  }
+
+  @Test()
+  public async shouldNotSubscribeIS_TSEnvIfIsAlreadyDefined({ assert }: Context) {
+    process.env.IS_TS = 'true'
+
+    await new Ignite().load(Path.toHref(Path.pwd() + '/main.js'))
+
+    assert.equal(process.env.IS_TS, 'true')
+  }
+
+  @Test()
+  public async shouldNotBePossibleToHaveMultipleEqualUncaughtExceptionHandlersBeingRegisteredByIgnite({
     assert
   }: Context) {
-    delete process.env.IS_TS
-    const meta = pathToFileURL(Path.fixtures('main.js')).href
-    const ignite = await new Ignite().load(meta, { beforePath: '/dist' })
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'))
 
-    assert.isFalse(Env('IS_TS', true))
-    assert.isTrue(Path.app().includes('dist'))
-    assert.equal(ignite.meta, meta)
-    assert.containsSubset(ignite.options, { beforePath: '/dist' })
+    ignite.setUncaughtExceptionHandler()
+    ignite.setUncaughtExceptionHandler()
+    ignite.setUncaughtExceptionHandler()
+    ignite.setUncaughtExceptionHandler()
+    ignite.setUncaughtExceptionHandler()
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    assert.lengthOf(process?._events?.uncaughtException, 3)
   }
 
   @Test()
-  public async shouldBeAbleToIgniteTheApplicationLoadingADifferentRcFileWhenInstantiatingIgnite({ assert }: Context) {
-    Config.delete('rc')
-    const ignite = await new Ignite().load(Config.get('meta'), { athennaRcPath: Path.fixtures('.athennarc.json') })
-
-    assert.equal(ignite.meta, Config.get('meta'))
-    assert.deepEqual(Config.get('rc.providers'), [])
-    assert.containsSubset(ignite.options, { athennaRcPath: Path.fixtures('.athennarc.json') })
-  }
-
-  @Test()
-  public async shouldBeAbleToIgniteTheApplicationWithoutAnRcFileWhenInstantiatingIgnite({ assert }: Context) {
-    Config.delete('rc')
-    const copy = Json.copy(this.originalPJson)
-    delete copy.athenna
-    await new File(Path.pwd('package.json')).setContent(JSON.stringify(copy, null, 2).concat('\n'))
-
-    const ignite = await new Ignite().load(Config.get('meta'))
-
-    assert.equal(ignite.meta, Config.get('meta'))
-    assert.deepEqual(Config.get('rc.providers'), [])
-    assert.containsSubset(ignite.options, { athennaRcPath: null })
-  }
-
-  @Test()
-  public async shouldNotThrowAnErrorWhenTheNodeEngineSatisfiesTheSemverVersion({ assert }: Context) {
-    Config.set('rc.engines', { node: '>=14.0.0' })
-
-    await new Ignite().load(Config.get('meta'))
-
-    assert.isFalse(this.processExitMock.called)
-  }
-
-  @Test()
-  public async shouldThrowAnErrorWhenTheNodeEngineDoesNotSatisfiesTheSemverVersion({ assert }: Context) {
-    Config.set('rc.engines', { node: '>=20.0.0' })
-
-    await new Ignite().load(Config.get('meta'))
-
-    assert.isTrue(this.processExitMock.calledWith(1))
-  }
-
-  @Test()
-  public async shouldBeAbleToFireTheIgniteClassLoadingAllTheRestOfTheApplication({ assert }: Context) {
-    Config.set('rc.environments', ['other'])
-    Config.set('rc.directories', { config: 'tests/fixtures/igniteConfig' })
-
-    const ignite = await new Ignite().load(Config.get('meta'), {
-      envPath: Path.fixtures('.env'),
-      environments: ['console']
+  public async shouldBeAbleToSetTheAbsolutePathToTheEnvFile({ assert }: Context) {
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      envPath: Path.pwd() + sep + '.env'
     })
 
-    await ignite.fire()
-
-    assert.equal(Env('IGNITE_FIRED'), true)
-    assert.equal(Env('NODE_ENV'), 'local')
-    assert.isTrue(Config.is('ignite.fired', true))
-    assert.deepEqual(Config.get('rc.environments'), ['other', 'console'])
-    assert.deepEqual(Config.get('rc.providers'), [
-      '#src/providers/CoreProvider',
-      '@athenna/http/providers/HttpRouteProvider',
-      '@athenna/http/providers/HttpServerProvider'
-    ])
+    assert.equal(ignite.options.envPath, Path.pwd() + sep + '.env')
   }
 
   @Test()
-  public async shouldBeAbleToFireTheIgniteClassLoadingAllTheRestOfTheApplicationResolvingTheEnvByNODE_ENV({
-    assert
-  }: Context) {
-    await new File(Path.fixtures('.env')).copy(Path.pwd('.env'))
-    await new File(Path.fixtures('.env.local')).copy(Path.pwd('.env.local'))
-
-    process.env.OVERRIDE_ENV = 'true'
-    Config.set('rc.environments', ['other'])
-    Config.set('rc.directories', { config: 'tests/fixtures/igniteConfig' })
-
-    const ignite = await new Ignite().load(Config.get('meta'), {
-      environments: ['console']
+  public async shouldBeAbleToSetTheRelativePathToTheEnvFile({ assert }: Context) {
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      envPath: '.env'
     })
 
-    await ignite.fire()
-
-    assert.isUndefined(Env('IGNITE_FIRED'))
-    assert.equal(Env('ENV_LOCAL_LOADED'), true)
-    assert.isTrue(Config.is('ignite.fired', true))
-    assert.deepEqual(Config.get('rc.environments'), ['other', 'console'])
-    assert.deepEqual(Config.get('rc.providers'), [
-      '#src/providers/CoreProvider',
-      '@athenna/http/providers/HttpRouteProvider',
-      '@athenna/http/providers/HttpServerProvider'
-    ])
+    assert.equal(ignite.options.envPath, Path.pwd() + sep + '.env')
   }
 
   @Test()
-  public async shouldBeAbleToHandleSyntaxErrorExceptionsOfConfigsUsingTheDefaultIgniteHandler({ assert }: Context) {
-    Config.set('rc.directories', { config: 'tests/fixtures/syntaxErrorConfig' })
+  public async shouldBeAbleToLoadTheAthennaPropertyAsRcFromPackageJsonFile({ assert }: Context) {
+    await new Ignite().load(Path.toHref(Path.pwd() + '/'))
 
-    const ignite = await new Ignite().load(Config.get('meta'), {
-      environments: ['console']
+    const pjson = new File(Path.pwd('package.json')).getContentAsJsonSync()
+
+    assert.containsSubset(Config.get('rc'), pjson.athenna)
+  }
+
+  @Test()
+  public async shouldSetAllTheDefaultValuesInTheRcConfig({ assert }: Context) {
+    await new Ignite().load(Path.toHref(Path.pwd() + '/'))
+
+    const pjson = new File(Path.pwd('package.json')).getContentAsJsonSync()
+
+    assert.containsSubset(Config.get('rc'), {
+      typescript: true,
+      version: pjson.version,
+      bootLogs: true,
+      shutdownLogs: true,
+      callPath: process.cwd(),
+      controllers: [],
+      engines: {
+        node: '>=20.0.0'
+      },
+      ignoreDirsBeforePath: ['nodeModules', 'nodeModulesBin'],
+      environments: [],
+      globalMiddlewares: [],
+      middlewares: [],
+      namedMiddlewares: {},
+      parentURL: Path.toHref(Path.pwd() + '/'),
+      preloads: [],
+      services: [],
+      athennaVersion: `Athenna Framework v${pjson.version}`
+    })
+  }
+
+  @Test()
+  public async shouldBeAbleToSetTheAbsolutePathToTheAthennaRcFile({ assert }: Context) {
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      athennaRcPath: Path.fixtures('.athennarc.json')
     })
 
-    await ignite.fire()
-
-    assert.isTrue(this.processExitMock.calledWith(1))
+    assert.equal(Config.get('rc.hello'), 'world!')
+    assert.equal(ignite.options.athennaRcPath, Path.fixtures('.athennarc.json'))
   }
 
   @Test()
-  public async shouldBeAbleToDefineWrongVersionsInPackageJsonButStillWorks({ assert }: Context) {
-    const copy = Json.copy(this.originalPJson)
-    copy.version = 'a.b.c'
-    await new File(Path.pwd('package.json')).setContent(JSON.stringify(copy, null, 2).concat('\n'))
+  public async shouldBeAbleToSetTheRelativePathToTheAthennaRcFile({ assert }: Context) {
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      athennaRcPath: './tests/fixtures/.athennarc.json'
+    })
 
-    await new Ignite().load(Config.get('meta'))
-
-    assert.isUndefined(Env('APP_VERSION'))
+    assert.equal(Config.get('rc.hello'), 'world!')
+    assert.equal(ignite.options.athennaRcPath, Path.fixtures('.athennarc.json'))
   }
 
   @Test()
-  public async shouldBeAbleToDefineApplicationSignals({ assert }: Context) {
-    let SIGINT = false
-    let SIGTERM = false
+  public async shouldSetTheRcFileInTheRcHelper({ assert }: Context) {
+    await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      athennaRcPath: './tests/fixtures/.athennarc.json'
+    })
 
+    assert.equal(Rc.content.get('hello'), 'world!')
+  }
+
+  @Test()
+  public async shouldBeAbleToMergeDirsSetInTheRcFileInPathDirs({ assert }: Context) {
+    Config.set('rc.directories', {
+      bin: 'test/bin',
+      src: 'test/src',
+      tests: 'test/tests'
+    })
+
+    await new Ignite().load(Path.toHref(Path.pwd() + '/'))
+
+    assert.equal(Path.dirs.bin, 'test/bin')
+    assert.equal(Path.dirs.src, 'test/src')
+    assert.equal(Path.dirs.tests, 'test/tests')
+    assert.equal(Path.dirs.app, 'app')
+    assert.equal(Path.dirs.bootstrap, 'bootstrap')
+  }
+
+  @Test()
+  public async shouldNotSetTheApplicationRootPathIfApplicationIsRunningTSCode({ assert }: Context) {
+    process.env.IS_TS = 'true'
+
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'))
+
+    assert.deepEqual(Path.dirs, { ...this.oldDirs, bootstrap: 'bin' })
+    assert.equal(ignite.options.beforePath, 'build')
+  }
+
+  @Test()
+  public async shouldNotSetTheApplicationRootPathIfItsUndefined({ assert }: Context) {
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      beforePath: undefined
+    })
+
+    assert.deepEqual(Path.dirs, { ...this.oldDirs, bootstrap: 'bin' })
+    assert.equal(ignite.options.beforePath, undefined)
+  }
+
+  @Test()
+  public async shouldBeAbleToSetTheApplicationBeforePathWhenRunningJSCode({ assert }: Context) {
+    process.env.IS_TS = 'false'
+
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/main.js'))
+
+    assert.equal(Path.dirs.bootstrap, 'build/bin')
+    assert.equal(Path.dirs.nodeModules, 'node_modules')
+    assert.equal(Path.dirs.nodeModulesBin, 'node_modules/.bin')
+    assert.equal(Path.dirs.app, 'build/app')
+    assert.equal(ignite.options.beforePath, 'build')
+  }
+
+  @Test()
+  public async shouldBeAbleToIgnorePathsWhenAddingTheApplicationBeforePath({ assert }: Context) {
+    process.env.IS_TS = 'false'
+    Config.set('rc.ignoreDirsBeforePath', ['bootstrap', 'nodeModules'])
+
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/main.js'))
+
+    assert.equal(Path.dirs.bootstrap, 'bin')
+    assert.equal(Path.dirs.nodeModules, 'node_modules')
+    assert.equal(Path.dirs.nodeModulesBin, 'build/node_modules/.bin')
+    assert.equal(Path.dirs.app, 'build/app')
+    assert.equal(ignite.options.beforePath, 'build')
+  }
+
+  @Test()
+  public async shouldThrownIfTheNodeEngineSatisfiesTheActualNodeJSVersion({ assert }: Context) {
+    const ignite = new Ignite()
+
+    Mock.when(ignite, 'handleError').throw(new NotSatisfiedNodeVersion(process.version, '<=18.0.0'))
+    Config.set('rc.engines.node', '<=18.0.0')
+
+    await assert.rejects(() => ignite.load(Path.toHref(Path.pwd() + '/')), NotSatisfiedNodeVersion)
+  }
+
+  @Test()
+  public async shouldIgnoreVersionValidationIfEnginesIsNotDefined({ assert }: Context) {
+    const ignite = new Ignite()
+
+    Config.set('rc.engines', undefined)
+
+    await assert.doesNotRejects(() => ignite.load(Path.toHref(Path.pwd() + '/')))
+  }
+
+  @Test()
+  public async shouldSetTheApplicationSIGTERMSignalByDefault({ assert }: Context) {
+    assert.lengthOf(process.listeners('SIGTERM'), 0)
+
+    await new Ignite().load(Path.toHref(Path.pwd() + '/'))
+
+    assert.isTrue(Env('SIGNALS_CONFIGURED', false))
+    assert.lengthOf(process.listeners('SIGTERM'), 1)
+  }
+
+  @Test()
+  public async shouldSetTheApplicationSIGINTSignalByDefault({ assert }: Context) {
+    assert.lengthOf(process.listeners('SIGINT'), 0)
+
+    await new Ignite().load(Path.toHref(Path.pwd() + '/'))
+
+    assert.isTrue(Env('SIGNALS_CONFIGURED', false))
+    assert.lengthOf(process.listeners('SIGINT'), 1)
+  }
+
+  @Test()
+  public async shouldSetACustomSIGTERMSignalForTheApplication({ assert }: Context) {
+    assert.lengthOf(process.listeners('SIGTERM'), 0)
+
+    const sigterm = () => {}
     Config.set('app.signals', {
-      SIGINT: () => (SIGINT = true),
-      SIGTERM: () => (SIGTERM = true)
+      SIGTERM: sigterm
     })
 
-    await new Ignite().load(Config.get('meta'))
+    await new Ignite().load(Path.toHref(Path.pwd() + '/'))
 
-    process.emit('SIGINT')
-    process.emit('SIGTERM')
-
-    assert.equal(SIGINT, true)
-    assert.equal(SIGTERM, true)
+    assert.isTrue(Env('SIGNALS_CONFIGURED', false))
+    assert.lengthOf(process.listeners('SIGTERM'), 1)
+    assert.deepEqual(process.listeners('SIGTERM')[0], sigterm)
   }
 
   @Test()
-  public async shouldNotDefineApplicationSignalsMoreThanOnce({ assert }: Context) {
-    let SIGINT = false
-    let SIGTERM = false
+  public async shouldSetACustomSIGINTSignalForTheApplication({ assert }: Context) {
+    assert.lengthOf(process.listeners('SIGINT'), 0)
 
+    const sigint = () => {}
     Config.set('app.signals', {
-      SIGINT: () => (SIGINT = true),
-      SIGTERM: () => (SIGTERM = true)
+      SIGINT: sigint
     })
 
-    const ignite = await new Ignite().load(Config.get('meta'))
+    await new Ignite().load(Path.toHref(Path.pwd() + '/'))
 
-    Config.set('app.signals', {
-      SIGINT: () => (SIGINT = false),
-      SIGTERM: () => (SIGTERM = false)
-    })
-
-    await ignite.load(Config.get('meta'))
-
-    process.emit('SIGINT')
-    process.emit('SIGTERM')
-
-    assert.equal(SIGINT, true)
-    assert.equal(SIGTERM, true)
+    assert.isTrue(Env('SIGNALS_CONFIGURED', false))
+    assert.lengthOf(process.listeners('SIGINT'), 1)
+    assert.deepEqual(process.listeners('SIGINT')[0], sigint)
   }
 
   @Test()
-  public async shouldBeAbleToExecuteDefaultSIGINTSignalOfIgnite({ assert }: Context) {
-    const ignite = await new Ignite().load(Config.get('meta'), {
-      environments: ['console']
+  public async shouldBeAbleToMergeCustomSIGTERMWithDefaultSIGINTForTheApplication({ assert }: Context) {
+    assert.lengthOf(process.listeners('SIGINT'), 0)
+    assert.lengthOf(process.listeners('SIGTERM'), 0)
+
+    const sigterm = () => {}
+    Config.set('app.signals', {
+      SIGTERM: sigterm
+    })
+
+    await new Ignite().load(Path.toHref(Path.pwd() + '/'))
+
+    assert.isTrue(Env('SIGNALS_CONFIGURED', false))
+    assert.lengthOf(process.listeners('SIGINT'), 1)
+    assert.lengthOf(process.listeners('SIGTERM'), 1)
+    assert.deepEqual(process.listeners('SIGTERM')[0], sigterm)
+  }
+
+  @Test()
+  public async shouldBeAbleToMergeCustomSIGINTWithDefaultSIGTERMForTheApplication({ assert }: Context) {
+    assert.lengthOf(process.listeners('SIGINT'), 0)
+    assert.lengthOf(process.listeners('SIGTERM'), 0)
+
+    const sigint = () => {}
+    Config.set('app.signals', {
+      SIGINT: sigint
+    })
+
+    await new Ignite().load(Path.toHref(Path.pwd() + '/'))
+
+    assert.isTrue(Env('SIGNALS_CONFIGURED', false))
+    assert.lengthOf(process.listeners('SIGINT'), 1)
+    assert.lengthOf(process.listeners('SIGTERM'), 1)
+    assert.deepEqual(process.listeners('SIGINT')[0], sigint)
+  }
+
+  @Test()
+  public async shouldCatchVanillaErrorsThatHappensDuringBootOfTheFoundationAndHandleIt({ assert }: Context) {
+    const fatalMock = Mock.fake()
+    Log.when('channelOrVanilla').return({
+      fatal: fatalMock
+    })
+    Mock.when(process, 'exit').return(undefined)
+
+    const ignite = new Ignite()
+
+    Mock.spy(ignite, 'handleError')
+    Mock.when(ignite, 'setUncaughtExceptionHandler').throw(new Error('test'))
+
+    await ignite.load(Path.toHref(Path.pwd() + '/'))
+
+    assert.calledWith(process.exit, 1)
+    assert.calledWith(ignite.handleError, new Error('test'))
+    assert.calledWith(fatalMock, await new Error('test').toAthennaException().prettify())
+  }
+
+  @Test()
+  public async shouldCatchAthennaExceptionsThatHappensDuringBootOfTheFoundationAndHandleIt({ assert }: Context) {
+    const fatalMock = Mock.fake()
+    Log.when('channelOrVanilla').return({
+      fatal: fatalMock
+    })
+    Mock.when(process, 'exit').return(undefined)
+
+    const ignite = new Ignite()
+
+    Mock.spy(ignite, 'handleError')
+    Mock.when(ignite, 'setUncaughtExceptionHandler').throw(new Exception())
+
+    await ignite.load(Path.toHref(Path.pwd() + '/'))
+
+    assert.calledWith(process.exit, 1)
+    assert.calledWith(ignite.handleError, new Exception())
+    assert.calledWith(fatalMock, await new Exception().prettify())
+  }
+
+  @Test()
+  public async shouldCatchAnyKindOfErrorsWhenUsingBun({ assert }: Context) {
+    process.versions.bun = '1.0.0'
+    const fatalMock = Mock.fake()
+    Log.when('channelOrVanilla').return({
+      fatal: fatalMock
+    })
+    Mock.when(process.stderr, 'write').return(undefined)
+    Mock.when(process, 'exit').return(undefined)
+
+    const ignite = new Ignite()
+
+    Mock.spy(ignite, 'handleError')
+    Mock.when(ignite, 'setUncaughtExceptionHandler').throw(new Exception())
+
+    await ignite.load(Path.toHref(Path.pwd() + '/'))
+
+    assert.calledOnce(process.stderr.write)
+    assert.calledWith(process.exit, 1)
+    assert.calledWith(ignite.handleError, new Exception())
+    assert.notCalled(fatalMock)
+  }
+
+  @Test()
+  public async shouldBeAbleToLoadAnEnvFileWhenFiringAthennaApplication({ assert }: Context) {
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false,
+      envPath: Path.fixtures('.env')
     })
 
     await ignite.fire()
 
-    process.emit('SIGINT')
-
-    assert.isTrue(this.processExitMock.called)
+    assert.equal(ignite.options.envPath, Path.fixtures('.env'))
+    assert.equal(process.env.LOADED_FIXTURE_ENV, 'true')
   }
 
   @Test()
-  public async shouldBeAbleToExecuteDefaultSIGTERMSignalOfIgnite({ assert }: Context) {
-    const processKillFake = Mock.sandbox.fake()
-    process.kill = processKillFake
-    Config.set('rc.providers', ['#tests/fixtures/providers/ConsoleEnvProvider'])
+  public async shouldBeAbleToLoadConfigPathWhenFiringAthennaApplication({ assert }: Context) {
+    Config.set('rc.directories.config', 'tests/fixtures/igniteConfig')
 
-    const ignite = await new Ignite().load(Config.get('meta'), {
-      environments: ['console']
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
     })
 
     await ignite.fire()
 
-    process.emit('SIGTERM', 'SIGTERM')
-
-    await Exec.sleep(100)
-
-    assert.isTrue(ioc.has('ConsoleEnvShutdown'))
-    assert.calledWith(processKillFake, process.pid, 'SIGTERM')
+    assert.equal(Config.get('hello.hello'), 'world!')
   }
 
   @Test()
-  public async shouldIgnoreUndefinedSignalsFromAppSignals({ assert }: Context) {
-    Config.set('app.signals', {
-      SIGINT: null, // will set the default signal
-      IGNORE: undefined,
-      SIGTERM: undefined // will set the default signal
+  public async shouldBeAbleToLoadConfigPathSafeWhenFiringAthennaApplication({ assert }: Context) {
+    Config.set('rc.directories.config', 'tests/fixtures/igniteConfig')
+    Config.set('hello.hello', 'will-not-be-changed!')
+
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false,
+      loadConfigSafe: true
     })
 
-    await new Ignite().load(Config.get('meta'))
+    await ignite.fire()
 
-    const events = process.eventNames()
-
-    assert.isTrue(events.includes('SIGINT'))
-    assert.isTrue(events.includes('SIGTERM'))
-    assert.isFalse(events.includes('IGNORE'))
+    assert.equal(Config.get('hello.hello'), 'will-not-be-changed!')
   }
 
   @Test()
-  public async shouldBeAbleToIgniteTheArtisanApplicationFromIgniteClass({ assert }: Context) {
-    const ignite = await new Ignite().load(Config.get('meta'))
+  public async shouldPushTheEnvironmentsSetInIgniteLoadToTheConfigValueOfIt({ assert }: Context) {
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false,
+      environments: ['test']
+    })
 
-    await ignite.artisan(['node', 'artisan', 'test:generate'], { routePath: Path.fixtures('routes/console.ts') })
+    await ignite.fire()
 
-    assert.isTrue(await File.exists(Path.fixtures('storage/Command.ts')))
+    assert.deepEqual(Config.get('rc.environments'), ['test'])
   }
 
   @Test()
-  public async shouldBeAbleToIgniteTheHttpApplicationFromIgniteClass({ assert }: Context) {
-    const ignite = await new Ignite().load(Config.get('meta'))
+  public async shouldNotSubscribeEnvironmentsConfigButOnlyAddNewValues({ assert }: Context) {
+    Config.set('rc.environments', ['development'])
+
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false,
+      environments: ['test']
+    })
+
+    await ignite.fire()
+
+    assert.deepEqual(Config.get('rc.environments'), ['development', 'test'])
+  }
+
+  @Test()
+  public async shouldCatchAndHandleVanillaErrorsThatHappensInsideFireMethod({ assert }: Context) {
+    const ignite = new Ignite()
+
+    Mock.when(ignite, 'handleError').return(undefined)
+    Mock.when(ignite, 'setEnvVariablesFile').throw(new Error())
+
+    await ignite.load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+    await ignite.fire()
+
+    assert.calledWith(ignite.handleError, new Error())
+  }
+
+  @Test()
+  public async shouldCatchAndHandleExceptionsThatHappensInsideFireMethod({ assert }: Context) {
+    const ignite = new Ignite()
+
+    Mock.when(ignite, 'handleError').return(undefined)
+    Mock.when(ignite, 'setEnvVariablesFile').throw(new Exception())
+
+    await ignite.load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+    await ignite.fire()
+
+    assert.calledWith(ignite.handleError, new Exception())
+  }
+
+  @Test()
+  public async shouldRegisterAndBootProvidersWhenFiringTheFoundation({ assert }: Context) {
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+    await ignite.fire()
+
+    assert.lengthOf(LoadHelper.providers, 3)
+  }
+
+  @Test()
+  public async shouldPreloadModulesWhenFiringTheFoundation({ assert }: Context) {
+    Config.set('rc.preloads', ['#tests/fixtures/routes/load'])
+
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+    await ignite.fire()
+
+    assert.deepEqual(LoadHelper.alreadyPreloaded, ['#tests/fixtures/routes/load'])
+  }
+
+  @Test()
+  public async shouldSetTheReplEnvironmentInOptionsWhenIgnitingAReplApplication({ assert }: Context) {
+    Mock.when(Repl, 'boot').resolve(undefined)
+
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+    await ignite.repl()
+
+    assert.deepEqual(Config.get('rc.environments'), ['repl'])
+  }
+
+  @Test()
+  public async shouldFireTheFoundationWhenIgnitingReplApplication({ assert }: Context) {
+    Mock.when(Repl, 'boot').resolve(undefined)
+
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+
+    Mock.spy(ignite, 'fire')
+
+    await ignite.repl()
+
+    assert.calledOnce(ignite.fire)
+  }
+
+  @Test()
+  public async shouldSetACustomUncaughtExceptionHandlerForReplApplication({ assert }: Context) {
+    Mock.when(Repl, 'boot').resolve(undefined)
+
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+
+    Mock.spy(ignite, 'setUncaughtExceptionHandler')
+
+    await ignite.repl()
+
+    assert.calledOnce(ignite.setUncaughtExceptionHandler)
+  }
+
+  @Test()
+  public async shouldCatchAndHandleVanillaErrorsThatHappensInsideReplMethod({ assert }: Context) {
+    const ignite = new Ignite()
+
+    Mock.when(ignite, 'handleError').return(undefined)
+    Mock.when(ignite, 'fire').throw(new Error())
+
+    await ignite.load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+    await ignite.repl()
+
+    assert.calledWith(ignite.handleError, new Error())
+  }
+
+  @Test()
+  public async shouldCatchAndHandleExceptionsThatHappensInsideReplMethod({ assert }: Context) {
+    const ignite = new Ignite()
+
+    Mock.when(ignite, 'handleError').return(undefined)
+    Mock.when(ignite, 'fire').throw(new Exception())
+
+    await ignite.load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+    await ignite.repl()
+
+    assert.calledWith(ignite.handleError, new Exception())
+  }
+
+  @Test()
+  public async shouldSetTheConsoleEnvironmentInOptionsWhenIgnitingAnArtisanApplication({ assert }: Context) {
+    Mock.when(Console, 'boot').resolve(undefined)
+
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+    await ignite.console([])
+
+    assert.deepEqual(ignite.options.environments, ['console'])
+  }
+
+  @Test()
+  public async shouldNotFireTheFoundationWhenIgnitingConsoleApplications({ assert }: Context) {
+    Mock.when(Console, 'boot').resolve(undefined)
+
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+
+    Mock.when(ignite, 'fire').resolve(undefined)
+
+    await ignite.console([])
+
+    assert.notCalled(ignite.fire)
+    assert.deepEqual(ignite.options.environments, ['console'])
+  }
+
+  @Test()
+  public async shouldSendTheCorrectArgvAndOptionsToTheConsoleBootMethod({ assert }: Context) {
+    Mock.when(Console, 'boot').resolve(undefined)
+
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+
+    await ignite.console(['test'], {
+      displayName: 'Artisan'
+    })
+
+    assert.calledWith(Console.boot, ['test'], { displayName: 'Artisan' })
+  }
+
+  @Test()
+  public async shouldCatchAndHandleVanillaErrorsThatHappensInsideConsoleMethod({ assert }: Context) {
+    Mock.when(Console, 'boot').reject(new Error())
+    const ignite = new Ignite()
+
+    Mock.when(ignite, 'handleError').return(undefined)
+
+    await ignite.load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+    await ignite.console([])
+
+    assert.calledWith(ignite.handleError, new Error())
+  }
+
+  @Test()
+  public async shouldCatchAndHandleExceptionsThatHappensInsideConsoleMethod({ assert }: Context) {
+    Mock.when(Console, 'boot').reject(new Exception())
+    const ignite = new Ignite()
+
+    Mock.when(ignite, 'handleError').return(undefined)
+
+    await ignite.load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+    await ignite.console([])
+
+    assert.calledWith(ignite.handleError, new Exception())
+  }
+
+  @Test()
+  public async shouldSetTheHttpEnvironmentInOptionsWhenIgnitingAHttpApplication({ assert }: Context) {
+    Mock.when(Http, 'boot').resolve(undefined)
+
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+    await ignite.httpServer()
+
+    assert.deepEqual(Config.get('rc.environments'), ['http'])
+  }
+
+  @Test()
+  public async shouldFireTheFoundationWhenIgnitingHttpApplication({ assert }: Context) {
+    Mock.when(Http, 'boot').resolve(undefined)
+
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+
+    Mock.spy(ignite, 'fire')
 
     await ignite.httpServer()
 
-    assert.isTrue(Server.isListening)
+    assert.calledOnce(ignite.fire)
   }
 
   @Test()
-  public async shouldBeAbleToIgniteTheReplApplicationFromIgniteClass({ assert }: Context) {
-    const ignite = await new Ignite().load(Config.get('meta'))
+  public async shouldSendTheCorrectOptionsToTheHttpBootMethod({ assert }: Context) {
+    Mock.when(Http, 'boot').resolve(undefined)
 
-    const repl = await ignite.repl()
-
-    assert.deepEqual(repl.context.ioc, ioc)
-
-    repl.close()
-  }
-
-  @Test()
-  public async shouldBeAbleToRegisterTheServicesDepsUsingTheCoreProvider({ assert }: Context) {
-    const ignite = await new Ignite().load(Config.get('meta'), {
-      environments: ['console']
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
     })
 
-    await ignite.fire()
+    await ignite.httpServer({ host: 'localhost', port: 3000 })
 
-    assert.isTrue(ioc.has('welcomeService'))
-    assert.isTrue(ioc.has('App/Services/WelcomeService'))
-    assert.isTrue(ioc.has('decoratedWelcomeService'))
-    assert.isTrue(ioc.has('App/Services/DecoratedWelcomeService'))
+    assert.calledWith(Http.boot, { host: 'localhost', port: 3000 })
   }
 
   @Test()
-  public async shouldBeAbleToIgniteTheApplicationWithDifferentDirectoriesRegistered({ assert }: Context) {
-    await new Ignite().load(Config.get('meta'), { athennaRcPath: Path.fixtures('.athennarc-dirs.json') })
+  public async shouldCatchAndHandleVanillaErrorsThatHappensInsideHttpMethod({ assert }: Context) {
+    Mock.when(Http, 'boot').reject(new Error())
+    const ignite = new Ignite()
 
-    assert.equal(Path.app(), Path.pwd('app'))
-    assert.equal(Path.controllers(), Path.pwd('src/http/controllers'))
-    assert.equal(Path.middlewares(), Path.pwd('src/http/middlewares'))
-    assert.equal(Path.interceptors(), Path.pwd('src/http/interceptors'))
-    assert.equal(Path.terminators(), Path.pwd('src/http/terminators'))
+    Mock.when(ignite, 'handleError').return(undefined)
+
+    await ignite.load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+    await ignite.httpServer()
+
+    assert.calledWith(ignite.handleError, new Error())
+  }
+
+  @Test()
+  public async shouldCatchAndHandleExceptionsThatHappensInsideHttpMethod({ assert }: Context) {
+    Mock.when(Http, 'boot').reject(new Exception())
+    const ignite = new Ignite()
+
+    Mock.when(ignite, 'handleError').return(undefined)
+
+    await ignite.load(Path.toHref(Path.pwd() + '/'), {
+      bootLogs: false
+    })
+    await ignite.httpServer()
+
+    assert.calledWith(ignite.handleError, new Exception())
   }
 }

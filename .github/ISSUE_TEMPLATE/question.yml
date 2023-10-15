@@ -13,7 +13,7 @@ body:
         For anything else, such as questions or getting help, please see:
 
         - [The Athenna help page](https://athenna.io/help)
-        - [Our `#help` channel in Discord](https://discord.gg/j6FKKQQrW9)
+        - [Our `#help` channel in Discord](https://discord.gg/JdEbBAKw6X)
         - The [AthennaIO](https://stackoverflow.com/questions/tagged/AthennaIO) tag on [StackOverflow](https://stackoverflow.com/questions/ask)
   - type: checkboxes
     id: no-post

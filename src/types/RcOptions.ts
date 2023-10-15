@@ -9,10 +9,10 @@
 
 export interface RcOptions {
   /**
-   * The meta url of where the application has bootstrapped. Athenna will always save this information
+   * The parent url of where the application has bootstrapped. Athenna will always save this information
    * to know the call path where the application has started.
    */
-  meta?: string
+  parentURL?: string
 
   /**
    * Set if the application will have boot logs showed.
