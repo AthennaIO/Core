@@ -8,7 +8,7 @@
     "strict": false,
     "rootDir": ".",
     "baseUrl": ".",
-    "outDir": "./build-relative",
+    "outDir": "../../build-relative",
     "module": "NodeNext",
     "target": "ESNext",
     "moduleResolution": "NodeNext",

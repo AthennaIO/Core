@@ -19,9 +19,9 @@ export default class BuildCommandTest extends BaseCommandTest {
     output.assertSucceeded()
     output.assertLogged('Application successfully compiled')
 
-    assert.isTrue(Folder.existsSync(Path.fixtures('build')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.js')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.d.ts')))
+    assert.isTrue(Folder.existsSync(Path.pwd('build')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.js')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.d.ts')))
   }
 
   @Test()
@@ -33,27 +33,27 @@ export default class BuildCommandTest extends BaseCommandTest {
     output.assertSucceeded()
     output.assertLogged('Application successfully compiled')
 
-    assert.isTrue(Folder.existsSync(Path.fixtures('build-relative')))
-    assert.isTrue(File.existsSync(Path.fixtures('build-relative/app/hello.js')))
-    assert.isTrue(File.existsSync(Path.fixtures('build-relative/app/hello.d.ts')))
+    assert.isTrue(Folder.existsSync(Path.pwd('build-relative')))
+    assert.isTrue(File.existsSync(Path.pwd('build-relative/app/hello.js')))
+    assert.isTrue(File.existsSync(Path.pwd('build-relative/app/hello.d.ts')))
   }
 
   @Test()
   public async shouldDeleteTheOldOutDirBeforeCompilingTheApplicationAgain({ assert, command }: Context) {
     await command.run('build')
 
-    assert.isTrue(Folder.existsSync(Path.fixtures('build')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.js')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.d.ts')))
+    assert.isTrue(Folder.existsSync(Path.pwd('build')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.js')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.d.ts')))
 
     const output = await command.run('build')
 
     output.assertSucceeded()
     output.assertLogged('Application successfully compiled')
 
-    assert.isTrue(Folder.existsSync(Path.fixtures('build')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.js')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.d.ts')))
+    assert.isTrue(Folder.existsSync(Path.pwd('build')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.js')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.d.ts')))
   }
 
   @Test()
@@ -66,11 +66,11 @@ export default class BuildCommandTest extends BaseCommandTest {
     output.assertLogged('Copying included paths to build folder: README.md, LICENSE.md')
     output.assertLogged('Application successfully compiled')
 
-    assert.isTrue(Folder.existsSync(Path.fixtures('build')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/LICENSE.md')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/README.md')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.js')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.d.ts')))
+    assert.isTrue(Folder.existsSync(Path.pwd('build')))
+    assert.isTrue(File.existsSync(Path.pwd('build/LICENSE.md')))
+    assert.isTrue(File.existsSync(Path.pwd('build/README.md')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.js')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.d.ts')))
   }
 
   @Test()
@@ -83,11 +83,11 @@ export default class BuildCommandTest extends BaseCommandTest {
     output.assertLogged('Copying included paths to build folder: src/*, templates/*')
     output.assertLogged('Application successfully compiled')
 
-    assert.isTrue(Folder.existsSync(Path.fixtures('build')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/src/index.ts')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/templates/exception.edge')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.js')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.d.ts')))
+    assert.isTrue(Folder.existsSync(Path.pwd('build')))
+    assert.isTrue(File.existsSync(Path.pwd('build/src/index.ts')))
+    assert.isTrue(File.existsSync(Path.pwd('build/templates/exception.edge')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.js')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.d.ts')))
   }
 
   @Test()
@@ -103,11 +103,11 @@ export default class BuildCommandTest extends BaseCommandTest {
     output.assertLogged('Copying included paths to build folder: src/**/*Command.ts')
     output.assertLogged('Application successfully compiled')
 
-    assert.isTrue(Folder.existsSync(Path.fixtures('build')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.js')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.d.ts')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/src/commands/BuildCommand.ts')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/src/commands/MakeServiceCommand.ts')))
+    assert.isTrue(Folder.existsSync(Path.pwd('build')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.js')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.d.ts')))
+    assert.isTrue(File.existsSync(Path.pwd('build/src/commands/BuildCommand.ts')))
+    assert.isTrue(File.existsSync(Path.pwd('build/src/commands/MakeServiceCommand.ts')))
   }
 
   @Test()
@@ -123,11 +123,11 @@ export default class BuildCommandTest extends BaseCommandTest {
     output.assertLogged('Copying included paths to build folder: templates/**/*.edge')
     output.assertLogged('Application successfully compiled')
 
-    assert.isTrue(Folder.existsSync(Path.fixtures('build')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/templates/exception.edge')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/templates/provider.edge')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.js')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.d.ts')))
+    assert.isTrue(Folder.existsSync(Path.pwd('build')))
+    assert.isTrue(File.existsSync(Path.pwd('build/templates/exception.edge')))
+    assert.isTrue(File.existsSync(Path.pwd('build/templates/provider.edge')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.js')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.d.ts')))
   }
 
   @Test()
@@ -139,9 +139,9 @@ export default class BuildCommandTest extends BaseCommandTest {
     output.assertSucceeded()
     output.assertLogged('Application successfully compiled')
 
-    assert.isTrue(Folder.existsSync(Path.fixtures('build-relative')))
-    assert.isTrue(File.existsSync(Path.fixtures('build-relative/app/hello.js')))
-    assert.isTrue(File.existsSync(Path.fixtures('build-relative/app/hello.d.ts')))
+    assert.isTrue(Folder.existsSync(Path.pwd('build-relative')))
+    assert.isTrue(File.existsSync(Path.pwd('build-relative/app/hello.js')))
+    assert.isTrue(File.existsSync(Path.pwd('build-relative/app/hello.d.ts')))
   }
 
   @Test()
@@ -165,9 +165,9 @@ export default class BuildCommandTest extends BaseCommandTest {
     output.assertSucceeded()
     output.assertLogged('Application successfully compiled')
 
-    assert.isTrue(Folder.existsSync(Path.fixtures('build')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.js')))
-    assert.isFalse(File.existsSync(Path.fixtures('build/.env')))
-    assert.isTrue(File.existsSync(Path.fixtures('build/app/hello.d.ts')))
+    assert.isTrue(Folder.existsSync(Path.pwd('build')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.js')))
+    assert.isFalse(File.existsSync(Path.pwd('build/.env')))
+    assert.isTrue(File.existsSync(Path.pwd('build/app/hello.d.ts')))
   }
 }

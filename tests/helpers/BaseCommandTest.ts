@@ -36,10 +36,6 @@ export class BaseCommandTest {
     await Folder.safeRemove(Path.pwd('build'))
     await Folder.safeRemove(Path.pwd('build-relative'))
     await Folder.safeRemove(Path.tests('e2e'))
-    await Folder.safeRemove(Path.fixtures('dist'))
-    await Folder.safeRemove(Path.fixtures('build'))
-    await Folder.safeRemove(Path.fixtures('storage'))
-    await Folder.safeRemove(Path.fixtures('build-relative'))
 
     await new File(Path.pwd('package.json')).setContent(this.originalPJson)
   }
