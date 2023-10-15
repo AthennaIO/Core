@@ -11,8 +11,8 @@ import { rimraf } from 'rimraf'
 import { tsc } from '@athenna/tsconfig/tsc'
 import { Path, Color } from '@athenna/common'
 import { BaseCommand } from '@athenna/artisan'
+import { isAbsolute, join, parse } from 'node:path'
 import { copyfiles } from '@athenna/tsconfig/copyfiles'
-import { isAbsolute, join, parse, sep } from 'node:path'
 import { UndefinedOutDirException } from '#src/exceptions/UndefinedOutDirException'
 
 export class BuildCommand extends BaseCommand {
@@ -42,7 +42,7 @@ export class BuildCommand extends BaseCommand {
     const compiler = Color.yellow.bold('tsc')
     const includedFiles = Color.gray(include.join(', '))
 
-    const outDir = this.getOutDir(tsConfigPath)
+    const outDir = this.getOutDir()
     const outDirName = Color.yellow.bold(parse(outDir).name)
 
     const tasks = this.logger.task()
@@ -68,13 +68,11 @@ export class BuildCommand extends BaseCommand {
     this.logger.success('Application successfully compiled')
   }
 
-  private getOutDir(tsConfigPath: string): string {
+  private getOutDir(): string {
     if (!Config.exists('rc.commands.build.outDir')) {
       throw new UndefinedOutDirException()
     }
 
-    return (
-      parse(tsConfigPath).dir + sep + Config.get('rc.commands.build.outDir')
-    )
+    return Path.pwd(Config.get('rc.commands.build.outDir'))
   }
 }
