@@ -28,7 +28,7 @@ jobs:
         run: npm install
 
       - name: Run tests
-        run: npm run test:coverage
+        run: npm run test
 
       - name: Test code compilation
         run: npm run build
@@ -50,7 +50,7 @@ jobs:
         run: npm install
 
       - name: Run tests
-        run: npm run test:coverage
+        run: npm run test
 
       - name: Test code compilation
         run: npm run build
