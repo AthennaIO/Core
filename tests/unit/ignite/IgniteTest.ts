@@ -138,7 +138,7 @@ export default class IgniteTest {
   @Test()
   public async shouldBeAbleToSetTheAbsolutePathToTheEnvFile({ assert }: Context) {
     const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
-      envPath: Path.pwd() + '/.env'
+      envPath: Path.pwd() + sep + '.env'
     })
 
     assert.equal(ignite.options.envPath, Path.pwd() + sep + '.env')
