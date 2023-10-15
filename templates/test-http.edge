@@ -1,0 +1,11 @@
+import { Test, type Context } from '@athenna/test'
+import { BaseHttpTest } from '@athenna/core/testing/BaseHttpTest'
+
+export default class {{ namePascal }} extends BaseHttpTest {
+  @Test()
+  public async shouldBeAbleToExecuteHttpRequests({ request }: Context) {
+    const response = await request.get('/')
+
+    response.assertStatusCode(200)
+  }
+}

@@ -22,7 +22,7 @@ export class Http {
       host: Config.get('http.host', '127.0.0.1'),
       port: Config.get('http.port', 3000),
       trace: Config.get('http.trace', false),
-      routePath: Path.routes(`rest.${Path.ext()}`),
+      routePath: Path.routes(`http.${Path.ext()}`),
       kernelPath: '@athenna/http/kernels/HttpKernel'
     })
 
@@ -37,7 +37,7 @@ export class Http {
     await server.listen({ host: options.host, port: options.port })
 
     if (Config.notExists('rc.bootLogs') || Config.is('rc.bootLogs', false)) {
-      return
+      return server
     }
 
     const host = server.getHost() || options.host

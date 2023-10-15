@@ -1,0 +1,12 @@
+import { Test, type Context } from '@athenna/test'
+import { BaseConsoleTest } from '@athenna/core/testing/BaseConsoleTest'
+
+export default class {{ namePascal }} extends BaseConsoleTest {
+  @Test()
+  public async shouldBeAbleToExecuteConsoleCommands({ command }: Context) {
+    const output = await command.run('greet')
+
+    output.assertSucceeded()
+    output.assertLogged('Hello World!')
+  }
+}

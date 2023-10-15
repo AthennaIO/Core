@@ -12,7 +12,7 @@ import { ServerImpl } from '@athenna/http'
 import { AfterAll, BeforeAll } from '@athenna/test'
 import { Ignite, type HttpOptions, type IgniteOptions } from '@athenna/core'
 
-export class BaseRestTest {
+export class BaseHttpTest {
   public ignite: Ignite
   public httpServer: ServerImpl
   public httpOptions: HttpOptions = {}
