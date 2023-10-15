@@ -32,6 +32,7 @@ export class BaseCommandTest {
     await Folder.safeRemove(Path.app())
     await Folder.safeRemove(Path.providers())
     await Folder.safeRemove(Path.storage())
+    await Folder.safeRemove(Path.fixtures('storage'))
     await Folder.safeRemove(Path.pwd('dist'))
     await Folder.safeRemove(Path.pwd('build'))
     await Folder.safeRemove(Path.pwd('build-relative'))

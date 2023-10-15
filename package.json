@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "4.10.1",
+  "version": "4.10.2",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -57,8 +57,8 @@
     "./commands/ServeCommand": "./src/commands/ServeCommand.js",
     "./commands/TestCommand": "./src/commands/TestCommand.js",
     "./commands/BuildCommand": "./src/commands/BuildCommand.js",
-    "./testing/BaseCliTest": "./src/testing/BaseCliTest.js",
-    "./testing/BaseRestTest": "./src/testing/BaseRestTest.js"
+    "./testing/BaseHttpTest": "./src/testing/BaseHttpTest.js",
+    "./testing/BaseConsoleTest": "./src/testing/BaseConsoleTest.js"
   },
   "imports": {
     "#bin/*": "./bin/*.js",
@@ -106,8 +106,8 @@
       "src/**/*.ts"
     ],
     "exclude": [
-      "src/testing/BaseCliTest.ts",
-      "src/testing/BaseRestTest.ts",
+      "src/testing/BaseConsoleTest.ts",
+      "src/testing/BaseHttpTest.ts",
       "src/repl/helpers/Command.ts",
       "src/types/*"
     ],
@@ -204,8 +204,8 @@
       "provider": "./templates/provider.edge",
       "service": "./templates/service.edge",
       "test": "./templates/test.edge",
-      "test-cli": "./templates/test-cli.edge",
-      "test-rest": "./templates/test-rest.edge",
+      "test-console": "./templates/test-console.edge",
+      "test-http": "./templates/test-http.edge",
       "test-fn": "./templates/test-fn.edge",
       "command": "node_modules/@athenna/artisan/templates/command.edge",
       "controller": "node_modules/@athenna/http/templates/controller.edge",

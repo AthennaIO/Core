@@ -35,8 +35,8 @@ export default class MakeTestCommandTest extends BaseCommandTest {
   }
 
   @Test()
-  public async shouldBeAbleToCreateATestFileUsingRestTemplate({ assert, command }: Context) {
-    const output = await command.run('make:test TestTest --rest')
+  public async shouldBeAbleToCreateATestFileUsingHttpTemplate({ assert, command }: Context) {
+    const output = await command.run('make:test TestTest --http')
 
     output.assertSucceeded()
     output.assertLogged('[ MAKING TEST ]')
@@ -46,8 +46,8 @@ export default class MakeTestCommandTest extends BaseCommandTest {
   }
 
   @Test()
-  public async shouldBeAbleToCreateATestFileUsingCliTemplate({ assert, command }: Context) {
-    const output = await command.run('make:test TestTest --cli')
+  public async shouldBeAbleToCreateATestFileUsingConsoleTemplate({ assert, command }: Context) {
+    const output = await command.run('make:test TestTest --console')
 
     output.assertSucceeded()
     output.assertLogged('[ MAKING TEST ]')

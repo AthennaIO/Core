@@ -12,7 +12,7 @@ import { BeforeAll } from '@athenna/test'
 import { Ignite, type IgniteOptions } from '@athenna/core'
 import { TestCommand } from '@athenna/artisan/testing/plugins'
 
-export class BaseCliTest {
+export class BaseConsoleTest {
   public ignite: Ignite
   public igniteOptions: IgniteOptions = {}
   public artisanPath: string = Path.bootstrap(`artisan.${Path.ext()}`)

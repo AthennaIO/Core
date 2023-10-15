@@ -25,18 +25,18 @@ export class MakeTestCommand extends BaseCommand {
   public isUnit: boolean
 
   @Option({
-    description: 'Create a REST API test.',
-    signature: '-r, --rest',
+    description: 'Create a HTTP test.',
+    signature: '-h, --http',
     default: false
   })
-  public isRest: boolean
+  public isHttp: boolean
 
   @Option({
-    description: 'Create a CLI test.',
-    signature: '-c, --cli',
+    description: 'Create a Console test.',
+    signature: '-c, --console',
     default: false
   })
-  public isCli: boolean
+  public isConsole: boolean
 
   @Option({
     description: 'Create the test as function instead of class.',
@@ -58,8 +58,8 @@ export class MakeTestCommand extends BaseCommand {
 
     let template = 'test'
 
-    if (this.isCli) template = 'test-cli'
-    else if (this.isRest) template = 'test-rest'
+    if (this.isConsole) template = 'test-console'
+    else if (this.isHttp) template = 'test-http'
     else if (this.isUnit) template = 'test' // This is necessary to avoid multiple options case.
 
     if (this.isFunction) {
