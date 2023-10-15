@@ -8,6 +8,7 @@
  */
 
 import { parse } from 'node:path'
+import { debug } from '#src/debug'
 import { Log } from '@athenna/logger'
 import { Exec, Module } from '@athenna/common'
 import { ServiceProvider } from '@athenna/ioc'
@@ -44,20 +45,20 @@ export class LoadHelper {
    * Execute the "boot" method of all the providers loaded.
    */
   public static async bootProviders(): Promise<void> {
-    await Exec.concurrently(
-      this.providers,
-      Provider => new Provider().boot() as Promise<void>
-    )
+    await Exec.concurrently(this.providers, Provider => {
+      debug('running boot() method of provider %s.', Provider.name)
+      return new Provider().boot() as Promise<void>
+    })
   }
 
   /**
    * Execute the "register" method of all the providers loaded.
    */
   public static async registerProviders(): Promise<void> {
-    await Exec.concurrently(
-      this.providers,
-      Provider => new Provider().register() as Promise<void>
-    )
+    await Exec.concurrently(this.providers, Provider => {
+      debug('running register() method of provider %s.', Provider.name)
+      return new Provider().register() as Promise<void>
+    })
   }
 
   /**
@@ -65,6 +66,8 @@ export class LoadHelper {
    */
   public static async shutdownProviders(): Promise<void> {
     await Exec.concurrently(this.providers, Provider => {
+      debug('running shutdown() method of provider %s.', Provider.name)
+
       if (Config.is('rc.shutdownLogs', true)) {
         Log.channelOrVanilla('application').success(
           `Provider ({yellow} ${Provider.name}) successfully shutdown`
@@ -80,7 +83,10 @@ export class LoadHelper {
    */
   public static async preloadFiles(): Promise<void> {
     await Exec.concurrently(Config.get('rc.preloads', []), path => {
+      debug('preloading path %s.', path)
+
       if (this.alreadyPreloaded.includes(path)) {
+        debug('path %s has already been preloaded and will be skipped.', path)
         return
       }
 
@@ -103,9 +109,16 @@ export class LoadHelper {
     const providers = await Exec.concurrently(paths, this.resolvePath)
 
     this.providers = providers.filter(Provider => {
+      debug('loading provider %s.', Provider.name)
+
       if (!this.isRegistered(Provider) && this.canBeBootstrapped(Provider)) {
         return true
       }
+
+      debug(
+        'provider %s will not be loaded because it is already registered or it cannot bootstrap in the current environment.',
+        Provider.name
+      )
 
       return false
     })
@@ -141,6 +154,6 @@ export class LoadHelper {
    * Resolve the import path by meta URL and import it.
    */
   private static async resolvePath(path: string) {
-    return Module.resolve(path, Config.get('rc.meta'))
+    return Module.resolve(path, Config.get('rc.parentURL'))
   }
 }

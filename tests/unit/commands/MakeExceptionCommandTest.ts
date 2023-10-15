@@ -7,39 +7,44 @@
  * file that was distributed with this source code.
  */
 
-import { File } from '@athenna/common'
-import { Artisan } from '@athenna/artisan'
+import { File, Path } from '@athenna/common'
 import { Test, type Context } from '@athenna/test'
 import { BaseCommandTest } from '#tests/helpers/BaseCommandTest'
 
 export default class MakeExceptionCommandTest extends BaseCommandTest {
   @Test()
-  public async shouldBeAbleToCreateAnExceptionFile({ assert }: Context) {
-    await Artisan.call('make:exception TestException', false)
+  public async shouldBeAbleToCreateAExceptionFile({ assert, command }: Context) {
+    const output = await command.run('make:exception TestException')
 
-    const path = Path.exceptions('TestException.ts')
+    output.assertSucceeded()
+    output.assertLogged('[ MAKING EXCEPTION ]')
+    output.assertLogged('[  success  ] Exception "TestException" successfully created.')
 
-    assert.isTrue(await File.exists(path))
-    assert.isTrue(this.processExitMock.calledOnceWith(0))
+    assert.isTrue(await File.exists(Path.exceptions('TestException.ts')))
   }
 
   @Test()
-  public async shouldBeAbleToCreateAnExceptionFileInDifferentDestPath({ assert }: Context) {
-    Config.set('rc.commands.make:exception.destination', Path.fixtures('storage/exceptions'))
+  public async shouldBeAbleToCreateAExceptionFileWithADifferentDestPath({ assert, command }: Context) {
+    const output = await command.run('make:exception TestException', {
+      path: Path.fixtures('consoles/console-mock-dest-import.ts')
+    })
 
-    await Artisan.call('make:exception TestException', false)
+    output.assertSucceeded()
+    output.assertLogged('[ MAKING EXCEPTION ]')
+    output.assertLogged('[  success  ] Exception "TestException" successfully created.')
 
-    const path = Path.fixtures('storage/exceptions/TestException.ts')
-
-    assert.isTrue(await File.exists(path))
-    assert.isTrue(this.processExitMock.calledOnceWith(0))
+    assert.isTrue(await File.exists(Path.fixtures('storage/exceptions/TestException.ts')))
   }
 
   @Test()
-  public async shouldThrowAnExceptionWhenTheFileAlreadyExists({ assert }: Context) {
-    await Artisan.call('make:exception TestException', false)
-    await Artisan.call('make:exception TestException', false)
+  public async shouldThrowAnExceptionWhenTheFileAlreadyExists({ command }: Context) {
+    await command.run('make:exception TestException')
+    const output = await command.run('make:exception TestException')
 
-    assert.isTrue(this.processExitMock.calledWith(1))
+    output.assertFailed()
+    output.assertLogged('[ MAKING EXCEPTION ]')
+    output.assertLogged('The file')
+    output.assertLogged('TestException.ts')
+    output.assertLogged('already exists')
   }
 }

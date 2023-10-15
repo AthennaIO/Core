@@ -8,21 +8,21 @@
  */
 
 import type {
-  ArtisanOptions,
   HttpOptions,
+  ConsoleOptions,
   IgniteOptions,
   SemverNode
 } from '#src/types'
 
 import { Ioc } from '@athenna/ioc'
 import { Http } from '#src/applications/Http'
-import { Repl } from '#src/applications/Repl'
 import { EnvHelper, Rc } from '@athenna/config'
 import { isAbsolute, resolve } from 'node:path'
-import { Artisan } from '#src/applications/Artisan'
-import type { PrettyREPLServer } from 'pretty-repl'
+import type { ReplImpl } from '#src/repl/ReplImpl'
+import { Console } from '#src/applications/Console'
 import { LoadHelper } from '#src/helpers/LoadHelper'
 import { Log, LoggerProvider } from '@athenna/logger'
+import { Repl as ReplApp } from '#src/applications/Repl'
 import { File, Is, Module, Options } from '@athenna/common'
 import { parse as semverParse, satisfies as semverSatisfies } from 'semver'
 import { NotSatisfiedNodeVersion } from '#src/exceptions/NotSatisfiedNodeVersion'
@@ -34,14 +34,14 @@ export class Ignite {
   public container = new Ioc()
 
   /**
-   * The meta url path where the Ignite was called.
+   * The parent url path where the Ignite was called.
    *
    * @example
    * ```ts
    * new Ignite(import.meta.url)...
    * ```
    */
-  public meta: string
+  public parentURL: string
 
   /**
    * The Ignite options that will be used in "fire" method.
@@ -51,11 +51,11 @@ export class Ignite {
   /**
    * Load the Ignite class using the options and meta url path.
    */
-  public async load(meta: string, options?: IgniteOptions): Promise<this> {
+  public async load(parentURL: string, options?: IgniteOptions): Promise<this> {
     try {
       new LoggerProvider().register()
 
-      this.meta = meta
+      this.parentURL = parentURL
       this.options = Options.create(options, {
         beforePath: 'build',
         bootLogs: true,
@@ -91,53 +91,58 @@ export class Ignite {
   /**
    * Ignite the REPL application.
    */
-  public async repl(): Promise<PrettyREPLServer> {
-    this.options.environments.push('repl')
+  public async repl(): Promise<ReplImpl> {
+    try {
+      const { ReplProvider } = await import('#src/providers/ReplProvider')
 
-    await this.fire()
+      new ReplProvider().register()
 
-    this.options.uncaughtExceptionHandler = async error => {
-      if (!Is.Exception(error)) {
-        error = error.toAthennaException()
-      }
+      this.options.environments.push('repl')
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      await Log.channelOrVanilla('exception').fatal(await error.prettify())
-      repl.displayPrompt()
+      await this.fire()
+
+      this.options.uncaughtExceptionHandler = ReplApp.handleError
+
+      this.setUncaughtExceptionHandler()
+
+      return await ReplApp.boot()
+    } catch (err) {
+      await this.handleError(err)
     }
-
-    this.setUncaughtExceptionHandler()
-
-    const repl = await Repl.boot()
-
-    return repl
   }
 
   /**
-   * Ignite the Artisan application.
+   * Ignite the Console application.
    */
-  public async artisan(argv: string[], options?: ArtisanOptions) {
-    const { ViewProvider } = await import('@athenna/view')
-    const { ArtisanProvider } = await import('@athenna/artisan')
+  public async console(argv: string[], options?: ConsoleOptions) {
+    try {
+      const { ViewProvider } = await import('@athenna/view')
+      const { ArtisanProvider } = await import('@athenna/artisan')
 
-    new ViewProvider().register()
-    new ArtisanProvider().register()
+      new ViewProvider().register()
+      new ArtisanProvider().register()
 
-    this.options.environments.push('console')
+      this.options.environments.push('console')
 
-    return Artisan.boot(argv, options)
+      return await Console.boot(argv, options)
+    } catch (err) {
+      await this.handleError(err)
+    }
   }
 
   /**
    * Ignite the Http server application.
    */
   public async httpServer(options?: HttpOptions) {
-    this.options.environments.push('http')
+    try {
+      this.options.environments.push('http')
 
-    await this.fire()
+      await this.fire()
 
-    return Http.boot(options)
+      return await Http.boot(options)
+    } catch (err) {
+      await this.handleError(err)
+    }
   }
 
   /**
@@ -188,12 +193,11 @@ export class Ignite {
    * ```
    */
   public setUncaughtExceptionHandler(): void {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (Is.Array(process?._events?.uncaughtException)) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      process._events.uncaughtException.splice(1, 1)
+    if (process.listeners('uncaughtException').length) {
+      process.removeListener(
+        'uncaughtException',
+        this.options.uncaughtExceptionHandler
+      )
     }
 
     process.on('uncaughtException', this.options.uncaughtExceptionHandler)
@@ -222,17 +226,15 @@ export class Ignite {
       Config.set('rc.callPath', process.cwd())
     }
 
-    if (!process.env.CORE_TESTING) {
-      const __dirname = Module.createDirname(import.meta.url)
+    const __dirname = Module.createDirname(import.meta.url)
 
-      process.chdir(resolve(__dirname, '..', '..', '..', '..', '..'))
-    }
+    process.chdir(resolve(__dirname, '..', '..', '..', '..', '..'))
 
     /**
      * If env IS_TS is already set, then we cant change it.
      */
     if (Env('IS_TS') === undefined) {
-      if (this.meta.endsWith('.ts')) {
+      if (this.parentURL.endsWith('.ts')) {
         process.env.IS_TS = 'true'
       } else {
         process.env.IS_TS = 'false'
@@ -257,11 +259,9 @@ export class Ignite {
     }
 
     Object.keys(Path.dirs).forEach(dir => {
-      if (dir === 'nodeModules') {
-        return
-      }
+      const ignoreDirs = Config.get('rc.ignoreDirsBeforePath')
 
-      if (dir === 'nodeModulesBin') {
+      if (ignoreDirs.includes(dir)) {
         return
       }
 
@@ -300,20 +300,20 @@ export class Ignite {
     const signals = Config.get('app.signals', {})
 
     if (!signals.SIGINT) {
-      signals.SIGINT = async () => {
+      signals.SIGINT = () => {
         process.exit()
       }
     }
 
     if (!signals.SIGTERM) {
-      signals.SIGTERM = async signal => {
-        await LoadHelper.shutdownProviders()
-
-        process.kill(process.pid, signal)
+      signals.SIGTERM = signal => {
+        LoadHelper.shutdownProviders().then(() =>
+          process.kill(process.pid, signal)
+        )
       }
     }
 
-    Object.keys(signals).forEach(key => {
+    Object.keys(signals).forEach((key: any) => {
       if (!signals[key]) {
         return
       }
@@ -339,19 +339,24 @@ export class Ignite {
   public async setRcContentAndAppVars() {
     const file = new File(this.options.athennaRcPath, '')
     const pkgJson = await new File(Path.pwd('package.json')).getContentAsJson()
-    const corePkgJson = await new File('../../package.json').getContentAsJson()
+    const __dirname = Module.createDirname(import.meta.url)
+    const corePkgJson = await new File(
+      resolve(__dirname, '..', '..', 'package.json')
+    ).getContentAsJson()
     const coreSemverVersion = this.parseVersion(corePkgJson.version)
 
-    process.env.APP_NAME = pkgJson.name
-    process.env.APP_VERSION = this.parseVersion(pkgJson.version).toString()
-    process.env.ATHENNA_VERSION = `Athenna Framework ${coreSemverVersion.toString()}`
+    process.env.APP_NAME = process.env.APP_NAME || pkgJson.name
+    process.env.APP_VERSION =
+      process.env.APP_VERSION || this.parseVersion(pkgJson.version).toString()
+    process.env.ATHENNA_VERSION = `Athenna Framework v${coreSemverVersion.toString()}`
 
     const athennaRc = {
-      meta: this.meta,
+      parentURL: this.parentURL,
       typescript: Env('IS_TS', false),
       version: process.env.APP_VERSION,
       athennaVersion: process.env.ATHENNA_VERSION,
       engines: pkgJson.engines || {},
+      ignoreDirsBeforePath: ['nodeModules', 'nodeModulesBin'],
       commands: {},
       directories: {},
       services: [],
@@ -442,11 +447,14 @@ export class Ignite {
   /**
    * Handle an error turning it pretty and logging as fatal.
    */
-  private async handleError(error: any) {
+  public async handleError(error: any) {
     if (process.versions.bun) {
       console.error(error)
 
-      process.exit(1)
+      /**
+       * Return is needed only for testing purposes.
+       */
+      return process.exit(1)
     }
 
     if (!Is.Exception(error)) {

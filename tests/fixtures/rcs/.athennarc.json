@@ -1,0 +1,51 @@
+{
+  "templates": {
+    "exception": "./templates/exception.edge",
+    "facade": "./templates/facade.edge",
+    "provider": "./templates/provider.edge",
+    "service": "./templates/service.edge",
+    "test": "./templates/test.edge",
+    "test-cli": "./templates/test-cli.edge",
+    "test-rest": "./templates/test-rest.edge",
+    "test-fn": "./templates/test-fn.edge",
+    "command": "node_modules/@athenna/artisan/templates/command.edge",
+    "controller": "node_modules/@athenna/http/templates/controller.edge",
+    "middleware": "node_modules/@athenna/http/templates/middleware.edge",
+    "interceptor": "node_modules/@athenna/http/templates/interceptor.edge",
+    "terminator": "node_modules/@athenna/http/templates/terminator.edge"
+  },
+  "commands": {
+    "make:exception": "#src/commands/MakeExceptionCommand",
+    "make:facade": "#src/commands/MakeFacadeCommand",
+    "make:provider": "#src/commands/MakeProviderCommand",
+    "make:service": "#src/commands/MakeServiceCommand",
+    "make:test": "#src/commands/MakeTestCommand",
+    "serve": {
+      "stayAlive": true,
+      "entrypoint": "#bin/http",
+      "path": "#src/commands/ServeCommand"
+    },
+    "test": {
+      "stayAlive": true,
+      "entrypoint": "#bin/test",
+      "path": "#src/commands/TestCommand"
+    },
+    "repl": {
+      "stayAlive": true,
+      "entrypoint": "#bin/repl",
+      "path": "#src/commands/ReplCommand"
+    },
+    "build": {
+      "path": "#src/commands/BuildCommand",
+      "tsconfig": "./tests/fixtures/tsconfig.json",
+      "metaFiles": ["app/hello.edge", "LICENSE.md", ".env"]
+    }
+  },
+  "services": ["#tests/fixtures/services/WelcomeService", "#tests/fixtures/services/DecoratedWelcomeService"],
+  "providers": [
+    "#src/providers/CoreProvider",
+    "@athenna/http/providers/HttpRouteProvider",
+    "@athenna/http/providers/HttpServerProvider"
+  ],
+  "preloads": ["#tests/fixtures/routes/http"]
+}

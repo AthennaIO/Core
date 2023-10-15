@@ -7,9 +7,6 @@
  * file that was distributed with this source code.
  */
 
-/**
- * A map that saves classes that have been called.
- */
 export const CALLED_MAP = new Map<string, boolean>()
 
 CALLED_MAP.set('HttpKernel', false)

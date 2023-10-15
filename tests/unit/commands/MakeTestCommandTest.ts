@@ -7,77 +7,88 @@
  * file that was distributed with this source code.
  */
 
-import { File } from '@athenna/common'
-import { Artisan } from '@athenna/artisan'
+import { File, Path } from '@athenna/common'
 import { Test, type Context } from '@athenna/test'
 import { BaseCommandTest } from '#tests/helpers/BaseCommandTest'
 
 export default class MakeTestCommandTest extends BaseCommandTest {
   @Test()
-  public async shouldBeAbleToCreateAnE2ETestFileAsClass({ assert }: Context) {
-    await Artisan.call('make:test TestTest', false)
+  public async shouldBeAbleToCreateATestFile({ assert, command }: Context) {
+    const output = await command.run('make:test TestTest')
 
-    const path = Path.tests('e2e/TestTest.ts')
-    const file = await new File(path).load({ withContent: true })
+    output.assertSucceeded()
+    output.assertLogged('[ MAKING TEST ]')
+    output.assertLogged('[  success  ] Test "TestTest" successfully created.')
 
-    assert.isTrue(file.fileExists)
-    assert.isTrue(file.content.toString().includes('export default class TestTest'))
-    assert.isTrue(this.processExitMock.calledOnceWith(0))
+    assert.isTrue(await File.exists(Path.tests('e2e/TestTest.ts')))
   }
 
   @Test()
-  public async shouldBeAbleToCreateATestFileInDifferentDestPath({ assert }: Context) {
-    Config.set('rc.commands.make:test.destination', Path.fixtures('storage/tests'))
+  public async shouldBeAbleToCreateATestFileInUnitFolder({ assert, command }: Context) {
+    const output = await command.run('make:test TestTest --unit')
 
-    await Artisan.call('make:test TestTest', false)
+    output.assertSucceeded()
+    output.assertLogged('[ MAKING TEST ]')
+    output.assertLogged('[  success  ] Test "TestTest" successfully created.')
 
-    const path = Path.fixtures('storage/tests/TestTest.ts')
-
-    assert.isTrue(await File.exists(path))
-    assert.isTrue(this.processExitMock.calledOnceWith(0))
+    assert.isTrue(await File.exists(Path.tests('unit/TestTest.ts')))
   }
 
   @Test()
-  public async shouldBeAbleToCreateAnUnitTestFileAsClass({ assert }: Context) {
-    await Artisan.call('make:test TestTest --unit', false)
+  public async shouldBeAbleToCreateATestFileUsingRestTemplate({ assert, command }: Context) {
+    const output = await command.run('make:test TestTest --rest')
 
-    const path = Path.tests('unit/TestTest.ts')
-    const file = await new File(path).load({ withContent: true })
+    output.assertSucceeded()
+    output.assertLogged('[ MAKING TEST ]')
+    output.assertLogged('[  success  ] Test "TestTest" successfully created.')
 
-    assert.isTrue(file.fileExists)
-    assert.isTrue(file.content.toString().includes('export default class TestTest'))
-    assert.isTrue(this.processExitMock.calledOnceWith(0))
+    assert.isTrue(await File.exists(Path.tests('e2e/TestTest.ts')))
   }
 
   @Test()
-  public async shouldBeAbleToCreateAnE2ETestFileAsFunction({ assert }: Context) {
-    await Artisan.call('make:test TestTest --function', false)
+  public async shouldBeAbleToCreateATestFileUsingCliTemplate({ assert, command }: Context) {
+    const output = await command.run('make:test TestTest --cli')
 
-    const path = Path.tests('e2e/TestTest.ts')
-    const file = await new File(path).load({ withContent: true })
+    output.assertSucceeded()
+    output.assertLogged('[ MAKING TEST ]')
+    output.assertLogged('[  success  ] Test "TestTest" successfully created.')
 
-    assert.isTrue(file.fileExists)
-    assert.isTrue(file.content.toString().includes("test.group('TestTest'"))
-    assert.isTrue(this.processExitMock.calledOnceWith(0))
+    assert.isTrue(await File.exists(Path.tests('e2e/TestTest.ts')))
   }
 
   @Test()
-  public async shouldBeAbleToCreateAnUnitTestFileAsFunction({ assert }: Context) {
-    await Artisan.call('make:test TestTest --unit --function', false)
+  public async shouldBeAbleToCreateATestFileUsingFunctionalTemplate({ assert, command }: Context) {
+    const output = await command.run('make:test TestTest --function')
 
-    const path = Path.tests('unit/TestTest.ts')
-    const file = await new File(path).load({ withContent: true })
+    output.assertSucceeded()
+    output.assertLogged('[ MAKING TEST ]')
+    output.assertLogged('[  success  ] Test "TestTest" successfully created.')
 
-    assert.isTrue(file.fileExists)
-    assert.isTrue(file.content.toString().includes("test.group('TestTest'"))
-    assert.isTrue(this.processExitMock.calledOnceWith(0))
+    assert.isTrue(await File.exists(Path.tests('e2e/TestTest.ts')))
   }
 
   @Test()
-  public async shouldThrowAnExceptionWhenTheFileAlreadyExists({ assert }: Context) {
-    await Artisan.call('make:test TestTest', false)
-    await Artisan.call('make:test TestTest', false)
+  public async shouldBeAbleToCreateATestFileWithADifferentDestPath({ assert, command }: Context) {
+    const output = await command.run('make:test TestTest', {
+      path: Path.fixtures('consoles/console-mock-dest-import.ts')
+    })
 
-    assert.isTrue(this.processExitMock.calledWith(1))
+    output.assertSucceeded()
+    output.assertLogged('[ MAKING TEST ]')
+    output.assertLogged('[  success  ] Test "TestTest" successfully created.')
+
+    assert.isTrue(await File.exists(Path.fixtures('storage/tests/TestTest.ts')))
+  }
+
+  @Test()
+  public async shouldThrowAnTestWhenTheFileAlreadyExists({ command }: Context) {
+    await command.run('make:test TestTest')
+    const output = await command.run('make:test TestTest')
+
+    output.assertFailed()
+    output.assertLogged('[ MAKING TEST ]')
+    output.assertLogged('The file')
+    output.assertLogged('TestTest.ts')
+    output.assertLogged('already exists')
   }
 }

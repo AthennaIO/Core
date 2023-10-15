@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "4.9.1",
+  "version": "4.10.0",
   "description": "The plug and play Node.js framework.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -10,20 +10,25 @@
   "keywords": [
     "esm",
     "core",
+    "cli",
+    "rest",
+    "rest-api",
+    "http-server",
+    "console",
     "ignite",
     "nodejs",
     "athenna",
-    "bootstrap"
+    "bootstrap",
+    "typescript"
   ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
-    "start": "sh node bin/http.ts",
-    "http": "sh node bin/http.ts",
-    "repl": "sh node bin/repl.ts",
-    "artisan": "sh node bin/artisan.ts",
-    "build": "rimraf build && tsc --project bin/tsconfig.build.json",
+    "build": "node node_modules/@athenna/tsconfig/src/build.js",
     "lint:fix": "eslint \"{bin,src,tests}/**/*.ts\" --fix",
-    "test": "npm run --silent lint:fix && sh node bin/test.ts",
-    "test:debug": "cross-env NODE_DEBUG=athenna:* sh node --inspect bin/test.ts",
+    "test": "npm run --silent lint:fix && node --enable-source-maps --import=@athenna/tsconfig bin/test.ts",
+    "test:debug": "cross-env NODE_DEBUG=athenna:* node --inspect --enable-source-maps --import=@athenna/tsconfig bin/test.ts",
     "test:coverage": "c8 npm run --silent test"
   },
   "files": [
@@ -40,6 +45,7 @@
   "exports": {
     ".": "./src/index.js",
     "./types": "./src/types/index.js",
+    "./package": "./package.json",
     "./package.json": "./package.json",
     "./providers/CoreProvider": "./src/providers/CoreProvider.js",
     "./commands/MakeExceptionCommand": "./src/commands/MakeExceptionCommand.js",
@@ -70,20 +76,18 @@
     "semver": "^7.5.4"
   },
   "devDependencies": {
-    "@athenna/artisan": "^4.10.0",
-    "@athenna/common": "^4.13.1",
-    "@athenna/config": "^4.4.0",
-    "@athenna/http": "^4.8.0",
-    "@athenna/ioc": "^4.4.0",
-    "@athenna/logger": "^4.5.0",
-    "@athenna/test": "^4.7.0",
-    "@athenna/view": "^4.3.0",
-    "@typescript-eslint/eslint-plugin": "^5.56.0",
-    "@typescript-eslint/parser": "^5.56.0",
-    "c8": "^7.12.0",
+    "@athenna/artisan": "^4.15.0",
+    "@athenna/common": "^4.18.0",
+    "@athenna/config": "^4.7.0",
+    "@athenna/http": "^4.11.0",
+    "@athenna/ioc": "^4.7.0",
+    "@athenna/logger": "^4.8.0",
+    "@athenna/test": "^4.12.0",
+    "@athenna/tsconfig": "^4.9.2",
+    "@athenna/view": "^4.6.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
     "commitizen": "^4.2.6",
-    "copyfiles": "^2.4.1",
-    "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.36.0",
     "eslint-config-prettier": "^8.8.0",
@@ -94,11 +98,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "husky": "^3.1.0",
     "lint-staged": "^12.5.0",
-    "prettier": "^2.8.7",
-    "reflect-metadata": "^0.1.13",
-    "rimraf": "^5.0.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.2"
+    "prettier": "^2.8.7"
   },
   "c8": {
     "all": true,
@@ -106,10 +106,10 @@
       "src/**/*.ts"
     ],
     "exclude": [
-      "src/types/*",
-      "src/testing/*.ts",
-      "src/commands/*.ts",
-      "src/applications/Repl.ts"
+      "src/testing/BaseCliTest.ts",
+      "src/testing/BaseRestTest.ts",
+      "src/repl/helpers/Command.ts",
+      "src/types/*"
     ],
     "reporter": [
       "text-summary",
@@ -213,48 +213,47 @@
       "interceptor": "node_modules/@athenna/http/templates/interceptor.edge",
       "terminator": "node_modules/@athenna/http/templates/terminator.edge"
     },
+    "directories": {
+      "bootstrap": "bin"
+    },
     "commands": {
-      "make:exception": "#src/commands/MakeExceptionCommand",
-      "make:facade": "#src/commands/MakeFacadeCommand",
-      "make:provider": "#src/commands/MakeProviderCommand",
-      "make:service": "#src/commands/MakeServiceCommand",
-      "make:test": "#src/commands/MakeTestCommand",
+      "make:exception": {
+        "path": "#src/commands/MakeExceptionCommand"
+      },
+      "make:facade": {
+        "path": "#src/commands/MakeFacadeCommand"
+      },
+      "make:provider": {
+        "path": "#src/commands/MakeProviderCommand"
+      },
+      "make:service": {
+        "path": "#src/commands/MakeServiceCommand"
+      },
+      "make:test": {
+        "path": "#src/commands/MakeTestCommand"
+      },
       "serve": {
         "stayAlive": true,
-        "entrypoint": "#bin/http",
         "path": "#src/commands/ServeCommand"
       },
       "test": {
         "stayAlive": true,
-        "entrypoint": "#bin/test",
         "path": "#src/commands/TestCommand"
       },
       "repl": {
         "stayAlive": true,
-        "entrypoint": "#bin/repl",
         "path": "#src/commands/ReplCommand"
       },
       "build": {
         "path": "#src/commands/BuildCommand",
         "tsconfig": "./tests/fixtures/tsconfig.json",
-        "metaFiles": [
-          "app/hello.edge",
-          "LICENSE.md",
-          ".env"
-        ]
+        "outDir": "build"
       }
     },
-    "services": [
-      "#tests/fixtures/services/WelcomeService",
-      "#tests/fixtures/services/DecoratedWelcomeService"
-    ],
     "providers": [
       "#src/providers/CoreProvider",
       "@athenna/http/providers/HttpRouteProvider",
       "@athenna/http/providers/HttpServerProvider"
-    ],
-    "preloads": [
-      "#tests/fixtures/routes/http"
     ]
   }
 }

@@ -7,50 +7,50 @@
  * file that was distributed with this source code.
  */
 
-import { File } from '@athenna/common'
-import { Config } from '@athenna/config'
-import { Artisan } from '@athenna/artisan'
+import { File, Path } from '@athenna/common'
 import { Test, type Context } from '@athenna/test'
 import { BaseCommandTest } from '#tests/helpers/BaseCommandTest'
 
 export default class MakeServiceCommandTest extends BaseCommandTest {
   @Test()
-  public async shouldBeAbleToCreateAServiceFile({ assert }: Context) {
-    await Artisan.call('make:service TestService', false)
+  public async shouldBeAbleToCreateAServiceFile({ assert, command }: Context) {
+    const output = await command.run('make:service TestService')
 
-    const path = Path.services('TestService.ts')
-
-    assert.isTrue(await File.exists(path))
-    assert.isTrue(this.processExitMock.calledOnceWith(0))
+    output.assertSucceeded()
+    output.assertLogged('[ MAKING SERVICE ]')
+    output.assertLogged('[  success  ] Service "TestService" successfully created.')
 
     const { athenna } = await new File(Path.pwd('package.json')).getContentAsJson()
 
-    assert.containsSubset(Config.get('rc.services'), ['#app/services/TestService'])
+    assert.isTrue(await File.exists(Path.services('TestService.ts')))
     assert.containsSubset(athenna.services, ['#app/services/TestService'])
   }
 
   @Test()
-  public async shouldBeAbleToCreateAServiceFileInDifferentDestPath({ assert }: Context) {
-    Config.set('rc.commands.make:service.destination', Path.fixtures('storage/services'))
+  public async shouldBeAbleToCreateAServiceFileWithADifferentDestPath({ assert, command }: Context) {
+    const output = await command.run('make:service TestService', {
+      path: Path.fixtures('consoles/console-mock-dest-import.ts')
+    })
 
-    await Artisan.call('make:service TestService', false)
-
-    const path = Path.fixtures('storage/services/TestService.ts')
-
-    assert.isTrue(await File.exists(path))
-    assert.isTrue(this.processExitMock.calledOnceWith(0))
+    output.assertSucceeded()
+    output.assertLogged('[ MAKING SERVICE ]')
+    output.assertLogged('[  success  ] Service "TestService" successfully created.')
 
     const { athenna } = await new File(Path.pwd('package.json')).getContentAsJson()
 
-    assert.containsSubset(Config.get('rc.services'), ['#tests/fixtures/storage/services/TestService'])
+    assert.isTrue(await File.exists(Path.fixtures('storage/services/TestService.ts')))
     assert.containsSubset(athenna.services, ['#tests/fixtures/storage/services/TestService'])
   }
 
   @Test()
-  public async shouldThrowAnExceptionWhenTheFileAlreadyExists({ assert }: Context) {
-    await Artisan.call('make:service TestService', false)
-    await Artisan.call('make:service TestService', false)
+  public async shouldThrowAnServiceWhenTheFileAlreadyExists({ command }: Context) {
+    await command.run('make:service TestService')
+    const output = await command.run('make:service TestService')
 
-    assert.isTrue(this.processExitMock.calledWith(1))
+    output.assertFailed()
+    output.assertLogged('[ MAKING SERVICE ]')
+    output.assertLogged('The file')
+    output.assertLogged('TestService.ts')
+    output.assertLogged('already exists')
   }
 }

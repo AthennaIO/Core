@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { debug } from '#src/debug'
 import { Log } from '@athenna/logger'
 import type { ServerImpl } from '@athenna/http'
 import { Is, Module, Options } from '@athenna/common'
@@ -21,37 +22,39 @@ export class Http {
       host: Config.get('http.host', '127.0.0.1'),
       port: Config.get('http.port', 3000),
       trace: Config.get('http.trace', false),
-      routePath: Path.routes(`http.${Path.ext()}`),
+      routePath: Path.routes(`rest.${Path.ext()}`),
       kernelPath: '@athenna/http/kernels/HttpKernel'
     })
 
     const server = ioc.safeUse('Athenna/Core/HttpServer')
 
+    debug('booting http application with options %o', options)
+
     await this.resolveKernel(options)
 
     ioc.safeUse('Athenna/Core/HttpRoute').register()
 
-    await server.listen({ host: options.host, port: options.port }).then(() => {
-      if (Config.is('rc.bootLogs', false)) {
-        return
-      }
+    await server.listen({ host: options.host, port: options.port })
 
-      const host = server.getHost()
-      const port = server.getPort()
-      let path = `${host}:${port}`
+    if (Config.notExists('rc.bootLogs') || Config.is('rc.bootLogs', false)) {
+      return
+    }
 
-      if (!Is.Ip(host)) {
-        path = host
-      }
+    const host = server.getHost() || options.host
+    const port = server.getPort() || options.port
+    let path = `${host}:${port}`
 
-      if (host === '::1') {
-        path = `localhost:${port}`
-      }
+    if (!Is.Ip(host)) {
+      path = host
+    }
 
-      Log.channelOrVanilla('application').success(
-        `Http server started on ({yellow} ${path})`
-      )
-    })
+    if (host === '::1') {
+      path = `localhost:${port}`
+    }
+
+    Log.channelOrVanilla('application').success(
+      `Http server started on ({yellow} ${path})`
+    )
 
     return server
   }
@@ -64,7 +67,7 @@ export class Http {
   private static async resolveKernel(options?: HttpOptions) {
     const Kernel = await Module.resolve(
       options.kernelPath,
-      Config.get('rc.meta')
+      Config.get('rc.parentURL')
     )
 
     const kernel = new Kernel()
@@ -76,11 +79,7 @@ export class Http {
     await kernel.registerHelmet()
     await kernel.registerSwagger()
     await kernel.registerRateLimit()
-
-    if (options.trace) {
-      await kernel.registerRTracer()
-    }
-
+    await kernel.registerRTracer(options.trace)
     await kernel.registerLoggerTerminator()
     await kernel.registerRoutes(options.routePath)
 

@@ -7,24 +7,54 @@
  * file that was distributed with this source code.
  */
 
-import { Artisan } from '@athenna/artisan'
 import { Test, type Context } from '@athenna/test'
 import { BaseCommandTest } from '#tests/helpers/BaseCommandTest'
 
 export default class ServeCommandTest extends BaseCommandTest {
   @Test()
-  public async shouldBeAbleToServeTheApplication({ assert }: Context) {
-    const { stdout, stderr } = await Artisan.callInChild('serve', this.artisan)
+  public async shouldBeAbleToExecuteServeCommand({ command }: Context) {
+    const output = await command.run('serve')
 
-    assert.deepEqual(stderr, '')
-    assert.isTrue(stdout.includes('serving application'))
+    output.assertSucceeded()
+    output.assertLogged('Hello from #bin/main!')
   }
 
   @Test()
-  public async shouldBeAbleToServeTheApplicationWithDifferentNodeEnv({ assert }: Context) {
-    const { stdout, stderr } = await Artisan.callInChild('serve --env heyhey', this.artisan)
+  public async shouldBeAbleToExecuteServeCommandWithADifferentEnv({ command }: Context) {
+    const output = await command.run('serve --env=test-hello')
 
-    assert.deepEqual(stderr, '')
-    assert.isTrue(stdout.includes('heyhey'))
+    output.assertSucceeded()
+    output.assertLogged('Hello from #bin/main!')
+    output.assertLogged('test-hello\ntest-hello')
+  }
+
+  @Test()
+  public async shouldBeAbleToExecuteServeCommandUsingAImportAliasPathEntry({ command }: Context) {
+    const output = await command.run('serve', {
+      path: Path.fixtures('consoles/import-alias-path-entry.ts')
+    })
+
+    output.assertSucceeded()
+    output.assertLogged('Hello from #tests/fixtures/entrypoints/main!')
+  }
+
+  @Test()
+  public async shouldBeAbleToExecuteServeCommandUsingAnAbsolutePathEntry({ command }: Context) {
+    const output = await command.run('serve', {
+      path: Path.fixtures('consoles/absolute-path-entry.ts')
+    })
+
+    output.assertSucceeded()
+    output.assertLogged('Hello from #tests/fixtures/entrypoints/main!')
+  }
+
+  @Test()
+  public async shouldBeAbleToExecuteServeCommandUsingARelativePathEntry({ command }: Context) {
+    const output = await command.run('serve', {
+      path: Path.fixtures('consoles/relative-path-entry.ts')
+    })
+
+    output.assertSucceeded()
+    output.assertLogged('Hello from #tests/fixtures/entrypoints/main!')
   }
 }

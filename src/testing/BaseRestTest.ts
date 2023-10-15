@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import { pathToFileURL } from 'node:url'
 import { Options } from '@athenna/common'
 import { ServerImpl } from '@athenna/http'
 import { AfterAll, BeforeAll } from '@athenna/test'
@@ -15,27 +14,27 @@ import { Ignite, type HttpOptions, type IgniteOptions } from '@athenna/core'
 
 export class BaseRestTest {
   public ignite: Ignite
-  public restServer: ServerImpl
-  public restOptions: HttpOptions = {}
+  public httpServer: ServerImpl
+  public httpOptions: HttpOptions = {}
   public igniteOptions: IgniteOptions = {}
 
   @BeforeAll()
   public async baseBeforeAll() {
     this.ignite = await new Ignite().load(
-      pathToFileURL(Path.bootstrap(`test.${Path.ext()}`)).href,
+      Path.toHref(Path.bootstrap(`test.${Path.ext()}`)),
       this.getIgniteOptions()
     )
 
-    this.restServer = await this.ignite.httpServer(this.getRestOptions())
+    this.httpServer = await this.ignite.httpServer(this.getHttpOptions())
   }
 
   @AfterAll()
   public async baseAfterAll() {
-    await this.restServer.close()
+    await this.httpServer.close()
   }
 
-  private getRestOptions() {
-    return Options.create(this.restOptions, {})
+  private getHttpOptions() {
+    return Options.create(this.httpOptions, {})
   }
 
   private getIgniteOptions() {

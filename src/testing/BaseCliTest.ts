@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import { pathToFileURL } from 'node:url'
 import { Options } from '@athenna/common'
 import { BeforeAll } from '@athenna/test'
 import { Ignite, type IgniteOptions } from '@athenna/core'
@@ -23,7 +22,7 @@ export class BaseCliTest {
     TestCommand.setArtisanPath(this.artisanPath)
 
     this.ignite = await new Ignite().load(
-      pathToFileURL(Path.bootstrap(`test.${Path.ext()}`)).href,
+      Path.toHref(Path.bootstrap(`test.${Path.ext()}`)),
       this.getIgniteOptions()
     )
   }

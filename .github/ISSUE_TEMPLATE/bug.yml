@@ -16,7 +16,7 @@ body:
     attributes:
       value: |
         ## Ask for help through appropriate channels
-        If you feel unsure about the cause of the problem, consider asking for help on for example [StackOverflow](https://stackoverflow.com/questions/ask) or our [Discord](https://discord.gg/mZyBkA936X) before posting a bug report. The issue tracker is not a help forum.
+        If you feel unsure about the cause of the problem, consider asking for help on for example [StackOverflow](https://stackoverflow.com/questions/ask) or our [Discord](https://discord.gg/JdEbBAKw6X) before posting a bug report. The issue tracker is not a help forum.
   - type: markdown
     attributes:
       value: |
