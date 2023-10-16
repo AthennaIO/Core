@@ -116,15 +116,15 @@ export class ReplImpl {
   /**
    * Import a module in the repl session.
    */
-  public import(key: string, path: string): ReplImpl {
-    return this.write(`const ${key} = await import('${path}')`)
+  public async import(key: string, path: string) {
+    this.setInContext(key, await import(path))
   }
 
   /**
    * Import a module and register all it properties
    * in the repl context.
    */
-  public async importInContext(path: string) {
+  public async importAll(path: string) {
     let module = await Module.resolve(path, Config.get('rc.parentURL'), {
       import: true,
       getModule: false
