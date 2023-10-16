@@ -151,12 +151,14 @@ export default class ReplImplTest {
     const repl = new ReplImpl()
 
     repl.session = {
-      write: Mock.fake()
+      context: {}
     } as any
 
-    repl.import('common', '@athenna/common')
+    await repl.import('common', '@athenna/common')
 
-    assert.calledWithMatch(repl.session.write, "const common = await import('@athenna/common')")
+    const common = await import('@athenna/common')
+
+    assert.deepEqual(repl.session.context.common.Clean, common.Clean)
   }
 
   @Test()
@@ -170,7 +172,7 @@ export default class ReplImplTest {
       context: {}
     } as any
 
-    await repl.importInContext('@athenna/common')
+    await repl.importAll('@athenna/common')
 
     const common = await import('@athenna/common')
 
@@ -189,7 +191,7 @@ export default class ReplImplTest {
       context: {}
     } as any
 
-    await repl.importInContext('#tests/fixtures/modules/default-class')
+    await repl.importAll('#tests/fixtures/modules/default-class')
 
     const module = await import('#tests/fixtures/modules/default-class')
 
@@ -207,7 +209,7 @@ export default class ReplImplTest {
       context: {}
     } as any
 
-    await repl.importInContext('#tests/fixtures/modules/default-fn')
+    await repl.importAll('#tests/fixtures/modules/default-fn')
 
     const module = await import('#tests/fixtures/modules/default-fn')
 
@@ -225,7 +227,7 @@ export default class ReplImplTest {
       context: {}
     } as any
 
-    await repl.importInContext('#tests/fixtures/modules/default-arrow-fn')
+    await repl.importAll('#tests/fixtures/modules/default-arrow-fn')
 
     const module = await import('#tests/fixtures/modules/default-arrow-fn')
 
@@ -243,7 +245,7 @@ export default class ReplImplTest {
       context: {}
     } as any
 
-    await repl.importInContext('#tests/fixtures/modules/default-const')
+    await repl.importAll('#tests/fixtures/modules/default-const')
 
     const module = await import('#tests/fixtures/modules/default-const')
 
@@ -261,7 +263,7 @@ export default class ReplImplTest {
       context: {}
     } as any
 
-    await repl.importInContext('#tests/fixtures/modules/default-object')
+    await repl.importAll('#tests/fixtures/modules/default-object')
 
     const module = await import('#tests/fixtures/modules/default-object')
 
