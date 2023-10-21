@@ -50,12 +50,29 @@ export class ServeCommand extends BaseCommand {
       const nodemon = this.getNodemon()
 
       nodemon({
-        script: entrypoint.replace('.ts', '.js')
+        script: entrypoint.replace('.ts', '.js'),
+        ignore: [
+          '.git',
+          '.github',
+          '.idea',
+          '.vscode',
+          '.fleet',
+          'node_modules/**/node_modules'
+        ],
+        watch: [
+          './',
+          'package.json',
+          '.athennarc.json',
+          'tsconfig.json',
+          '.env',
+          '.env.dev',
+          '.env.test',
+          '.env.testing',
+          '.env.example'
+        ],
+        ext: '*.*',
+        ...Config.get('rc.commands.serve.nodemon', {})
       })
-
-      if (Config.is('rc.bootLogs', false)) {
-        return
-      }
 
       let isFirstRestart = true
 
