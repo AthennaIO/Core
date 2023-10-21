@@ -57,4 +57,22 @@ export default class ServeCommandTest extends BaseCommandTest {
     output.assertSucceeded()
     output.assertLogged('Hello from #tests/fixtures/entrypoints/main!')
   }
+
+  @Test()
+  public async shouldBeAbleToExecuteServeCommandInWatchMode({ command }: Context) {
+    const output = await command.run('serve --watch', {
+      path: Path.fixtures('consoles/watch-mode.ts')
+    })
+
+    output.assertSucceeded()
+  }
+
+  @Test()
+  public async shouldBeAbleToExecuteServeCommandInWatchModeWithLogs({ command }: Context) {
+    const output = await command.run('serve --watch', {
+      path: Path.fixtures('consoles/watch-mode-logs.ts')
+    })
+
+    output.assertSucceeded()
+  }
 }
