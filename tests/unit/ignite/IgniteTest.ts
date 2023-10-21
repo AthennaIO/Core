@@ -454,6 +454,29 @@ export default class IgniteTest {
   }
 
   @Test()
+  public async shouldCatchErrorsThatAreNotVanillaErrorsOrExceptions({ assert }: Context) {
+    process.versions.bun = '1.0.0'
+    const fatalMock = Mock.fake()
+    Log.when('channelOrVanilla').return({
+      fatal: fatalMock
+    })
+    Mock.when(process.stderr, 'write').return(undefined)
+    Mock.when(process, 'exit').return(undefined)
+
+    const ignite = new Ignite()
+
+    Mock.spy(ignite, 'handleError')
+    Mock.when(ignite, 'setUncaughtExceptionHandler').throw('error')
+
+    await ignite.load(Path.toHref(Path.pwd() + '/'))
+
+    assert.calledOnce(process.stderr.write)
+    assert.calledWith(process.exit, 1)
+    assert.calledOnce(ignite.handleError)
+    assert.notCalled(fatalMock)
+  }
+
+  @Test()
   public async shouldBeAbleToLoadAnEnvFileWhenFiringAthennaApplication({ assert }: Context) {
     const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), {
       bootLogs: false,
