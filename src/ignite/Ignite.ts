@@ -448,7 +448,7 @@ export class Ignite {
    * Handle an error turning it pretty and logging as fatal.
    */
   public async handleError(error: any) {
-    if (process.versions.bun) {
+    if (process.versions.bun || (!Is.Error(error) && !Is.Exception(error))) {
       console.error(error)
 
       /**
