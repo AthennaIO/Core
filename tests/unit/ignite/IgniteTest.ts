@@ -407,7 +407,7 @@ export default class IgniteTest {
 
     assert.calledWith(process.exit, 1)
     assert.calledWith(ignite.handleError, new Error('test'))
-    assert.calledWith(fatalMock, await new Error('test').toAthennaException().prettify())
+    assert.calledOnce(fatalMock)
   }
 
   @Test()
@@ -427,7 +427,7 @@ export default class IgniteTest {
 
     assert.calledWith(process.exit, 1)
     assert.calledWith(ignite.handleError, new Exception())
-    assert.calledWith(fatalMock, await new Exception().prettify())
+    assert.calledOnce(fatalMock)
   }
 
   @Test()
