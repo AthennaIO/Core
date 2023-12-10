@@ -132,7 +132,7 @@ export default class IgniteTest {
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    assert.lengthOf(process?._events?.uncaughtException, 3)
+    assert.lengthOf(process?._events?.uncaughtException, 2)
   }
 
   @Test()
