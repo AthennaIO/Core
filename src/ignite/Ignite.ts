@@ -193,11 +193,14 @@ export class Ignite {
    * ```
    */
   public setUncaughtExceptionHandler(): void {
+    /**
+     * Remove listeners registered more then once by
+     * Ignite class.
+     */
     if (process.listeners('uncaughtException').length) {
-      process.removeListener(
-        'uncaughtException',
-        this.options.uncaughtExceptionHandler
-      )
+      process.listeners('uncaughtException').forEach(l => {
+        process.removeListener('uncaughtException', l)
+      })
     }
 
     process.on('uncaughtException', this.options.uncaughtExceptionHandler)
