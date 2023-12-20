@@ -7,9 +7,9 @@
  * file that was distributed with this source code.
  */
 
+import { Runner } from '@athenna/test'
 import { request } from '@athenna/http/testing/plugins'
 import { command } from '@athenna/artisan/testing/plugins'
-import { Runner, assert, specReporter } from '@athenna/test'
 
 if (process.argv.includes('--cmd')) {
   console.log(process.argv)
@@ -20,10 +20,9 @@ if (process.argv.includes('--cmd')) {
 }
 
 await Runner.setTsEnv()
-  .addPlugin(assert())
+  .addAssertPlugin()
   .addPlugin(request())
   .addPlugin(command())
-  .addReporter(specReporter())
   .addPath('tests/unit/**/*.ts')
   .setCliArgs(process.argv.slice(2))
   .setGlobalTimeout(30000)
