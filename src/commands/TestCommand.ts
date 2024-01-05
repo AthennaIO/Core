@@ -11,11 +11,7 @@ import { Module } from '@athenna/common'
 import { Option, BaseCommand, Commander } from '@athenna/artisan'
 
 export class TestCommand extends BaseCommand {
-  @Option({
-    signature: '-e, --env <env>',
-    description: 'Change the environment where your tests wil run.',
-    default: 'test'
-  })
+  @Option({ signature: '--env <env>' })
   public env: string
 
   public static signature(): string {
@@ -47,10 +43,8 @@ export class TestCommand extends BaseCommand {
   }
 
   public async handle(): Promise<void> {
-    if (this.env !== '') {
-      process.env.APP_ENV = this.env
-      process.env.NODE_ENV = this.env
-    }
+    process.env.APP_ENV = this.env || 'test'
+    process.env.NODE_ENV = this.env || 'test'
 
     const entrypoint = Config.get(
       'rc.commands.test.entrypoint',

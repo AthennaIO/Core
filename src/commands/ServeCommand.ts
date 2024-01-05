@@ -13,11 +13,7 @@ import { Module } from '@athenna/common'
 import { BaseCommand, Option } from '@athenna/artisan'
 
 export class ServeCommand extends BaseCommand {
-  @Option({
-    signature: '-e, --env <env>',
-    description: 'Change the environment where the application will run.',
-    default: ''
-  })
+  @Option({ isFromGlobal: true, signature: '--env <env>' })
   public env: string
 
   @Option({
@@ -36,10 +32,8 @@ export class ServeCommand extends BaseCommand {
   }
 
   public async handle(): Promise<void> {
-    if (this.env !== '') {
-      process.env.APP_ENV = this.env
-      process.env.NODE_ENV = this.env
-    }
+    process.env.APP_ENV = this.env
+    process.env.NODE_ENV = this.env
 
     const entrypoint = Config.get(
       'rc.commands.serve.entrypoint',

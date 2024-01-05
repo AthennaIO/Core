@@ -20,6 +20,7 @@ import { EnvHelper, Rc } from '@athenna/config'
 import { isAbsolute, resolve } from 'node:path'
 import type { ReplImpl } from '#src/repl/ReplImpl'
 import { Console } from '#src/applications/Console'
+import { CommanderHandler } from '@athenna/artisan'
 import { LoadHelper } from '#src/helpers/LoadHelper'
 import { Log, LoggerProvider } from '@athenna/logger'
 import { Repl as ReplApp } from '#src/applications/Repl'
@@ -81,6 +82,8 @@ export class Ignite {
       this.verifyNodeEngineVersion()
       this.registerItselfToTheContainer()
       this.setApplicationSignals()
+
+      CommanderHandler.reconstruct()
 
       return this
     } catch (err) {
