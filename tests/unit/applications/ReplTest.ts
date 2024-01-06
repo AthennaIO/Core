@@ -57,13 +57,14 @@ export default class ReplTest {
     Repl.when('setPrompt').return(Repl)
     Repl.when('displayPrompt').return(Repl)
     Repl.when('commandImpl').return(Repl)
+    Repl.when('shutdownProviders').return(Repl)
 
     await ReplApp.boot()
 
     assert.calledWith(process.stdout.write, chalkRainbow(figlet.textSync('REPL\n')) + '\n')
     assert.calledWith(process.stdout.write, Color.gray('To import your modules use dynamic imports:\n') + '\n')
     assert.calledWith(process.stdout.write, Color.gray("const { User } = await import('#app/models/User')\n") + '\n')
-    assert.calledWith(process.stdout.write, Color.yellow.bold('To see all commands available type:') + ' .help\n\n\n')
+    assert.calledWith(process.stdout.write, Color.yellow.bold('To see all commands available type:') + ' .help\n\n')
   }
 
   @Test()
@@ -74,6 +75,7 @@ export default class ReplTest {
     Repl.when('setPrompt').return(Repl)
     Repl.when('displayPrompt').return(Repl)
     Repl.when('commandImpl').return(Repl)
+    Repl.when('shutdownProviders').return(Repl)
 
     await ReplApp.boot()
 
@@ -89,6 +91,7 @@ export default class ReplTest {
     Repl.when('setPrompt').return(Repl)
     Repl.when('displayPrompt').return(Repl)
     Repl.when('commandImpl').return(Repl)
+    Repl.when('shutdownProviders').return(Repl)
 
     await ReplApp.boot()
 

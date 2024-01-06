@@ -7,9 +7,10 @@
  * file that was distributed with this source code.
  */
 
-import { Is, Module, Options, String } from '@athenna/common'
+import { LoadHelper } from '#src/helpers/LoadHelper'
 import type { Command } from '#src/repl/helpers/Command'
 import type { REPLServer, ReplOptions } from 'node:repl'
+import { Is, Module, Options, String } from '@athenna/common'
 import { CommandBuilder } from '#src/repl/helpers/CommandBuilder'
 
 type REPLWriteKey = {
@@ -39,6 +40,18 @@ export class ReplImpl {
     this.session = start(options)
 
     return this.session
+  }
+
+  /**
+   * Shutdown all Athenna providers on exit.
+   */
+  public shutdownProviders() {
+    this.session?.on('exit', async () => {
+      await LoadHelper.shutdownProviders()
+      process.exit(0)
+    })
+
+    return this
   }
 
   /**

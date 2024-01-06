@@ -36,12 +36,13 @@ export class Repl {
     Logger.gray("const { User } = await import('#app/models/User')\n")
 
     Logger.write(
-      `${Color.yellow.bold('To see all commands available type:')} .help\n\n`
+      `${Color.yellow.bold('To see all commands available type:')} .help\n`
     )
 
     repl
       .setPrompt(Color.purple.bold('Athenna ') + Color.green.bold('❯ '))
       .displayPrompt(false)
+      .shutdownProviders()
       .commandImpl(Ls)
       .commandImpl(Clean)
 
