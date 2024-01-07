@@ -7,8 +7,10 @@
  * file that was distributed with this source code.
  */
 
+import { LoggerProvider } from '@athenna/logger'
 import { Artisan, ConsoleKernel, ArtisanProvider } from '@athenna/artisan'
 
+new LoggerProvider().register()
 new ArtisanProvider().register()
 
 await Config.loadAll(Path.fixtures('config'))

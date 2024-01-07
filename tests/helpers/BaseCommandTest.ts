@@ -8,6 +8,7 @@
  */
 
 import { File, Folder } from '@athenna/common'
+import { LoggerProvider } from '@athenna/logger'
 import { ArtisanProvider } from '@athenna/artisan'
 import { BeforeEach, AfterEach, Mock } from '@athenna/test'
 import { TestCommand } from '@athenna/artisan/testing/plugins'
@@ -17,6 +18,7 @@ export class BaseCommandTest {
 
   @BeforeEach()
   public async beforeEach() {
+    new LoggerProvider().register()
     new ArtisanProvider().register()
 
     TestCommand.setArtisanPath(Path.fixtures('consoles/base-console.ts'))

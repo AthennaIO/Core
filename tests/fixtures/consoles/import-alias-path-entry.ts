@@ -9,9 +9,11 @@
 
 import { ViewProvider } from '@athenna/view'
 import { Rc, Config } from '@athenna/config'
+import { LoggerProvider } from '@athenna/logger'
 import { Artisan, ConsoleKernel, ArtisanProvider } from '@athenna/artisan'
 
 new ViewProvider().register()
+new LoggerProvider().register()
 new ArtisanProvider().register()
 
 await Config.loadAll(Path.fixtures('config'))
