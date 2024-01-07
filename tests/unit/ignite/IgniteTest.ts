@@ -68,7 +68,6 @@ export default class IgniteTest {
     assert.containsSubset(ignite.options, {
       bootLogs: true,
       shutdownLogs: true,
-      beforePath: 'build',
       envPath: undefined,
       loadConfigSafe: true,
       athennaRcPath: Path.pwd('package.json')
@@ -240,7 +239,7 @@ export default class IgniteTest {
   public async shouldNotSetTheApplicationRootPathIfApplicationIsRunningTSCode({ assert }: Context) {
     process.env.IS_TS = 'true'
 
-    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'))
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/'), { beforePath: 'build' })
 
     assert.deepEqual(Path.dirs, { ...this.oldDirs, bootstrap: 'bin' })
     assert.equal(ignite.options.beforePath, 'build')
@@ -260,7 +259,7 @@ export default class IgniteTest {
   public async shouldBeAbleToSetTheApplicationBeforePathWhenRunningJSCode({ assert }: Context) {
     process.env.IS_TS = 'false'
 
-    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/main.js'))
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/main.js'), { beforePath: 'build' })
 
     assert.equal(Path.dirs.bootstrap, 'build/bin')
     assert.equal(Path.dirs.nodeModules, 'node_modules')
@@ -274,7 +273,7 @@ export default class IgniteTest {
     process.env.IS_TS = 'false'
     Config.set('rc.ignoreDirsBeforePath', ['bootstrap', 'nodeModules'])
 
-    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/main.js'))
+    const ignite = await new Ignite().load(Path.toHref(Path.pwd() + '/main.js'), { beforePath: 'build' })
 
     assert.equal(Path.dirs.bootstrap, 'bin')
     assert.equal(Path.dirs.nodeModules, 'node_modules')

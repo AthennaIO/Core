@@ -58,7 +58,6 @@ export class Ignite {
 
       this.parentURL = parentURL
       this.options = Options.create(options, {
-        beforePath: 'build',
         bootLogs: true,
         shutdownLogs: true,
         environments: [],

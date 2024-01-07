@@ -66,6 +66,15 @@ export class BuildCommand extends BaseCommand {
     console.log()
 
     this.logger.success('Application successfully compiled')
+
+    this.logger
+      .instruction()
+      .head('Running compiled code')
+      .add(`cd ${outDirName}`)
+      .add('npm ci --omit=dev')
+      .add('Define your production environment variables')
+      .add(`node ${Color.yellow.bold('bin/main.js')}`)
+      .render()
   }
 
   private getOutDir(): string {
