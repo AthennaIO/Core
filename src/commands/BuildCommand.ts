@@ -73,7 +73,9 @@ export class BuildCommand extends BaseCommand {
       .add(`cd ${outDirName}`)
       .add('npm ci --omit=dev')
       .add('Define your production environment variables')
-      .add(`node ${Color.yellow.bold('bin/main.js')}`)
+      .add(
+        `node ${Color.yellow.bold(`${parse(Path.bootstrap()).name}/main.js`)}`
+      )
       .render()
   }
 
