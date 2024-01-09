@@ -32,12 +32,12 @@ export default class ConsoleTest {
 
   @Test()
   public async shouldBeAbleToBootAConsoleApplicationInYourEntrypoint({ assert }: Context) {
-    const parseMock = Artisan.when('parse').resolve(undefined)
+    Artisan.when('parse').resolve(undefined)
 
     const argv = ['node', 'artisan']
     await Console.boot(argv)
 
-    assert.calledOnceWith(parseMock, argv, null)
+    assert.calledOnceWith(Artisan.parse, argv, null)
     assert.isTrue(CommanderHandler.hasCommand('test'))
     assert.isTrue(CommanderHandler.hasCommand('repl'))
     assert.isTrue(CommanderHandler.hasCommand('build'))
@@ -46,12 +46,12 @@ export default class ConsoleTest {
 
   @Test()
   public async shouldBeAbleToBootAConsoleApplicationByCommandOfArgv({ assert }: Context) {
-    const parseMock = Artisan.when('parse').resolve(undefined)
+    Artisan.when('parse').resolve(undefined)
 
     const argv = ['node', 'artisan', 'test']
     await Console.boot(argv)
 
-    assert.calledOnceWith(parseMock, argv, null)
+    assert.calledOnceWith(Artisan.parse, argv, null)
     assert.isTrue(CommanderHandler.hasCommand('test'))
     assert.isFalse(CommanderHandler.hasCommand('repl'))
     assert.isFalse(CommanderHandler.hasCommand('build'))
@@ -60,49 +60,49 @@ export default class ConsoleTest {
 
   @Test()
   public async shouldBeAbleToBootAConsoleApplicationWithADisplayName({ assert }: Context) {
-    const parseMock = Artisan.when('parse').resolve(undefined)
+    Artisan.when('parse').resolve(undefined)
 
     const argv = ['node', 'artisan', 'test']
     await Console.boot(argv, { displayName: 'Artisan' })
 
-    assert.calledOnceWith(parseMock, argv, 'Artisan')
+    assert.calledOnceWith(Artisan.parse, argv, 'Artisan')
     assert.isTrue(CommanderHandler.hasCommand('test'))
   }
 
   @Test()
   public async shouldBeAbleToBootAConsoleApplicationWithADifferentRoutePath({ assert }: Context) {
-    const parseMock = Artisan.when('parse').resolve(undefined)
+    Artisan.when('parse').resolve(undefined)
 
     const argv = ['node', 'artisan']
     await Console.boot(argv, { routePath: Path.fixtures('routes/console.ts') })
 
-    assert.calledOnceWith(parseMock, argv, null)
+    assert.calledOnceWith(Artisan.parse, argv, null)
     assert.isTrue(CommanderHandler.hasCommand('route:console'))
   }
 
   @Test()
   public async shouldBeAbleToBootAConsoleApplicationWithADifferentKernelPath({ assert }: Context) {
-    const infoMock = Log.when('info').return(undefined)
-    const parseMock = Artisan.when('parse').resolve(undefined)
+    Log.when('info').return(undefined)
+    Artisan.when('parse').resolve(undefined)
 
     const argv = ['node', 'artisan']
     await Console.boot(argv, { kernelPath: Path.fixtures('kernels/CustomConsoleKernel.ts') })
 
-    assert.calledOnceWith(parseMock, argv, null)
-    assert.calledOnceWith(infoMock, 'importing CustomConsoleKernel')
+    assert.calledOnceWith(Artisan.parse, argv, null)
+    assert.calledOnceWith(Log.info, 'importing CustomConsoleKernel')
     assert.isTrue(CommanderHandler.hasCommand('test'))
   }
 
   @Test()
   public async shouldBeAbleToBootAConsoleApplicationWithADifferentExceptionHandlerPath({ assert }: Context) {
-    const infoMock = Log.when('info').return(undefined)
-    const parseMock = Artisan.when('parse').resolve(undefined)
+    Log.when('info').return(undefined)
+    Artisan.when('parse').resolve(undefined)
 
     const argv = ['node', 'artisan']
     await Console.boot(argv, { exceptionHandlerPath: Path.fixtures('handlers/CustomConsoleExceptionHandler.ts') })
 
-    assert.calledOnceWith(parseMock, argv, null)
-    assert.calledOnceWith(infoMock, 'importing CustomConsoleExceptionHandler')
+    assert.calledOnceWith(Artisan.parse, argv, null)
+    assert.calledOnceWith(Log.info, 'importing CustomConsoleExceptionHandler')
     assert.isTrue(CommanderHandler.hasCommand('test'))
   }
 
@@ -113,12 +113,12 @@ export default class ConsoleTest {
     Log.when('channelOrVanilla').return({
       success: successMock
     })
-    const parseMock = Artisan.when('parse').resolve(undefined)
+    Artisan.when('parse').resolve(undefined)
 
     const argv = ['node', 'artisan']
     await Console.boot(argv)
 
-    assert.calledOnceWith(parseMock, argv, null)
+    assert.calledOnceWith(Artisan.parse, argv, null)
     assert.calledWith(successMock, 'Kernel ({yellow} ConsoleKernel) successfully booted')
     assert.isTrue(CommanderHandler.hasCommand('test'))
   }
