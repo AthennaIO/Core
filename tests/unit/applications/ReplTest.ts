@@ -39,10 +39,10 @@ export default class ReplTest {
   public async shouldBeAbleToBootAReplApplication({ assert }: Context) {
     Mock.when(process.stdout, 'write').return(undefined)
     Repl.when('start').resolve(undefined)
-    Repl.when('write').return(Repl)
-    Repl.when('setPrompt').return(Repl)
-    Repl.when('displayPrompt').return(Repl)
-    Repl.when('commandImpl').return(Repl)
+    Repl.when('write').returnThis()
+    Repl.when('setPrompt').returnThis()
+    Repl.when('displayPrompt').returnThis()
+    Repl.when('commandImpl').returnThis()
 
     await ReplApp.boot()
 
@@ -53,11 +53,11 @@ export default class ReplTest {
   public async shouldBeAbleToBootAReplApplicationAndSeeTheReplStartupLogs({ assert }: Context) {
     Mock.when(process.stdout, 'write').return(undefined)
     Repl.when('start').resolve(undefined)
-    Repl.when('write').return(Repl)
-    Repl.when('setPrompt').return(Repl)
-    Repl.when('displayPrompt').return(Repl)
-    Repl.when('commandImpl').return(Repl)
-    Repl.when('shutdownProviders').return(Repl)
+    Repl.when('write').returnThis()
+    Repl.when('setPrompt').returnThis()
+    Repl.when('displayPrompt').returnThis()
+    Repl.when('commandImpl').returnThis()
+    Repl.when('shutdownProviders').returnThis()
 
     await ReplApp.boot()
 
@@ -71,11 +71,11 @@ export default class ReplTest {
   public async shouldBeAbleToBootAReplApplicationAndDeleteTheDomainErrorHandler({ assert }: Context) {
     Mock.when(process.stdout, 'write').return(undefined)
     Repl.when('start').resolve(undefined)
-    Repl.when('write').return(Repl)
-    Repl.when('setPrompt').return(Repl)
-    Repl.when('displayPrompt').return(Repl)
-    Repl.when('commandImpl').return(Repl)
-    Repl.when('shutdownProviders').return(Repl)
+    Repl.when('write').returnThis()
+    Repl.when('setPrompt').returnThis()
+    Repl.when('displayPrompt').returnThis()
+    Repl.when('commandImpl').returnThis()
+    Repl.when('shutdownProviders').returnThis()
 
     await ReplApp.boot()
 
@@ -87,11 +87,11 @@ export default class ReplTest {
   public async shouldBeAbleToBootAReplApplicationAndRegisterTheLsCommand({ assert }: Context) {
     Mock.when(process.stdout, 'write').return(undefined)
     Repl.when('start').resolve(undefined)
-    Repl.when('write').return(Repl)
-    Repl.when('setPrompt').return(Repl)
-    Repl.when('displayPrompt').return(Repl)
-    Repl.when('commandImpl').return(Repl)
-    Repl.when('shutdownProviders').return(Repl)
+    Repl.when('write').returnThis()
+    Repl.when('setPrompt').returnThis()
+    Repl.when('displayPrompt').returnThis()
+    Repl.when('commandImpl').returnThis()
+    Repl.when('shutdownProviders').returnThis()
 
     await ReplApp.boot()
 

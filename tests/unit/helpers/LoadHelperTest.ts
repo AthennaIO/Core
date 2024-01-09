@@ -154,7 +154,7 @@ export default class LoadHelperTest {
     Config.set('rc.shutdownLogs', true)
 
     const successFake = Mock.fake()
-    const mock = Log.when('channelOrVanilla').return({
+    Log.when('channelOrVanilla').return({
       success: successFake
     })
 
@@ -166,7 +166,7 @@ export default class LoadHelperTest {
     assert.calledWith(successFake, 'Provider ({yellow} WorkerEnvProvider) successfully shutdown')
     assert.calledWith(successFake, 'Provider ({yellow} ConsoleEnvProvider) successfully shutdown')
     assert.calledWith(successFake, 'Provider ({yellow} HttpAndConsoleEnvProvider) successfully shutdown')
-    assert.calledTimesWith(mock, 5, 'application')
+    assert.calledTimesWith(Log.channelOrVanilla, 5, 'application')
   }
 
   @Test()
@@ -190,7 +190,7 @@ export default class LoadHelperTest {
     Config.set('rc.bootLogs', true)
 
     const successFake = Mock.fake()
-    const mock = Log.when('channelOrVanilla').return({
+    Log.when('channelOrVanilla').return({
       success: successFake
     })
 
@@ -201,8 +201,7 @@ export default class LoadHelperTest {
     assert.calledWith(successFake, 'Provider ({yellow} WorkerEnvProvider) successfully booted')
     assert.calledWith(successFake, 'Provider ({yellow} ConsoleEnvProvider) successfully booted')
     assert.calledWith(successFake, 'Provider ({yellow} HttpAndConsoleEnvProvider) successfully booted')
-
-    assert.calledTimesWith(mock, 5, 'application')
+    assert.calledTimesWith(Log.channelOrVanilla, 5, 'application')
   }
 
   @Test()
@@ -220,13 +219,13 @@ export default class LoadHelperTest {
     Config.set('rc.preloads', ['#tests/fixtures/routes/load'])
 
     const successFake = Mock.fake()
-    const mock = Log.when('channelOrVanilla').return({
+    Log.when('channelOrVanilla').return({
       success: successFake
     })
 
     await LoadHelper.preloadFiles()
 
-    assert.calledTimesWith(mock, 1, 'application')
+    assert.calledTimesWith(Log.channelOrVanilla, 1, 'application')
     assert.calledWith(successFake, 'File ({yellow} load) successfully preloaded')
   }
 
