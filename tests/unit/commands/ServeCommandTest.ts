@@ -20,15 +20,6 @@ export default class ServeCommandTest extends BaseCommandTest {
   }
 
   @Test()
-  public async shouldBeAbleToExecuteServeCommandWithADifferentEnv({ command }: Context) {
-    const output = await command.run('serve --env=test-hello')
-
-    output.assertSucceeded()
-    output.assertLogged('Hello from #bin/main!')
-    output.assertLogged('test-hello\ntest-hello')
-  }
-
-  @Test()
   public async shouldBeAbleToExecuteServeCommandUsingAImportAliasPathEntry({ command }: Context) {
     const output = await command.run('serve', {
       path: Path.fixtures('consoles/import-alias-path-entry.ts')

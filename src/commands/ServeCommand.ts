@@ -13,9 +13,6 @@ import { Module } from '@athenna/common'
 import { BaseCommand, Option } from '@athenna/artisan'
 
 export class ServeCommand extends BaseCommand {
-  @Option({ isFromGlobal: true, signature: '--env <env>' })
-  public env: string
-
   @Option({
     signature: '-w, --watch',
     description: 'Use nodemon to watch the application and restart on changes.',
@@ -32,9 +29,6 @@ export class ServeCommand extends BaseCommand {
   }
 
   public async handle(): Promise<void> {
-    process.env.APP_ENV = this.env
-    process.env.NODE_ENV = this.env
-
     const entrypoint = Config.get(
       'rc.commands.serve.entrypoint',
       Path.bootstrap(`main.${Path.ext()}`)

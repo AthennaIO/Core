@@ -4,8 +4,10 @@ export class {{ namePascal }} extends Exception {
   public constructor(message: string) {
     const status = 500
     const help = undefined
+    const details = []
+    const otherInfos = {}
     const code = 'E_{{ namePascalUpperCase }}'
 
-    super({ code, help, status, message })
+    super({ code, help, status, message, details, otherInfos })
   }
 }

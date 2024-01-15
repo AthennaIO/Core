@@ -8,7 +8,6 @@
  */
 
 import { Path } from '@athenna/common'
-import { sep, resolve, isAbsolute } from 'node:path'
 import { BaseCommand, Argument } from '@athenna/artisan'
 
 export class MakeExceptionCommand extends BaseCommand {
@@ -28,8 +27,13 @@ export class MakeExceptionCommand extends BaseCommand {
   public async handle(): Promise<void> {
     this.logger.simple('({bold,green} [ MAKING EXCEPTION ])\n')
 
+    const destination = Config.get(
+      'rc.commands.make:exception.destination',
+      Path.exceptions()
+    )
     const file = await this.generator
-      .path(this.getFilePath())
+      .fileName(this.name)
+      .destination(destination)
       .template('exception')
       .setNameProperties(true)
       .make()
@@ -37,28 +41,5 @@ export class MakeExceptionCommand extends BaseCommand {
     this.logger.success(
       `Exception ({yellow} "${file.name}") successfully created.`
     )
-  }
-
-  /**
-   * Get the file path where it will be generated.
-   */
-  private getFilePath(): string {
-    return this.getDestinationPath().concat(`${sep}${this.name}.${Path.ext()}`)
-  }
-
-  /**
-   * Get the destination path for the file that will be generated.
-   */
-  private getDestinationPath(): string {
-    let destination = Config.get(
-      'rc.commands.make:exception.destination',
-      Path.exceptions()
-    )
-
-    if (!isAbsolute(destination)) {
-      destination = resolve(Path.pwd(), destination)
-    }
-
-    return destination
   }
 }

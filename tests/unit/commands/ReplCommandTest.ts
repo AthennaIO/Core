@@ -20,15 +20,6 @@ export default class ReplCommandTest extends BaseCommandTest {
   }
 
   @Test()
-  public async shouldBeAbleToExecuteReplCommandWithADifferentEnv({ command }: Context) {
-    const output = await command.run('repl --env=test-hello')
-
-    output.assertSucceeded()
-    output.assertLogged('Hello from #bin/repl!')
-    output.assertLogged('test-hello\ntest-hello')
-  }
-
-  @Test()
   public async shouldBeAbleToExecuteReplCommandUsingAImportAliasPathEntry({ command }: Context) {
     const output = await command.run('repl', {
       path: Path.fixtures('consoles/import-alias-path-entry.ts')

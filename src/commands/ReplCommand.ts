@@ -8,12 +8,9 @@
  */
 
 import { Module } from '@athenna/common'
-import { BaseCommand, Option } from '@athenna/artisan'
+import { BaseCommand } from '@athenna/artisan'
 
 export class ReplCommand extends BaseCommand {
-  @Option({ isFromGlobal: true, signature: '--env <env>' })
-  public env: string
-
   public static signature(): string {
     return 'repl'
   }
@@ -23,9 +20,6 @@ export class ReplCommand extends BaseCommand {
   }
 
   public async handle(): Promise<void> {
-    process.env.APP_ENV = this.env
-    process.env.NODE_ENV = this.env
-
     const entrypoint = Config.get(
       'rc.commands.repl.entrypoint',
       Path.bootstrap(`repl.${Path.ext()}`)
