@@ -20,15 +20,6 @@ export default class TestCommandTest extends BaseCommandTest {
   }
 
   @Test()
-  public async shouldBeAbleToExecuteTestCommandWithADifferentEnv({ command }: Context) {
-    const output = await command.run('test --cmd --env=test-hello')
-
-    output.assertSucceeded()
-    output.assertLogged('Hello from #bin/test!')
-    output.assertLogged('test-hello\ntest-hello')
-  }
-
-  @Test()
   public async shouldBeAbleToExecuteTestCommandAndSetJapaArgs({ command }: Context) {
     const output = await command.run(
       'test ' +

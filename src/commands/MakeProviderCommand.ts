@@ -8,7 +8,6 @@
  */
 
 import { Path } from '@athenna/common'
-import { sep, resolve, isAbsolute } from 'node:path'
 import { BaseCommand, Argument } from '@athenna/artisan'
 
 export class MakeProviderCommand extends BaseCommand {
@@ -28,8 +27,13 @@ export class MakeProviderCommand extends BaseCommand {
   public async handle(): Promise<void> {
     this.logger.simple('({bold,green} [ MAKING PROVIDER ])\n')
 
+    const destination = Config.get(
+      'rc.commands.make:provider.destination',
+      Path.providers()
+    )
     const file = await this.generator
-      .path(this.getFilePath())
+      .fileName(this.name)
+      .destination(destination)
       .template('provider')
       .setNameProperties(true)
       .make()
@@ -38,47 +42,12 @@ export class MakeProviderCommand extends BaseCommand {
       `Provider ({yellow} "${file.name}") successfully created.`
     )
 
-    const importPath = this.getImportPath(file.name)
+    const importPath = this.generator.getImportPath()
 
     await this.rc.pushTo('providers', importPath).save()
 
     this.logger.success(
       `Athenna RC updated: ({dim,yellow} [ providers += "${importPath}" ])`
     )
-  }
-
-  /**
-   * Get the file path where it will be generated.
-   */
-  private getFilePath(): string {
-    return this.getDestinationPath().concat(`${sep}${this.name}.${Path.ext()}`)
-  }
-
-  /**
-   * Get the destination path for the file that will be generated.
-   */
-  private getDestinationPath(): string {
-    let destination = Config.get(
-      'rc.commands.make:provider.destination',
-      Path.providers()
-    )
-
-    if (!isAbsolute(destination)) {
-      destination = resolve(Path.pwd(), destination)
-    }
-
-    return destination
-  }
-
-  /**
-   * Get the import path that should be registered in RC file.
-   */
-  private getImportPath(fileName: string): string {
-    const destination = this.getDestinationPath()
-
-    return `${destination
-      .replace(Path.pwd(), '')
-      .replace(/\\/g, '/')
-      .replace('/', '#')}/${fileName}`
   }
 }

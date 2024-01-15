@@ -8,7 +8,6 @@
  */
 
 import { Path } from '@athenna/common'
-import { sep, resolve, isAbsolute } from 'node:path'
 import { BaseCommand, Argument, Option } from '@athenna/artisan'
 
 export class MakeTestCommand extends BaseCommand {
@@ -66,35 +65,17 @@ export class MakeTestCommand extends BaseCommand {
       template = 'test-fn'
     }
 
+    const destination = Config.get(
+      'rc.commands.make:test.destination',
+      this.isUnit ? Path.tests('unit') : Path.tests('e2e')
+    )
     const file = await this.generator
-      .path(this.getFilePath())
+      .fileName(this.name)
+      .destination(destination)
       .template(template)
       .setNameProperties(true)
       .make()
 
     this.logger.success(`Test ({yellow} "${file.name}") successfully created.`)
-  }
-
-  /**
-   * Get the file path where it will be generated.
-   */
-  private getFilePath(): string {
-    return this.getDestinationPath().concat(`${sep}${this.name}.${Path.ext()}`)
-  }
-
-  /**
-   * Get the destination path for the file that will be generated.
-   */
-  private getDestinationPath(): string {
-    let destination = Config.get(
-      'rc.commands.make:test.destination',
-      this.isUnit ? Path.tests('unit') : Path.tests('e2e')
-    )
-
-    if (!isAbsolute(destination)) {
-      destination = resolve(Path.pwd(), destination)
-    }
-
-    return destination
   }
 }
