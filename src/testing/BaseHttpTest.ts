@@ -7,12 +7,14 @@
  * file that was distributed with this source code.
  */
 
-import { Options } from '@athenna/common'
 import { ServerImpl } from '@athenna/http'
+import { Json, Options } from '@athenna/common'
 import { AfterAll, BeforeAll } from '@athenna/test'
 import { Ignite, type HttpOptions, type IgniteOptions } from '@athenna/core'
 
 export class BaseHttpTest {
+  private env = Json.copy(process.env)
+  private config = Json.copy(Config.get())
   public ignite: Ignite
   public httpServer: ServerImpl
   public httpOptions: HttpOptions = {}
@@ -31,6 +33,11 @@ export class BaseHttpTest {
   @AfterAll()
   public async baseAfterAll() {
     await this.httpServer.close()
+    ioc.reconstruct()
+    process.env = Json.copy(this.env)
+    Object.keys(this.config).forEach(key =>
+      Config.set(key, Json.copy(this.config[key]))
+    )
   }
 
   private getHttpOptions() {
