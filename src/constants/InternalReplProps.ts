@@ -27,6 +27,8 @@ export const INTERNAL_REPL_PROPS = [
   'btoa',
   'performance',
   'fetch',
+  'navigator',
+  'crypto',
   '__extends',
   '__assign',
   '__rest',
