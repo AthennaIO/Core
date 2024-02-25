@@ -7,20 +7,20 @@
  * file that was distributed with this source code.
  */
 
-import { Ignite, LoadHelper } from '#src'
 import { Rc } from '@athenna/config'
 import { sep, resolve } from 'node:path'
+import { Ignite, LoadHelper } from '#src'
 import { Repl } from '#src/applications/Repl'
 import { Http } from '#src/applications/Http'
 import { Console } from '#src/applications/Console'
 import { Log, LoggerProvider } from '@athenna/logger'
-import { Exception, File, Json, Module } from '@athenna/common'
+import { Exception, File, Json, Module, type PathDirs } from '@athenna/common'
 import { Test, type Context, BeforeEach, Mock, AfterEach } from '@athenna/test'
 import { NotSatisfiedNodeVersion } from '#src/exceptions/NotSatisfiedNodeVersion'
 
 export default class IgniteTest {
   public oldEnv: NodeJS.ProcessEnv
-  public oldDirs: Record<string, string>
+  public oldDirs: PathDirs
 
   @BeforeEach()
   public async beforeEach() {
