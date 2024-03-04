@@ -12,7 +12,7 @@ import { Argument, BaseCommand, Option } from '@athenna/artisan'
 
 export class InstallCommand extends BaseCommand {
   @Argument({
-    signature: '<...libraries>',
+    signature: 'libraries...',
     description: 'The libraries to install in your project.'
   })
   public libraries: string[]
@@ -52,6 +52,11 @@ export class InstallCommand extends BaseCommand {
       })
     })
 
+    console.log()
+    this.logger.success(
+      `Successfully installed ${this.libraries.join(', ')} libraries`
+    )
+
     for (const library of this.libraries) {
       const path = Path.nodeModules(`${library}/configurer/index.js`)
 
@@ -59,17 +64,11 @@ export class InstallCommand extends BaseCommand {
         continue
       }
 
-      task.addPromise(`Configuring ${library}`, async () => {
-        const Configurer = await Module.getFrom(path)
+      this.logger.simple(`\n({bold,green} [ CONFIGURING ${library} ])\n`)
 
-        return new Configurer().setPath(path).configure()
-      })
+      const Configurer = await Module.getFrom(path)
+
+      await new Configurer().setPath(path).configure()
     }
-
-    await task.run()
-
-    this.logger.success(
-      `Successfully installed ${this.libraries.join(', ')} libraries`
-    )
   }
 }
