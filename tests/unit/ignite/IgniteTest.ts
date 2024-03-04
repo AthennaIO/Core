@@ -8,6 +8,7 @@
  */
 
 import { Rc } from '@athenna/config'
+import { Path } from '@athenna/common'
 import { sep, resolve } from 'node:path'
 import { Ignite, LoadHelper } from '#src'
 import { Repl } from '#src/applications/Repl'

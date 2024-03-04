@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { Module } from '@athenna/common'
+import { Path, Module } from '@athenna/common'
 import { BaseCommand } from '@athenna/artisan'
 
 export class ReplCommand extends BaseCommand {

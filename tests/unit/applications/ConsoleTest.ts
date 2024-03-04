@@ -8,6 +8,7 @@
  */
 
 import { Rc } from '@athenna/config'
+import { Path } from '@athenna/common'
 import { Console } from '#src/applications/Console'
 import { Log, LoggerProvider } from '@athenna/logger'
 import { Artisan, ArtisanProvider, CommanderHandler } from '@athenna/artisan'

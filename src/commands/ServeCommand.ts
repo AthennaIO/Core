@@ -9,7 +9,7 @@
 
 import { Log } from '@athenna/logger'
 import { Config } from '@athenna/config'
-import { Module } from '@athenna/common'
+import { Path, Module } from '@athenna/common'
 import { BaseCommand, Option } from '@athenna/artisan'
 
 export class ServeCommand extends BaseCommand {

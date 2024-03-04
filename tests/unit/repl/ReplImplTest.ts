@@ -9,6 +9,7 @@
 
 import { sep } from 'node:path'
 import { ReplImpl } from '#src'
+import { Path } from '@athenna/common'
 import { Ls } from '#src/repl/commands/Ls'
 import { Test, type Context, Mock, Cleanup, AfterEach } from '@athenna/test'
 

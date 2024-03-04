@@ -8,6 +8,7 @@
  */
 
 import { CoreProvider } from '#src'
+import { Path } from '@athenna/common'
 import { Test, type Context, AfterEach, BeforeEach } from '@athenna/test'
 
 export default class CoreProviderTest {

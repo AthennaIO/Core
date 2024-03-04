@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { Path } from '@athenna/common'
 import { LoggerProvider } from '@athenna/logger'
 import { Artisan, ConsoleKernel, ArtisanProvider } from '@athenna/artisan'
 

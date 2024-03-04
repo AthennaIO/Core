@@ -7,9 +7,9 @@
  * file that was distributed with this source code.
  */
 
-import { File, Folder } from '@athenna/common'
 import { LoggerProvider } from '@athenna/logger'
 import { ArtisanProvider } from '@athenna/artisan'
+import { Path, File, Folder } from '@athenna/common'
 import { BeforeEach, AfterEach, Mock } from '@athenna/test'
 import { TestCommand } from '@athenna/artisan/testing/plugins'
 

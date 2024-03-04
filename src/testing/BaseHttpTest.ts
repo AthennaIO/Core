@@ -8,8 +8,8 @@
  */
 
 import { ServerImpl } from '@athenna/http'
-import { Json, Options } from '@athenna/common'
 import { AfterAll, BeforeAll } from '@athenna/test'
+import { Path, Json, Options } from '@athenna/common'
 import { Ignite, type HttpOptions, type IgniteOptions } from '@athenna/core'
 
 export class BaseHttpTest {

@@ -9,8 +9,8 @@
 
 import { debug } from '#src/debug'
 import { Log } from '@athenna/logger'
-import { Module, Options } from '@athenna/common'
 import type { ArtisanImpl } from '@athenna/artisan'
+import { Path, Module, Options } from '@athenna/common'
 import type { ConsoleOptions } from '#src/types/ConsoleOptions'
 
 export class Console {
