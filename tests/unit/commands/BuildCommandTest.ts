@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { File, Folder } from '@athenna/common'
 import { Test, type Context } from '@athenna/test'
+import { Path, File, Folder } from '@athenna/common'
 import { BaseCommandTest } from '#tests/helpers/BaseCommandTest'
 
 export default class BuildCommandTest extends BaseCommandTest {

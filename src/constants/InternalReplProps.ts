@@ -10,8 +10,6 @@
 /**
  * All node:repl internal properties to remove
  * from list when using ".ls" command.
- *
- * @type {string[]}
  */
 export const INTERNAL_REPL_PROPS = [
   'global',

@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "4.30.0",
+  "version": "4.31.0",
   "description": "One foundation for multiple applications.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -57,6 +57,7 @@
     "./commands/ServeCommand": "./src/commands/ServeCommand.js",
     "./commands/TestCommand": "./src/commands/TestCommand.js",
     "./commands/BuildCommand": "./src/commands/BuildCommand.js",
+    "./commands/InstallCommand": "./src/commands/InstallCommand.js",
     "./testing/BaseHttpTest": "./src/testing/BaseHttpTest.js",
     "./testing/BaseConsoleTest": "./src/testing/BaseConsoleTest.js"
   },
@@ -73,18 +74,18 @@
   },
   "dependencies": {
     "pretty-repl": "^3.1.2",
-    "semver": "^7.5.4"
+    "semver": "^7.6.0"
   },
   "devDependencies": {
-    "@athenna/artisan": "^4.37.0",
-    "@athenna/common": "^4.34.0",
-    "@athenna/config": "^4.16.0",
-    "@athenna/http": "^4.23.0",
-    "@athenna/ioc": "^4.16.0",
-    "@athenna/logger": "^4.17.0",
+    "@athenna/artisan": "^4.38.0",
+    "@athenna/common": "^4.35.0",
+    "@athenna/config": "^4.18.0",
+    "@athenna/http": "^4.24.0",
+    "@athenna/ioc": "^4.18.0",
+    "@athenna/logger": "^4.18.0",
     "@athenna/test": "^4.22.0",
     "@athenna/tsconfig": "^4.12.0",
-    "@athenna/view": "^4.18.0",
+    "@athenna/view": "^4.20.0",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
     "commitizen": "^4.2.6",
@@ -249,6 +250,9 @@
         "path": "#src/commands/BuildCommand",
         "tsconfig": "./tests/fixtures/tsconfig.json",
         "outDir": "build"
+      },
+      "install": {
+        "path": "#src/commands/InstallCommand"
       }
     },
     "providers": [

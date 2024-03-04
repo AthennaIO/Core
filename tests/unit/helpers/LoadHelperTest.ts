@@ -8,6 +8,7 @@
  */
 
 import { LoadHelper } from '#src'
+import { Path } from '@athenna/common'
 import { Log, LoggerProvider } from '@athenna/logger'
 import { CALLED_MAP } from '#tests/helpers/CalledMap'
 import { Test, BeforeEach, type Context, Mock, AfterEach } from '@athenna/test'

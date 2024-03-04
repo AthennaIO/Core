@@ -8,6 +8,7 @@
  */
 
 import { Mock } from '@athenna/test'
+import { Path } from '@athenna/common'
 import { ViewProvider } from '@athenna/view'
 import { Rc, Config } from '@athenna/config'
 import { LoggerProvider } from '@athenna/logger'

@@ -10,8 +10,8 @@
 import { debug } from '#src/debug'
 import { Log } from '@athenna/logger'
 import type { ServerImpl } from '@athenna/http'
-import { Is, Module, Options } from '@athenna/common'
 import type { HttpOptions } from '#src/types/HttpOptions'
+import { Is, Path, Module, Options } from '@athenna/common'
 
 export class Http {
   /**
