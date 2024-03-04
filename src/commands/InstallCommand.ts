@@ -52,7 +52,6 @@ export class InstallCommand extends BaseCommand {
       })
     })
 
-    console.log()
     this.logger.success(
       `Successfully installed ${this.libraries.join(', ')} libraries`
     )
