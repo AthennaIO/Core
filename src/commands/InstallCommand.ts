@@ -52,6 +52,8 @@ export class InstallCommand extends BaseCommand {
       })
     })
 
+    await task.run()
+    console.log()
     this.logger.success(
       `Successfully installed ${this.libraries.join(', ')} libraries`
     )
