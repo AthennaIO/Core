@@ -27,6 +27,12 @@ export class BaseConsoleTest {
       Path.toHref(Path.bootstrap(`test.${Path.ext()}`)),
       this.getIgniteOptions()
     )
+
+    const { ViewProvider } = await import('@athenna/view')
+    const { ArtisanProvider } = await import('@athenna/artisan')
+
+    new ViewProvider().register()
+    new ArtisanProvider().register()
   }
 
   @AfterAll()
