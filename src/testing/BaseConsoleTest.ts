@@ -7,14 +7,12 @@
  * file that was distributed with this source code.
  */
 
-import { AfterAll, BeforeAll } from '@athenna/test'
-import { Path, Json, Options } from '@athenna/common'
+import { BeforeAll } from '@athenna/test'
+import { Path, Options } from '@athenna/common'
 import { Ignite, type IgniteOptions } from '@athenna/core'
 import { TestCommand } from '@athenna/artisan/testing/plugins'
 
 export class BaseConsoleTest {
-  private env = Json.copy(process.env)
-  private config = Json.copy(Config.get())
   public ignite: Ignite
   public igniteOptions: IgniteOptions = {}
   public artisanPath: string = Path.bootstrap(`artisan.${Path.ext()}`)
@@ -26,21 +24,6 @@ export class BaseConsoleTest {
     this.ignite = await new Ignite().load(
       Path.toHref(Path.bootstrap(`test.${Path.ext()}`)),
       this.getIgniteOptions()
-    )
-
-    const { ViewProvider } = await import('@athenna/view')
-    const { ArtisanProvider } = await import('@athenna/artisan')
-
-    new ViewProvider().register()
-    new ArtisanProvider().register()
-  }
-
-  @AfterAll()
-  public async baseAfterAll() {
-    ioc.reconstruct()
-    process.env = Json.copy(this.env)
-    Object.keys(this.config).forEach(key =>
-      Config.set(key, Json.copy(this.config[key]))
     )
   }
 
