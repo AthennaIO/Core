@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "4.39.0",
+  "version": "4.40.0",
   "description": "One foundation for multiple applications.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -86,8 +86,8 @@
     "@athenna/test": "^4.24.0",
     "@athenna/tsconfig": "^4.14.0",
     "@athenna/view": "^4.23.0",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.57.0",
