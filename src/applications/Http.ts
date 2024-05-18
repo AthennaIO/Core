@@ -77,6 +77,7 @@ export class Http {
     await kernel.registerExceptionHandler(options.exceptionHandlerPath)
     await kernel.registerCors()
     await kernel.registerHelmet()
+    await kernel.registerStatic()
     await kernel.registerSwagger()
     await kernel.registerRateLimit()
     await kernel.registerRTracer(options.trace)
