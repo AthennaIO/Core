@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "4.42.0",
+  "version": "4.43.0",
   "description": "One foundation for multiple applications.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -74,20 +74,20 @@
   },
   "dependencies": {
     "pretty-repl": "^3.1.2",
-    "semver": "^7.6.2"
+    "semver": "^7.6.3"
   },
   "devDependencies": {
     "@athenna/artisan": "^4.45.0",
-    "@athenna/common": "^4.43.0",
-    "@athenna/config": "^4.23.0",
-    "@athenna/http": "^4.37.0",
-    "@athenna/ioc": "^4.23.0",
-    "@athenna/logger": "^4.24.0",
-    "@athenna/test": "^4.26.0",
+    "@athenna/common": "^4.44.0",
+    "@athenna/config": "^4.24.0",
+    "@athenna/http": "^4.38.0",
+    "@athenna/ioc": "^4.24.0",
+    "@athenna/logger": "^4.25.0",
+    "@athenna/test": "^4.28.0",
     "@athenna/tsconfig": "^4.16.0",
-    "@athenna/view": "^4.25.0",
-    "@typescript-eslint/eslint-plugin": "^7.9.0",
-    "@typescript-eslint/parser": "^7.9.0",
+    "@athenna/view": "^4.27.0",
+    "@typescript-eslint/eslint-plugin": "^7.17.0",
+    "@typescript-eslint/parser": "^7.17.0",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.57.0",
@@ -96,10 +96,10 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^15.7.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-promise": "^6.6.0",
     "husky": "^3.1.0",
     "lint-staged": "^12.5.0",
-    "nodemon": "^3.1.0",
+    "nodemon": "^3.1.4",
     "prettier": "^2.8.8"
   },
   "c8": {
