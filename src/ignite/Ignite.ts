@@ -8,13 +8,15 @@
  */
 
 import type {
+  SemverNode,
+  CronOptions,
   HttpOptions,
-  ConsoleOptions,
   IgniteOptions,
-  SemverNode
+  ConsoleOptions
 } from '#src/types'
 
 import { Ioc } from '@athenna/ioc'
+import { Cron } from '#src/applications/Cron'
 import { Http } from '#src/applications/Http'
 import { EnvHelper, Rc } from '@athenna/config'
 import { isAbsolute, resolve } from 'node:path'
@@ -142,6 +144,21 @@ export class Ignite {
       await this.fire()
 
       return await Http.boot(options)
+    } catch (err) {
+      await this.handleError(err)
+    }
+  }
+
+  /**
+   * Ignite the CRON application.
+   */
+  public async cron(options?: CronOptions) {
+    try {
+      this.options.environments.push('cron')
+
+      await this.fire()
+
+      return await Cron.boot(options)
     } catch (err) {
       await this.handleError(err)
     }

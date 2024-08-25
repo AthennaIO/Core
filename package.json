@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "4.45.0",
+  "version": "4.46.0",
   "description": "One foundation for multiple applications.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -15,6 +15,9 @@
     "rest-api",
     "http-server",
     "console",
+    "cron",
+    "cronjob",
+    "scheduler",
     "ignite",
     "nodejs",
     "athenna",
@@ -80,6 +83,7 @@
     "@athenna/artisan": "^4.45.0",
     "@athenna/common": "^4.46.0",
     "@athenna/config": "^4.27.0",
+    "@athenna/cron": "^4.1.0",
     "@athenna/http": "^4.41.0",
     "@athenna/ioc": "^4.27.0",
     "@athenna/logger": "^4.29.0",
@@ -218,6 +222,9 @@
     "directories": {
       "bootstrap": "bin"
     },
+    "schedulers": [
+      "#tests/fixtures/schedulers/HelloScheduler"
+    ],
     "commands": {
       "make:exception": {
         "path": "#src/commands/MakeExceptionCommand"
