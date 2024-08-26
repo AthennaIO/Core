@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "One foundation for multiple applications.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -62,6 +62,7 @@
     "./commands/BuildCommand": "./src/commands/BuildCommand.js",
     "./commands/InstallCommand": "./src/commands/InstallCommand.js",
     "./testing/BaseHttpTest": "./src/testing/BaseHttpTest.js",
+    "./testing/BaseCronTest": "./src/testing/BaseCronTest.js",
     "./testing/BaseConsoleTest": "./src/testing/BaseConsoleTest.js"
   },
   "imports": {
@@ -83,7 +84,7 @@
     "@athenna/artisan": "^5.1.0",
     "@athenna/common": "^5.0.0",
     "@athenna/config": "^5.0.0",
-    "@athenna/cron": "^5.1.0",
+    "@athenna/cron": "^5.2.0",
     "@athenna/http": "^5.1.0",
     "@athenna/ioc": "^5.0.0",
     "@athenna/logger": "^5.0.0",
@@ -212,6 +213,7 @@
       "test": "./templates/test.edge",
       "test-console": "./templates/test-console.edge",
       "test-http": "./templates/test-http.edge",
+      "test-cron": "./templates/test-cron.edge",
       "test-fn": "./templates/test-fn.edge",
       "command": "node_modules/@athenna/artisan/templates/command.edge",
       "controller": "node_modules/@athenna/http/templates/controller.edge",

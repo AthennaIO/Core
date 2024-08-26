@@ -38,6 +38,13 @@ export class MakeTestCommand extends BaseCommand {
   public isConsole: boolean
 
   @Option({
+    description: 'Create a Cron test.',
+    signature: '-cr, --cron',
+    default: false
+  })
+  public isCron: boolean
+
+  @Option({
     description: 'Create the test as function instead of class.',
     signature: '--function',
     default: false
@@ -58,6 +65,7 @@ export class MakeTestCommand extends BaseCommand {
     let template = 'test'
 
     if (this.isConsole) template = 'test-console'
+    else if (this.isCron) template = 'test-cron'
     else if (this.isHttp) template = 'test-http'
     else if (this.isUnit) template = 'test' // This is necessary to avoid multiple options case.
 
