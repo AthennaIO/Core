@@ -21,7 +21,7 @@ export class BaseHttpTest {
   @BeforeAll()
   public async baseBeforeAll() {
     this.ignite = await new Ignite().load(
-      Path.toHref(Path.bootstrap(`test.${Path.ext()}`)),
+      Path.toHref(Path.bin(`test.${Path.ext()}`)),
       this.getIgniteOptions()
     )
 

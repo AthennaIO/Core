@@ -15,14 +15,14 @@ import { TestCommand } from '@athenna/artisan/testing/plugins'
 export class BaseConsoleTest {
   public ignite: Ignite
   public igniteOptions: IgniteOptions = {}
-  public artisanPath: string = Path.bootstrap(`artisan.${Path.ext()}`)
+  public artisanPath: string = Path.bin(`artisan.${Path.ext()}`)
 
   @BeforeAll()
   public async baseBeforeAll() {
     TestCommand.setArtisanPath(this.artisanPath)
 
     this.ignite = await new Ignite().load(
-      Path.toHref(Path.bootstrap(`test.${Path.ext()}`)),
+      Path.toHref(Path.bin(`test.${Path.ext()}`)),
       this.getIgniteOptions()
     )
   }
