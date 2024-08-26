@@ -23,7 +23,7 @@ export default class MakeProviderCommandTest extends BaseCommandTest {
     const { athenna } = await new File(Path.pwd('package.json')).getContentAsJson()
 
     assert.isTrue(await File.exists(Path.providers('TestProvider.ts')))
-    assert.containsSubset(athenna.providers, ['#providers/TestProvider'])
+    assert.containsSubset(athenna.providers, ['#src/providers/TestProvider'])
   }
 
   @Test()

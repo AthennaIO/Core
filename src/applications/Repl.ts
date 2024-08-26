@@ -33,7 +33,7 @@ export class Repl {
 
     Logger.write(chalkRainbow(figlet.textSync('REPL\n')))
     Logger.gray('To import your modules use dynamic imports:\n')
-    Logger.gray("const { User } = await import('#app/models/User')\n")
+    Logger.gray("const { User } = await import('#src/models/User')\n")
 
     Logger.write(
       `${Color.yellow.bold('To see all commands available type:')} .help\n`

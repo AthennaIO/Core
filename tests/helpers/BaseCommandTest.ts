@@ -30,10 +30,11 @@ export class BaseCommandTest {
     ioc.reconstruct()
 
     await File.safeRemove(Path.tests('unit/TestTest.ts'))
+    await File.safeRemove(Path.facades('TestFacade.ts'))
+    await File.safeRemove(Path.providers('TestProvider.ts'))
+    await File.safeRemove(Path.exceptions('TestException.ts'))
 
-    await Folder.safeRemove(Path.app())
-    await Folder.safeRemove(Path.providers())
-    await Folder.safeRemove(Path.storage())
+    await Folder.safeRemove(Path.services())
     await Folder.safeRemove(Path.fixtures('storage'))
     await Folder.safeRemove(Path.pwd('dist'))
     await Folder.safeRemove(Path.pwd('build'))
