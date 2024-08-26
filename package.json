@@ -213,6 +213,7 @@
       "test": "./templates/test.edge",
       "test-console": "./templates/test-console.edge",
       "test-http": "./templates/test-http.edge",
+      "test-cron": "./templates/test-cron.edge",
       "test-fn": "./templates/test-fn.edge",
       "command": "node_modules/@athenna/artisan/templates/command.edge",
       "controller": "node_modules/@athenna/http/templates/controller.edge",

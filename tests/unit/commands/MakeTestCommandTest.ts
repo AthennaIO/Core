@@ -60,6 +60,8 @@ export default class MakeTestCommandTest extends BaseCommandTest {
   public async shouldBeAbleToCreateATestFileUsingCronTemplate({ assert, command }: Context) {
     const output = await command.run('make:test TestTest --cron')
 
+    console.log(output.output)
+
     output.assertSucceeded()
     output.assertLogged('[ MAKING TEST ]')
     output.assertLogged('[  success  ] Test "TestTest" successfully created.')
