@@ -31,7 +31,7 @@ export class ServeCommand extends BaseCommand {
   public async handle(): Promise<void> {
     const entrypoint = Config.get(
       'rc.commands.serve.entrypoint',
-      Path.bootstrap(`main.${Path.ext()}`)
+      Path.bin(`main.${Path.ext()}`)
     )
 
     if (this.watch) {

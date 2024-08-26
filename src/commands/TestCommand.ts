@@ -42,7 +42,7 @@ export class TestCommand extends BaseCommand {
   public async handle(): Promise<void> {
     const entrypoint = Config.get(
       'rc.commands.test.entrypoint',
-      Path.bootstrap(`test.${Path.ext()}`)
+      Path.bin(`test.${Path.ext()}`)
     )
 
     process.argv.splice(2, 1)

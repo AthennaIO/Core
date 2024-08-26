@@ -22,7 +22,7 @@ export class ReplCommand extends BaseCommand {
   public async handle(): Promise<void> {
     const entrypoint = Config.get(
       'rc.commands.repl.entrypoint',
-      Path.bootstrap(`repl.${Path.ext()}`)
+      Path.bin(`repl.${Path.ext()}`)
     )
 
     await Module.resolve(entrypoint, Config.get('rc.parentURL'))
