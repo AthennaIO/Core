@@ -1,0 +1,9 @@
+import { Test, type Context } from '@athenna/test'
+import { BaseCronTest } from '@athenna/core/testing/BaseCronTest'
+
+export default class {{ namePascal }} extends BaseCronTest {
+  @Test()
+  public async shouldBeAbleToRunSchedulers({ scheduler }: Context) {
+    await scheduler.runByName('MySchedulerClassName')
+  }
+}
