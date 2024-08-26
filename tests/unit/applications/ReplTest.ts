@@ -63,7 +63,7 @@ export default class ReplTest {
 
     assert.calledWith(process.stdout.write, chalkRainbow(figlet.textSync('REPL\n')) + '\n')
     assert.calledWith(process.stdout.write, Color.gray('To import your modules use dynamic imports:\n') + '\n')
-    assert.calledWith(process.stdout.write, Color.gray("const { User } = await import('#app/models/User')\n") + '\n')
+    assert.calledWith(process.stdout.write, Color.gray("const { User } = await import('#src/models/User')\n") + '\n')
     assert.calledWith(process.stdout.write, Color.yellow.bold('To see all commands available type:') + ' .help\n\n')
   }
 

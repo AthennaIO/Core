@@ -23,7 +23,7 @@ export default class MakeServiceCommandTest extends BaseCommandTest {
     const { athenna } = await new File(Path.pwd('package.json')).getContentAsJson()
 
     assert.isTrue(await File.exists(Path.services('TestService.ts')))
-    assert.containsSubset(athenna.services, ['#app/services/TestService'])
+    assert.containsSubset(athenna.services, ['#src/services/TestService'])
   }
 
   @Test()
