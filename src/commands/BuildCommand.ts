@@ -9,8 +9,8 @@
 
 import { rimraf } from 'rimraf'
 import { tsc } from '@athenna/tsconfig/tsc'
+import { Path, Color } from '@athenna/common'
 import { isAbsolute, join, parse } from 'node:path'
-import { Path, Color, Module } from '@athenna/common'
 import { BaseCommand, Option } from '@athenna/artisan'
 import { copyfiles } from '@athenna/tsconfig/copyfiles'
 import { UndefinedOutDirException } from '#src/exceptions/UndefinedOutDirException'
@@ -61,15 +61,8 @@ export class BuildCommand extends BaseCommand {
       () => tsc(tsConfigPath)
     )
 
-    if (include.length) {
-      tasks.addPromise(
-        `Copying included paths to ${outDirName} folder: ${includedPaths}`,
-        () => copyfiles(include, outDir)
-      )
-    }
-
     if (this.vite) {
-      const vite = this.getVite()
+      const vite = await this.getVite()
 
       tasks.addPromise(
         `Compiling static files using ${Color.yellow.bold('vite')}`,
@@ -78,6 +71,13 @@ export class BuildCommand extends BaseCommand {
 
           return vite.build(config)
         }
+      )
+    }
+
+    if (include.length) {
+      tasks.addPromise(
+        `Copying included paths to ${outDirName} folder: ${includedPaths}`,
+        () => copyfiles(include, outDir)
       )
     }
 
@@ -105,10 +105,8 @@ export class BuildCommand extends BaseCommand {
     return Path.pwd(Config.get('rc.commands.build.outDir'))
   }
 
-  public getVite() {
-    const require = Module.createRequire(import.meta.url)
-
-    return require('vite')
+  public async getVite() {
+    return import('vite')
   }
 
   public async getViteConfig(vite: any) {
