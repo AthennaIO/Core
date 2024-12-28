@@ -15,8 +15,7 @@ import { BaseCommand, Option } from '@athenna/artisan'
 export class ServeCommand extends BaseCommand {
   @Option({
     signature: '-w, --watch',
-    description:
-      'Use nodemon to watch the application and restart on changes (also turn on vite --watch if using it).',
+    description: 'Use nodemon to watch the application and restart on changes.',
     default: false
   })
   public watch: boolean
@@ -131,22 +130,14 @@ export class ServeCommand extends BaseCommand {
     await Module.resolve(entrypoint, Config.get('rc.parentURL'))
   }
 
-  public getVite() {
-    const require = Module.createRequire(import.meta.url)
-
-    return require('vite')
-  }
-
-  public getVitePluginRestart() {
-    const require = Module.createRequire(import.meta.url)
-
-    return require('vite-plugin-restart')
-  }
-
   public getNodemon() {
     const require = Module.createRequire(import.meta.url)
 
     return require('nodemon')
+  }
+
+  public async getVite() {
+    return import('vite')
   }
 
   public async getViteConfig(vite: any) {
