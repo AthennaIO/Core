@@ -67,4 +67,22 @@ export default class ServeCommandTest extends BaseCommandTest {
 
     output.assertSucceeded()
   }
+
+  @Test()
+  public async shouldBeAbleToExecuteServeCommandWithVite({ command }: Context) {
+    const output = await command.run('serve --vite', {
+      path: Path.fixtures('consoles/serve-vite.ts')
+    })
+
+    output.assertSucceeded()
+  }
+
+  @Test()
+  public async shouldBeAbleToExecuteServeCommandWithViteWithLogs({ command }: Context) {
+    const output = await command.run('serve --vite', {
+      path: Path.fixtures('consoles/serve-vite-with-logs.ts')
+    })
+
+    output.assertSucceeded()
+  }
 }

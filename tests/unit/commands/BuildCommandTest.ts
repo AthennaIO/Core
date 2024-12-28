@@ -41,6 +41,16 @@ export default class BuildCommandTest extends BaseCommandTest {
   }
 
   @Test()
+  public async shouldBeAbleToRunBuildCommandWithVite({ command }: Context) {
+    const output = await command.run('build --vite', {
+      path: Path.fixtures('consoles/build-vite.ts')
+    })
+
+    output.assertSucceeded()
+    output.assertLogged('Application successfully compiled')
+  }
+
+  @Test()
   public async shouldDeleteTheOldOutDirBeforeCompilingTheApplicationAgain({ assert, command }: Context) {
     await command.run('build')
 

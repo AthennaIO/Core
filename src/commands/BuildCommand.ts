@@ -9,13 +9,20 @@
 
 import { rimraf } from 'rimraf'
 import { tsc } from '@athenna/tsconfig/tsc'
-import { Path, Color } from '@athenna/common'
-import { BaseCommand } from '@athenna/artisan'
 import { isAbsolute, join, parse } from 'node:path'
+import { Path, Color, Module } from '@athenna/common'
+import { BaseCommand, Option } from '@athenna/artisan'
 import { copyfiles } from '@athenna/tsconfig/copyfiles'
 import { UndefinedOutDirException } from '#src/exceptions/UndefinedOutDirException'
 
 export class BuildCommand extends BaseCommand {
+  @Option({
+    signature: '-v, --vite',
+    description: 'Use vite to build your application static files.',
+    default: false
+  })
+  public vite: boolean
+
   public static signature(): string {
     return 'build'
   }
@@ -40,7 +47,7 @@ export class BuildCommand extends BaseCommand {
     }
 
     const compiler = Color.yellow.bold('tsc')
-    const includedFiles = Color.gray(include.join(', '))
+    const includedPaths = Color.gray(include.join(', '))
 
     const outDir = this.getOutDir()
     const outDirName = Color.yellow.bold(parse(outDir).name)
@@ -56,9 +63,50 @@ export class BuildCommand extends BaseCommand {
 
     if (include.length) {
       tasks.addPromise(
-        `Copying included paths to ${outDirName} folder: ${includedFiles}`,
+        `Copying included paths to ${outDirName} folder: ${includedPaths}`,
         () => copyfiles(include, outDir)
       )
+    }
+
+    if (this.vite) {
+      const vite = this.getVite()
+
+      tasks.addPromise('Compiling static files using vite', async () => {
+        const defaultConfig = {
+          root: Path.pwd(),
+          assetsUrl: '/assets',
+          buildDirectory: 'public/assets',
+          logLevel: Config.get('rc.bootLogs', true) ? 'info' : 'silent',
+          build: {
+            assetsDir: '',
+            manifest: true,
+            emptyOutDir: true,
+            outDir: 'public/assets',
+            assetsInlineLimit: 0,
+            rollupOptions: {
+              output: {
+                entryFileNames: '[name].js',
+                chunkFileNames: '[name].js',
+                assetFileNames: '[name].[ext]'
+              },
+              input: ['src/resources/css/app.scss', 'src/resources/js/app.js']
+            }
+          }
+        }
+
+        const { config: fileConfig } = await vite.loadConfigFromFile(
+          {
+            command: 'build',
+            mode: 'production'
+          },
+          undefined,
+          Path.pwd()
+        )
+
+        const config = vite.mergeConfig(defaultConfig, fileConfig)
+
+        return vite.build(config)
+      })
     }
 
     await tasks.run()
@@ -83,5 +131,11 @@ export class BuildCommand extends BaseCommand {
     }
 
     return Path.pwd(Config.get('rc.commands.build.outDir'))
+  }
+
+  public getVite() {
+    const require = Module.createRequire(import.meta.url)
+
+    return require('vite')
   }
 }
