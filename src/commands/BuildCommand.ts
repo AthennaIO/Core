@@ -71,42 +71,14 @@ export class BuildCommand extends BaseCommand {
     if (this.vite) {
       const vite = this.getVite()
 
-      tasks.addPromise('Compiling static files using vite', async () => {
-        const defaultConfig = {
-          root: Path.pwd(),
-          assetsUrl: '/assets',
-          buildDirectory: 'public/assets',
-          logLevel: Config.get('rc.bootLogs', true) ? 'info' : 'silent',
-          build: {
-            assetsDir: '',
-            manifest: true,
-            emptyOutDir: true,
-            outDir: 'public/assets',
-            assetsInlineLimit: 0,
-            rollupOptions: {
-              output: {
-                entryFileNames: '[name].js',
-                chunkFileNames: '[name].js',
-                assetFileNames: '[name].[ext]'
-              },
-              input: ['src/resources/css/app.scss', 'src/resources/js/app.js']
-            }
-          }
+      tasks.addPromise(
+        `Compiling static files using ${Color.yellow.bold('vite')}`,
+        async () => {
+          const config = await this.getViteConfig(vite)
+
+          return vite.build(config)
         }
-
-        const { config: fileConfig } = await vite.loadConfigFromFile(
-          {
-            command: 'build',
-            mode: 'production'
-          },
-          undefined,
-          Path.pwd()
-        )
-
-        const config = vite.mergeConfig(defaultConfig, fileConfig)
-
-        return vite.build(config)
-      })
+      )
     }
 
     await tasks.run()
@@ -137,5 +109,49 @@ export class BuildCommand extends BaseCommand {
     const require = Module.createRequire(import.meta.url)
 
     return require('vite')
+  }
+
+  public async getViteConfig(vite: any) {
+    const defaultConfig = {
+      root: Path.pwd(),
+      assetsUrl: '/assets',
+      buildDirectory: 'public/assets',
+      logLevel: 'silent',
+      css: {
+        preprocessorOptions: {
+          scss: {
+            api: 'modern'
+          }
+        }
+      },
+      build: {
+        assetsDir: '',
+        manifest: true,
+        emptyOutDir: true,
+        outDir: 'public/assets',
+        assetsInlineLimit: 0,
+        rollupOptions: {
+          output: {
+            entryFileNames: '[name].js',
+            chunkFileNames: '[name].js',
+            assetFileNames: '[name].[ext]'
+          }
+        }
+      }
+    }
+
+    const { config: fileConfig } = await vite.loadConfigFromFile(
+      {
+        command: 'build',
+        mode: 'development'
+      },
+      undefined,
+      Path.pwd()
+    )
+
+    const config = vite.mergeConfig(defaultConfig, fileConfig)
+    await vite.build(config)
+
+    return config
   }
 }
