@@ -34,6 +34,10 @@ export class Http {
 
     ioc.safeUse('Athenna/Core/HttpRoute').register()
 
+    if (process.argv.includes('--vite')) {
+      await server.viteReady()
+    }
+
     await server.listen({ host: options.host, port: options.port })
 
     if (Config.notExists('rc.bootLogs') || Config.is('rc.bootLogs', false)) {
@@ -79,6 +83,7 @@ export class Http {
     await kernel.registerHelmet()
     await kernel.registerStatic()
     await kernel.registerSwagger()
+    await kernel.registerVite()
     await kernel.registerRateLimit()
     await kernel.registerRTracer(options.trace)
     await kernel.registerLoggerTerminator()
