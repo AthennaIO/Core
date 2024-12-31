@@ -82,10 +82,10 @@
   },
   "devDependencies": {
     "@athenna/artisan": "^5.3.0",
-    "@athenna/common": "^5.3.0",
+    "@athenna/common": "^5.5.0",
     "@athenna/config": "^5.1.0",
     "@athenna/cron": "^5.4.0",
-    "@athenna/http": "^5.7.0",
+    "@athenna/http": "^5.10.0",
     "@athenna/ioc": "^5.0.0",
     "@athenna/logger": "^5.1.0",
     "@athenna/test": "^5.2.0",

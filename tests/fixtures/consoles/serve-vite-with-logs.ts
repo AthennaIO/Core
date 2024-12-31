@@ -7,12 +7,10 @@
  * file that was distributed with this source code.
  */
 
-import { Mock } from '@athenna/test'
 import { Path } from '@athenna/common'
 import { ViewProvider } from '@athenna/view'
 import { Rc, Config } from '@athenna/config'
 import { LoggerProvider } from '@athenna/logger'
-import { ServeCommand } from '#src/commands/ServeCommand'
 import { Artisan, ConsoleKernel, ArtisanProvider } from '@athenna/artisan'
 
 new ViewProvider().register()
@@ -27,29 +25,6 @@ Path.mergeDirs(Config.get('rc.directories', {}))
 
 await new ConsoleKernel().registerCommands()
 
-const vite = function () {
-  return Mock.fake()
-}
-
-vite.loadConfigFromFile = function () {
-  return { config: {} }
-}
-
-vite.mergeConfig = function () {
-  return {}
-}
-
-vite.build = function () {
-  return this
-}
-
-const vitePluginRestart = function () {
-  return Mock.fake()
-}
-
 Config.set('rc.bootLogs', true)
-
-Mock.when(ServeCommand.prototype, 'getVite').return(vite)
-Mock.when(ServeCommand.prototype, 'getVitePluginRestart').return(vitePluginRestart)
 
 await Artisan.parse(process.argv)
