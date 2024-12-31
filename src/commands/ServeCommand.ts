@@ -44,17 +44,23 @@ export class ServeCommand extends BaseCommand {
 
     if (this.watch) {
       const nodemon = this.getNodemon()
+      const nodeArgs = []
+
+      if (this.vite) {
+        nodeArgs.push('--vite')
+      }
 
       nodemon({
         script: entrypoint.replace('.ts', '.js'),
+        args: nodeArgs,
         ignore: [
           '.git',
           '.github',
           '.idea',
           '.vscode',
           '.fleet',
-          Path.public(),
-          Path.resources('**/.edge'),
+          'public',
+          '*.edge',
           'node_modules/**/node_modules'
         ],
         watch: [
