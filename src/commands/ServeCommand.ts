@@ -53,7 +53,8 @@ export class ServeCommand extends BaseCommand {
           '.idea',
           '.vscode',
           '.fleet',
-          'public',
+          Path.public(),
+          Path.resources('**/.edge'),
           'node_modules/**/node_modules'
         ],
         watch: [
