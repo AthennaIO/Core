@@ -35,10 +35,6 @@ vite.loadConfigFromFile = function () {
   return { config: {} }
 }
 
-vite.mergeConfig = function () {
-  return {}
-}
-
 vite.build = function () {
   return this
 }

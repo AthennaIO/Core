@@ -110,45 +110,14 @@ export class BuildCommand extends BaseCommand {
   }
 
   public async getViteConfig(vite: any) {
-    const defaultConfig = {
-      root: Path.pwd(),
-      assetsUrl: '/assets',
-      buildDirectory: 'public/assets',
-      logLevel: 'silent',
-      css: {
-        preprocessorOptions: {
-          scss: {
-            api: 'modern'
-          }
-        }
-      },
-      build: {
-        assetsDir: '',
-        manifest: true,
-        emptyOutDir: true,
-        outDir: 'public/assets',
-        assetsInlineLimit: 0,
-        rollupOptions: {
-          output: {
-            entryFileNames: '[name].js',
-            chunkFileNames: '[name].js',
-            assetFileNames: '[name].[ext]'
-          }
-        }
-      }
-    }
-
-    const { config: fileConfig } = await vite.loadConfigFromFile(
+    const { config } = await vite.loadConfigFromFile(
       {
         command: 'build',
-        mode: 'development'
+        mode: 'production'
       },
       undefined,
       Path.pwd()
     )
-
-    const config = vite.mergeConfig(defaultConfig, fileConfig)
-    await vite.build(config)
 
     return config
   }

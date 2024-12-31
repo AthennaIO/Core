@@ -22,7 +22,8 @@ export class ServeCommand extends BaseCommand {
 
   @Option({
     signature: '-v, --vite',
-    description: 'Use vite to build your application static files.',
+    description:
+      'Turn on vite dev server for HMR and static files compilation.',
     default: false
   })
   public vite: boolean
@@ -40,24 +41,6 @@ export class ServeCommand extends BaseCommand {
       'rc.commands.serve.entrypoint',
       Path.bin(`main.${Path.ext()}`)
     )
-
-    if (this.vite) {
-      const formerNodeEnv = Env('NODE_ENV')
-
-      const vite = await this.getVite()
-      const config = await this.getViteConfig(vite)
-
-      await vite.build(config)
-
-      Log.channelOrVanilla('application').success(
-        'Static files successfully compiled with ({yellow} vite)'
-      )
-
-      /**
-       * Vite changes NODE_ENV when building which we need to avoid.
-       */
-      process.env.NODE_ENV = formerNodeEnv
-    }
 
     if (this.watch) {
       const nodemon = this.getNodemon()
@@ -98,24 +81,6 @@ export class ServeCommand extends BaseCommand {
 
           console.clear()
 
-          if (this.vite) {
-            const formerNodeEnv = Env('NODE_ENV')
-
-            const vite = await this.getVite()
-            const config = await this.getViteConfig(vite)
-
-            await vite.build(config)
-
-            Log.channelOrVanilla('application').success(
-              'Static files successfully recompiled with ({yellow} vite)'
-            )
-
-            /**
-             * Vite changes NODE_ENV when building which we need to avoid.
-             */
-            process.env.NODE_ENV = formerNodeEnv
-          }
-
           Log.channelOrVanilla('application').success(
             'Application successfully restarted'
           )
@@ -134,53 +99,5 @@ export class ServeCommand extends BaseCommand {
     const require = Module.createRequire(import.meta.url)
 
     return require('nodemon')
-  }
-
-  public async getVite() {
-    return import('vite')
-  }
-
-  public async getViteConfig(vite: any) {
-    const defaultConfig = {
-      root: Path.pwd(),
-      assetsUrl: '/assets',
-      buildDirectory: 'public/assets',
-      logLevel: 'silent',
-      css: {
-        preprocessorOptions: {
-          scss: {
-            api: 'modern'
-          }
-        }
-      },
-      build: {
-        assetsDir: '',
-        manifest: true,
-        emptyOutDir: true,
-        outDir: 'public/assets',
-        assetsInlineLimit: 0,
-        rollupOptions: {
-          output: {
-            entryFileNames: '[name].js',
-            chunkFileNames: '[name].js',
-            assetFileNames: '[name].[ext]'
-          }
-        }
-      }
-    }
-
-    const { config: fileConfig } = await vite.loadConfigFromFile(
-      {
-        command: 'build',
-        mode: 'development'
-      },
-      undefined,
-      Path.pwd()
-    )
-
-    const config = vite.mergeConfig(defaultConfig, fileConfig)
-    await vite.build(config)
-
-    return config
   }
 }
