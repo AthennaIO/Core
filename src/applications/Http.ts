@@ -34,10 +34,7 @@ export class Http {
 
     ioc.safeUse('Athenna/Core/HttpRoute').register()
 
-    if (process.argv.includes('--vite')) {
-      await server.viteReady()
-    }
-
+    await server.viteReady()
     await server.listen({ host: options.host, port: options.port })
 
     if (Config.notExists('rc.bootLogs') || Config.is('rc.bootLogs', false)) {

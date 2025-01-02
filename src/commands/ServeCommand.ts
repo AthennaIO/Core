@@ -20,14 +20,6 @@ export class ServeCommand extends BaseCommand {
   })
   public watch: boolean
 
-  @Option({
-    signature: '-v, --vite',
-    description:
-      'Turn on vite dev server for HMR and static files compilation.',
-    default: false
-  })
-  public vite: boolean
-
   public static signature(): string {
     return 'serve'
   }
@@ -44,15 +36,9 @@ export class ServeCommand extends BaseCommand {
 
     if (this.watch) {
       const nodemon = this.getNodemon()
-      const nodeArgs = []
-
-      if (this.vite) {
-        nodeArgs.push('--vite')
-      }
 
       nodemon({
         script: entrypoint.replace('.ts', '.js'),
-        args: nodeArgs,
         ignore: [
           '.git',
           '.github',
@@ -61,6 +47,7 @@ export class ServeCommand extends BaseCommand {
           '.fleet',
           'public',
           '*.edge',
+          'vite.config.*',
           'node_modules/**/node_modules'
         ],
         watch: [
