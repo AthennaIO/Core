@@ -47,7 +47,7 @@ export class ServeCommand extends BaseCommand {
           '.fleet',
           'public',
           '*.edge',
-          'vite.config.*',
+          'vite.config.{js,ts,mjs}',
           'node_modules/**/node_modules'
         ],
         watch: [
