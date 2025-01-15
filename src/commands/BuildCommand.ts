@@ -72,6 +72,31 @@ export class BuildCommand extends BaseCommand {
           return vite.build(config)
         }
       )
+
+      if (Config.exists('http.vite.ssrEntrypoint')) {
+        tasks.addPromise(
+          `Compiling SSR entrypoint using ${Color.yellow.bold('vite')}`,
+          async () => {
+            const config = await this.getViteConfig(vite)
+
+            if (!config.build) {
+              config.build = {}
+            }
+
+            if (!config.build.rollupOptions) {
+              config.build.rollupOptions = {}
+            }
+
+            config.build.ssr = true
+            config.build.outDir = Config.get('http.vite.ssrBuildDirectory')
+            config.build.rollupOptions.input = Config.get(
+              'http.vite.ssrEntrypoint'
+            )
+
+            return vite.build(config)
+          }
+        )
+      }
     }
 
     if (include.length) {
