@@ -10,7 +10,7 @@
 import { parse } from 'node:path'
 import { debug } from '#src/debug'
 import { Log } from '@athenna/logger'
-import { Exec, Module } from '@athenna/common'
+import { Module } from '@athenna/common'
 import { ServiceProvider } from '@athenna/ioc'
 
 export class LoadHelper {
@@ -45,7 +45,7 @@ export class LoadHelper {
    * Execute the "boot" method of all the providers loaded.
    */
   public static async bootProviders(): Promise<void> {
-    await Exec.concurrently(this.providers, Provider => {
+    await this.providers.athenna.concurrently(Provider => {
       debug('running boot() method of provider %s.', Provider.name)
       return new Provider().boot() as Promise<void>
     })
@@ -55,7 +55,7 @@ export class LoadHelper {
    * Execute the "register" method of all the providers loaded.
    */
   public static async registerProviders(): Promise<void> {
-    await Exec.concurrently(this.providers, Provider => {
+    await this.providers.athenna.concurrently(Provider => {
       debug('running register() method of provider %s.', Provider.name)
       return new Provider().register() as Promise<void>
     })
@@ -65,7 +65,7 @@ export class LoadHelper {
    * Execute the "shutdown" method of all the providers loaded.
    */
   public static async shutdownProviders(): Promise<void> {
-    await Exec.concurrently(this.providers, Provider => {
+    await this.providers.athenna.concurrently(Provider => {
       debug('running shutdown() method of provider %s.', Provider.name)
 
       if (Config.is('rc.shutdownLogs', true)) {
@@ -82,7 +82,7 @@ export class LoadHelper {
    * Preload all the files inside "rc.preloads" configuration by importing.
    */
   public static async preloadFiles(): Promise<void> {
-    await Exec.concurrently(Config.get('rc.preloads', []), path => {
+    await Config.get<string[]>('rc.preloads', []).athenna.concurrently(path => {
       debug('preloading path %s.', path)
 
       if (this.alreadyPreloaded.includes(path)) {
@@ -96,7 +96,9 @@ export class LoadHelper {
         )
       }
 
-      return this.resolvePath(path).then(() => this.alreadyPreloaded.push(path))
+      return this.resolvePath(path).then(() =>
+        this.alreadyPreloaded.push(path)
+      ) as Promise<void>
     })
   }
 
@@ -105,8 +107,8 @@ export class LoadHelper {
    * the providers have the same value of "rc.s".
    */
   public static async loadBootableProviders(): Promise<void> {
-    const paths = Config.get('rc.providers', [])
-    const providers = await Exec.concurrently(paths, this.resolvePath)
+    const paths = Config.get<string[]>('rc.providers', [])
+    const providers = await paths.athenna.concurrently(this.resolvePath)
 
     this.providers = providers.filter(Provider => {
       debug('loading provider %s.', Provider.name)

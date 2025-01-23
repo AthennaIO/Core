@@ -26,11 +26,11 @@ import { CommanderHandler } from '@athenna/artisan'
 import { LoadHelper } from '#src/helpers/LoadHelper'
 import { Log, LoggerProvider } from '@athenna/logger'
 import { Repl as ReplApp } from '#src/applications/Repl'
-import { Is, Path, File, Module, Options } from '@athenna/common'
 import { parse as semverParse, satisfies as semverSatisfies } from 'semver'
+import { Is, Path, File, Module, Options, Macroable } from '@athenna/common'
 import { NotSatisfiedNodeVersion } from '#src/exceptions/NotSatisfiedNodeVersion'
 
-export class Ignite {
+export class Ignite extends Macroable {
   /**
    * The Athenna service provider instance (Ioc container).
    */
