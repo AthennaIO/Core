@@ -79,6 +79,7 @@ export class Http {
     await kernel.registerCors()
     await kernel.registerHelmet()
     await kernel.registerStatic()
+    await kernel.registerMultipart()
     await kernel.registerSwagger()
     await kernel.registerVite()
     await kernel.registerRateLimit()
