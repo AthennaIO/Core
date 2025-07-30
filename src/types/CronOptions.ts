@@ -9,13 +9,6 @@
 
 export type CronOptions = {
   /**
-   * Create a custom trace uuid to all new requests done to the server using AsyncLocalStorage.
-   *
-   * @default Config.get('cron.trace', false)
-   */
-  trace?: boolean
-
-  /**
    * The path to the cron routes.
    *
    * @default Path.routes(`cron.${Path.ext()}`)
