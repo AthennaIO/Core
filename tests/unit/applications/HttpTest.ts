@@ -12,8 +12,8 @@ import { Path } from '@athenna/common'
 import { Http } from '#src/applications/Http'
 import { CommanderHandler } from '@athenna/artisan'
 import { Log, LoggerProvider } from '@athenna/logger'
+import { HttpServerProvider, HttpRouteProvider, Server } from '@athenna/http'
 import { Test, type Context, BeforeEach, AfterEach, Mock } from '@athenna/test'
-import { HttpServerProvider, HttpRouteProvider, Server, HttpKernel } from '@athenna/http'
 
 export default class HttpTest {
   @BeforeEach()
@@ -80,17 +80,6 @@ export default class HttpTest {
 
     assert.calledOnceWith(Log.info, 'importing CustomHttpExceptionHandler')
     assert.calledOnceWith(Server.listen, { host: '127.0.0.1', port: 3000 })
-  }
-
-  @Test()
-  public async shouldBeAbleToBootAHttpApplicationWithTracingPluginRegistered({ assert }: Context) {
-    Mock.when(HttpKernel.prototype, 'registerRTracer').resolve(undefined)
-    Server.when('listen').resolve(undefined)
-
-    await Http.boot({ trace: true })
-
-    assert.calledOnceWith(Server.listen, { host: '127.0.0.1', port: 3000 })
-    assert.calledOnceWith(HttpKernel.prototype.registerRTracer, true)
   }
 
   @Test()

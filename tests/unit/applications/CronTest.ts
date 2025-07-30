@@ -12,8 +12,8 @@ import { Path } from '@athenna/common'
 import { Cron } from '#src/applications/Cron'
 import { CommanderHandler } from '@athenna/artisan'
 import { Log, LoggerProvider } from '@athenna/logger'
+import { Cron as CronFacade, CronProvider, CronBuilder } from '@athenna/cron'
 import { Test, type Context, BeforeEach, AfterEach, Mock } from '@athenna/test'
-import { Cron as CronFacade, CronProvider, CronKernel, CronBuilder } from '@athenna/cron'
 
 export default class CronTest {
   private cronBuilder: CronBuilder
@@ -61,15 +61,6 @@ export default class CronTest {
     await Cron.boot({ exceptionHandlerPath: Path.fixtures('handlers/CustomCronExceptionHandler.ts') })
 
     assert.calledOnceWith(Log.info, 'importing CustomCronExceptionHandler')
-  }
-
-  @Test()
-  public async shouldBeAbleToBootACronApplicationWithTracingPluginRegistered({ assert }: Context) {
-    Mock.when(CronKernel.prototype, 'registerRTracer').resolve(undefined)
-
-    await Cron.boot({ trace: true })
-
-    assert.calledOnceWith(CronKernel.prototype.registerRTracer, true)
   }
 
   @Test()

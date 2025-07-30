@@ -19,7 +19,6 @@ export class Cron {
    */
   public static async boot(options?: CronOptions): Promise<CronImpl> {
     options = Options.create(options, {
-      trace: Config.get('cron.trace', false),
       routePath: Path.routes(`cron.${Path.ext()}`),
       kernelPath: '@athenna/cron/kernels/CronKernel'
     })
@@ -53,7 +52,7 @@ export class Cron {
 
     const kernel = new Kernel()
 
-    await kernel.registerRTracer(options.trace)
+    await kernel.registerRTracer()
     await kernel.registerExceptionHandler(options.exceptionHandlerPath)
     await kernel.registerSchedulers()
     await kernel.registerRoutes(options.routePath)
