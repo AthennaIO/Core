@@ -483,27 +483,13 @@ export class Ignite extends Macroable {
       error = error.toAthennaException()
     }
 
-    const isUsingJsonFormatter = Config.is(
-      'logging.channels.exception.formatter',
-      'json'
-    )
+    if (Config.is('app.logger.prettifyException', true)) {
+      await Log.channelOrVanilla('exception').fatal(await error.prettify())
 
-    if (isUsingJsonFormatter) {
-      await Log.channelOrVanilla('exception').fatal({
-        name: error.name,
-        code: error.code,
-        status: error.status,
-        message: error.message,
-        help: error.help,
-        cause: error.cause,
-        details: error.details,
-        stack: error.stack
-      })
-
-      return
+      process.exit(1)
     }
 
-    await Log.channelOrVanilla('exception').fatal(await error.prettify())
+    await Log.channelOrVanilla('exception').fatal(error)
 
     process.exit(1)
   }
