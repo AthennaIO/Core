@@ -19,8 +19,11 @@ export class Cron {
    */
   public static async boot(options?: CronOptions): Promise<CronImpl> {
     options = Options.create(options, {
-      routePath: Path.routes(`cron.${Path.ext()}`),
-      kernelPath: '@athenna/cron/kernels/CronKernel'
+      routePath: Config.get('rc.cron.route', Path.routes(`cron.${Path.ext()}`)),
+      kernelPath: Config.get(
+        'rc.cron.kernel',
+        '@athenna/cron/kernels/CronKernel'
+      )
     })
 
     const cron = ioc.safeUse('Athenna/Core/Cron')

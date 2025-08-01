@@ -23,8 +23,14 @@ export class Console {
   ): Promise<ArtisanImpl> {
     options = Options.create(options, {
       displayName: null,
-      routePath: Path.routes(`console.${Path.ext()}`),
-      kernelPath: '@athenna/artisan/kernels/ConsoleKernel'
+      routePath: Config.get(
+        'rc.console.route',
+        Path.routes(`console.${Path.ext()}`)
+      ),
+      kernelPath: Config.get(
+        'rc.console.kernel',
+        '@athenna/artisan/kernels/ConsoleKernel'
+      )
     })
 
     const artisan = ioc.safeUse('Athenna/Core/Artisan')
