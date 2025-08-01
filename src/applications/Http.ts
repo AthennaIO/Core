@@ -21,8 +21,11 @@ export class Http {
     options = Options.create(options, {
       host: Config.get('http.host', '127.0.0.1'),
       port: Config.get('http.port', 3000),
-      routePath: Path.routes(`http.${Path.ext()}`),
-      kernelPath: '@athenna/http/kernels/HttpKernel'
+      routePath: Config.get('rc.http.route', Path.routes(`http.${Path.ext()}`)),
+      kernelPath: Config.get(
+        'rc.http.kernel',
+        '@athenna/http/kernels/HttpKernel'
+      )
     })
 
     const server = ioc.safeUse('Athenna/Core/HttpServer')
