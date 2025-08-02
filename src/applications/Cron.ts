@@ -55,6 +55,7 @@ export class Cron {
 
     const kernel = new Kernel()
 
+    await kernel.registerLogger()
     await kernel.registerRTracer()
     await kernel.registerExceptionHandler(options.exceptionHandlerPath)
     await kernel.registerSchedulers()
