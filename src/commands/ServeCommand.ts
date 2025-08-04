@@ -46,6 +46,7 @@ export class ServeCommand extends BaseCommand {
           '.vscode',
           '.fleet',
           'public',
+          'resources',
           'src/resources/**/*',
           'vite.config.{js,ts,mjs}',
           'node_modules/**/node_modules'
