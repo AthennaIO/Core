@@ -12,7 +12,7 @@ import { Log } from '@athenna/logger'
 import type { ServerImpl } from '@athenna/http'
 import type { HttpOptions } from '#src/types/HttpOptions'
 import { Is, Path, Module, Options } from '@athenna/common'
-import type { Handler as AWSLambdaHandler } from 'aws-lambda'
+import type { AWSLambdaHandler } from '#src/types/AWSLambdaHandler'
 
 export class Http {
   /**
