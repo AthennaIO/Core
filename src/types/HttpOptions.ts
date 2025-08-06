@@ -9,6 +9,14 @@
 
 export type HttpOptions = {
   /**
+   * Only initialize the server without booting it. Useful when you want to
+   * deploy your application in a serverless environment.
+   *
+   * @default false
+   */
+  initOnly?: boolean
+
+  /**
    * The host where the server will run. By default Athenna will read the "http.host" config
    * to get this information, but you can set here and subscribe this behavior.
    *

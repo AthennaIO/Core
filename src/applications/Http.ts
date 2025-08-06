@@ -15,10 +15,11 @@ import { Is, Path, Module, Options } from '@athenna/common'
 
 export class Http {
   /**
-   * Boot the Http application.
+   * Only initialize the server without booting it.
    */
-  public static async boot(options?: HttpOptions): Promise<ServerImpl> {
+  public static async init(options?: HttpOptions): Promise<ServerImpl> {
     options = Options.create(options, {
+      initOnly: false,
       host: Config.get('http.host', '127.0.0.1'),
       port: Config.get('http.port', 3000),
       routePath: Config.get('rc.http.route', Path.routes(`http.${Path.ext()}`)),
@@ -37,6 +38,20 @@ export class Http {
     ioc.safeUse('Athenna/Core/HttpRoute').register()
 
     await server.viteReady()
+
+    return server
+  }
+
+  /**
+   * Boot the Http application.
+   */
+  public static async boot(options?: HttpOptions): Promise<ServerImpl> {
+    const server = await this.init(options)
+
+    if (options.initOnly) {
+      return server
+    }
+
     await server.listen({ host: options.host, port: options.port })
 
     if (Config.notExists('rc.bootLogs') || Config.is('rc.bootLogs', false)) {
