@@ -136,7 +136,7 @@ export default class HttpTest {
     Server.when('listen').resolve(undefined)
 
     await Http.boot({ host: '::1' })
-    
+
     assert.calledOnceWith(Server.listen, { host: '::1', port: 3000 })
     assert.calledWith(successMock, 'Http server started on ({yellow} localhost:3000)')
     assert.calledWith(successMock, 'Kernel ({yellow} HttpKernel) successfully booted')

@@ -18,6 +18,7 @@ import type {
 import { Ioc } from '@athenna/ioc'
 import { Cron } from '#src/applications/Cron'
 import { Http } from '#src/applications/Http'
+import type { ServerImpl } from '@athenna/http'
 import { EnvHelper, Rc } from '@athenna/config'
 import { isAbsolute, resolve } from 'node:path'
 import type { ReplImpl } from '#src/repl/ReplImpl'
@@ -26,6 +27,7 @@ import { CommanderHandler } from '@athenna/artisan'
 import { LoadHelper } from '#src/helpers/LoadHelper'
 import { Log, LoggerProvider } from '@athenna/logger'
 import { Repl as ReplApp } from '#src/applications/Repl'
+import type { Handler as AWSLambdaHandler } from 'aws-lambda'
 import { parse as semverParse, satisfies as semverSatisfies } from 'semver'
 import { Is, Path, File, Module, Options, Macroable } from '@athenna/common'
 import { NotSatisfiedNodeVersion } from '#src/exceptions/NotSatisfiedNodeVersion'
@@ -134,10 +136,13 @@ export class Ignite extends Macroable {
     }
   }
 
+  public async httpServer(options: HttpOptions & { isAWSLambda: true }): Promise<AWSLambdaHandler>
+  public async httpServer(options?: HttpOptions): Promise<ServerImpl>
+
   /**
    * Ignite the Http server application.
    */
-  public async httpServer(options?: HttpOptions) {
+  public async httpServer(options?: HttpOptions): Promise<ServerImpl | AWSLambdaHandler> {
     try {
       this.options.environments.push('http')
 

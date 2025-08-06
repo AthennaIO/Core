@@ -32,13 +32,18 @@ export class Http {
     return server
   }
 
-  public static async boot(options: HttpOptions & { isAWSLambda: true }): Promise<AWSLambdaHandler>
+  public static async boot(
+    options: HttpOptions & { isAWSLambda: true }
+  ): Promise<AWSLambdaHandler>
+
   public static async boot(options?: HttpOptions): Promise<ServerImpl>
 
   /**
    * Boot the Http application.
    */
-  public static async boot(options?: HttpOptions): Promise<ServerImpl | AWSLambdaHandler> {
+  public static async boot(
+    options?: HttpOptions
+  ): Promise<ServerImpl | AWSLambdaHandler> {
     options = Options.create(options, {
       initOnly: false,
       isAWSLambda: false,
