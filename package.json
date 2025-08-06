@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "5.21.0",
+  "version": "5.22.0",
   "description": "One foundation for multiple applications.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -85,7 +85,7 @@
     "@athenna/common": "^5.14.0",
     "@athenna/config": "^5.4.0",
     "@athenna/cron": "^5.9.0",
-    "@athenna/http": "^5.34.0",
+    "@athenna/http": "^5.38.0",
     "@athenna/ioc": "^5.2.0",
     "@athenna/logger": "^5.8.0",
     "@athenna/test": "^5.5.0",

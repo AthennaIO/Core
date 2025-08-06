@@ -141,4 +141,15 @@ export default class HttpTest {
     assert.calledWith(successMock, 'Http server started on ({yellow} localhost:3000)')
     assert.calledWith(successMock, 'Kernel ({yellow} HttpKernel) successfully booted')
   }
+
+  @Test()
+  public async shouldThrowAnErrorWhenBootingAHttpApplicationToBeConsumedByAWSLambdaAndTheLibraryIsNotInstalled({
+    assert
+  }: Context) {
+    Config.set('rc.bootLogs', true)
+
+    assert.rejects(() => Http.boot({ isAWSLambda: true }), {
+      message: 'The library @fastify/aws-lambda is not installed'
+    })
+  }
 }

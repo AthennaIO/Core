@@ -17,6 +17,13 @@ export type HttpOptions = {
   initOnly?: boolean
 
   /**
+   * If true, the server will be initialized to be consumed by AWS Lambda.
+   *
+   * @default false
+   */
+  isAWSLambda?: boolean
+
+  /**
    * The host where the server will run. By default Athenna will read the "http.host" config
    * to get this information, but you can set here and subscribe this behavior.
    *

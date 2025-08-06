@@ -16,8 +16,6 @@ export default class BuildCommandTest extends BaseCommandTest {
   public async shouldBeAbleToBuildTheApplicationCode({ assert, command }: Context) {
     const output = await command.run('build')
 
-    console.log(output.output.stdout)
-    console.log(output.output.stderr)
     output.assertSucceeded()
     output.assertLogged('Application successfully compiled')
 
