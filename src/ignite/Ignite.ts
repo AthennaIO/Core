@@ -27,7 +27,7 @@ import { CommanderHandler } from '@athenna/artisan'
 import { LoadHelper } from '#src/helpers/LoadHelper'
 import { Log, LoggerProvider } from '@athenna/logger'
 import { Repl as ReplApp } from '#src/applications/Repl'
-import type { Handler as AWSLambdaHandler } from 'aws-lambda'
+import type { AWSLambdaHandler } from '#src/types/AWSLambdaHandler'
 import { parse as semverParse, satisfies as semverSatisfies } from 'semver'
 import { Is, Path, File, Module, Options, Macroable } from '@athenna/common'
 import { NotSatisfiedNodeVersion } from '#src/exceptions/NotSatisfiedNodeVersion'
@@ -136,13 +136,18 @@ export class Ignite extends Macroable {
     }
   }
 
-  public async httpServer(options: HttpOptions & { isAWSLambda: true }): Promise<AWSLambdaHandler>
+  public async httpServer(
+    options: HttpOptions & { isAWSLambda: true }
+  ): Promise<AWSLambdaHandler>
+
   public async httpServer(options?: HttpOptions): Promise<ServerImpl>
 
   /**
    * Ignite the Http server application.
    */
-  public async httpServer(options?: HttpOptions): Promise<ServerImpl | AWSLambdaHandler> {
+  public async httpServer(
+    options?: HttpOptions
+  ): Promise<ServerImpl | AWSLambdaHandler> {
     try {
       this.options.environments.push('http')
 
