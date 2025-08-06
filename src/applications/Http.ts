@@ -18,17 +18,6 @@ export class Http {
    * Only initialize the server without booting it.
    */
   public static async init(options?: HttpOptions): Promise<ServerImpl> {
-    options = Options.create(options, {
-      initOnly: false,
-      host: Config.get('http.host', '127.0.0.1'),
-      port: Config.get('http.port', 3000),
-      routePath: Config.get('rc.http.route', Path.routes(`http.${Path.ext()}`)),
-      kernelPath: Config.get(
-        'rc.http.kernel',
-        '@athenna/http/kernels/HttpKernel'
-      )
-    })
-
     const server = ioc.safeUse('Athenna/Core/HttpServer')
 
     debug('booting http application with options %o', options)
@@ -46,10 +35,26 @@ export class Http {
    * Boot the Http application.
    */
   public static async boot(options?: HttpOptions): Promise<ServerImpl> {
+    options = Options.create(options, {
+      initOnly: false,
+      isAWSLambda: false,
+      host: Config.get('http.host', '127.0.0.1'),
+      port: Config.get('http.port', 3000),
+      routePath: Config.get('rc.http.route', Path.routes(`http.${Path.ext()}`)),
+      kernelPath: Config.get(
+        'rc.http.kernel',
+        '@athenna/http/kernels/HttpKernel'
+      )
+    })
+
     const server = await this.init(options)
 
     if (options.initOnly) {
       return server
+    }
+
+    if (options.isAWSLambda) {
+      return this.resolveAWSLambdaProxy(server)
     }
 
     await server.listen({ host: options.host, port: options.port })
@@ -109,5 +114,22 @@ export class Http {
         `Kernel ({yellow} ${Kernel.name}) successfully booted`
       )
     }
+  }
+
+  /**
+   * Resolve the AWS Lambda proxy.
+   */
+  private static async resolveAWSLambdaProxy(server: ServerImpl) {
+    const awsLambda = await Module.safeImport('@athenna/http/awslambda')
+
+    if (awsLambda?.default) {
+      return awsLambda.default(server.fastify)
+    }
+
+    if (!awsLambda) {
+      throw new Error('The library @fastify/aws-lambda is not installed')
+    }
+
+    return awsLambda(server.fastify)
   }
 }
