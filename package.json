@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "5.25.0",
+  "version": "5.26.0",
   "description": "One foundation for multiple applications.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -88,6 +88,7 @@
     "@athenna/http": "^5.38.0",
     "@athenna/ioc": "^5.2.0",
     "@athenna/logger": "^5.8.0",
+    "@athenna/queue": "^5.11.0",
     "@athenna/test": "^5.5.0",
     "@athenna/tsconfig": "^5.0.0",
     "@athenna/view": "^5.4.0",
@@ -227,6 +228,9 @@
     "directories": {
       "bootstrap": "bin"
     },
+    "workers": [
+      "#tests/fixtures/workers/HelloWorker"
+    ],
     "schedulers": [
       "#tests/fixtures/schedulers/HelloScheduler"
     ],

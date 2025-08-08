@@ -11,8 +11,10 @@ import type {
   SemverNode,
   CronOptions,
   HttpOptions,
+  WorkerOptions,
   IgniteOptions,
-  ConsoleOptions
+  ConsoleOptions,
+  AWSLambdaHandler
 } from '#src/types'
 
 import { Ioc } from '@athenna/ioc'
@@ -21,13 +23,13 @@ import { Http } from '#src/applications/Http'
 import type { ServerImpl } from '@athenna/http'
 import { EnvHelper, Rc } from '@athenna/config'
 import { isAbsolute, resolve } from 'node:path'
+import { Worker } from '#src/applications/Worker'
 import type { ReplImpl } from '#src/repl/ReplImpl'
 import { Console } from '#src/applications/Console'
 import { CommanderHandler } from '@athenna/artisan'
 import { LoadHelper } from '#src/helpers/LoadHelper'
 import { Log, LoggerProvider } from '@athenna/logger'
 import { Repl as ReplApp } from '#src/applications/Repl'
-import type { AWSLambdaHandler } from '#src/types/AWSLambdaHandler'
 import { parse as semverParse, satisfies as semverSatisfies } from 'semver'
 import { Is, Path, File, Module, Options, Macroable } from '@athenna/common'
 import { NotSatisfiedNodeVersion } from '#src/exceptions/NotSatisfiedNodeVersion'
@@ -169,6 +171,21 @@ export class Ignite extends Macroable {
       await this.fire()
 
       return await Cron.boot(options)
+    } catch (err) {
+      await this.handleError(err)
+    }
+  }
+
+  /**
+   * Ignite the Worker application.
+   */
+  public async worker(options?: WorkerOptions) {
+    try {
+      this.options.environments.push('worker')
+
+      await this.fire()
+
+      return await Worker.boot(options)
     } catch (err) {
       await this.handleError(err)
     }
