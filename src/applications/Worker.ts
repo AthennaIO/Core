@@ -43,6 +43,8 @@ export class Worker {
       `Worker application successfully started`
     )
 
+    await worker.start()
+
     return worker
   }
 
