@@ -7,6 +7,8 @@
  * file that was distributed with this source code.
  */
 
+import sourceMapSupport from 'source-map-support'
+
 import type {
   SemverNode,
   CronOptions,
@@ -54,6 +56,16 @@ export class Ignite extends Macroable {
    * The Ignite options that will be used in "fire" method.
    */
   public options: IgniteOptions
+
+  /**
+   * Install source maps support if the --enable-source-maps
+   * flag is not set.
+   */
+  public installSourceMaps() {
+    if (!process.execArgv.includes('--enable-source-maps')) {
+      sourceMapSupport.install({ handleUncaughtExceptions: false })
+    }
+  }
 
   /**
    * Load the Ignite class using the options and meta url path.
