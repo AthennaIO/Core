@@ -65,6 +65,8 @@ export class Ignite extends Macroable {
     if (!process.execArgv.includes('--enable-source-maps')) {
       sourceMapSupport.install({ handleUncaughtExceptions: false })
     }
+
+    return this
   }
 
   /**
