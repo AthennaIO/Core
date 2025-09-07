@@ -9,6 +9,15 @@
 
 export type CronOptions = {
   /**
+   * Force ignite to fire. If running multiple applications, Athenna will
+   * fire Ignite only on the first application bootstrap. Use this option
+   * if you want to force the Ignite fire for a specific application.
+   *
+   * @default false
+   */
+  forceIgniteFire: boolean
+
+  /**
    * The path to the cron routes.
    *
    * @default Path.routes(`cron.${Path.ext()}`)

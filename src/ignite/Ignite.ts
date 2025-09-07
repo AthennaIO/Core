@@ -35,6 +35,7 @@ import { Repl as ReplApp } from '#src/applications/Repl'
 import { parse as semverParse, satisfies as semverSatisfies } from 'semver'
 import { Is, Path, File, Module, Options, Macroable } from '@athenna/common'
 import { NotSatisfiedNodeVersion } from '#src/exceptions/NotSatisfiedNodeVersion'
+import { debug } from '#src/debug/index'
 
 export class Ignite extends Macroable {
   /**
@@ -56,6 +57,11 @@ export class Ignite extends Macroable {
    * The Ignite options that will be used in "fire" method.
    */
   public options: IgniteOptions
+
+  /**
+   * Holds if Ignite has already been fired.
+   */
+  public hasFired: boolean = false
 
   /**
    * Install source maps support if the --enable-source-maps
@@ -167,7 +173,7 @@ export class Ignite extends Macroable {
     try {
       this.options.environments.push('http')
 
-      await this.fire()
+      await this.fire(options?.forceIgniteFire)
 
       return await Http.boot(options)
     } catch (err) {
@@ -182,7 +188,7 @@ export class Ignite extends Macroable {
     try {
       this.options.environments.push('cron')
 
-      await this.fire()
+      await this.fire(options?.forceIgniteFire)
 
       return await Cron.boot(options)
     } catch (err) {
@@ -197,7 +203,7 @@ export class Ignite extends Macroable {
     try {
       this.options.environments.push('worker')
 
-      await this.fire()
+      await this.fire(options?.forceIgniteFire)
 
       return await Worker.boot(options)
     } catch (err) {
@@ -209,7 +215,17 @@ export class Ignite extends Macroable {
    * Fire the application configuring the env variables file, configuration files
    * providers and preload files.
    */
-  public async fire() {
+  public async fire(forceIgniteFire?: boolean) {
+    if (this.hasFired && !forceIgniteFire) {
+      debug(
+        'application already fired. if you need to refire use forceIgniteFire option in your application bootstrap.'
+      )
+
+      return
+    }
+
+    this.hasFired = true
+
     try {
       this.setEnvVariablesFile()
       await this.setConfigurationFiles()
