@@ -9,6 +9,15 @@
 
 export type HttpOptions = {
   /**
+   * Force ignite to fire. If running multiple applications, Athenna will
+   * fire Ignite only on the first application bootstrap. Use this option
+   * if you want to force the Ignite fire for a specific application.
+   *
+   * @default false
+   */
+  forceIgniteFire: boolean
+
+  /**
    * Only initialize the server without booting it. Useful when you want to
    * deploy your application in a serverless environment.
    *
