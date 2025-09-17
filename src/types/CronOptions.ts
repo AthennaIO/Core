@@ -15,7 +15,7 @@ export type CronOptions = {
    *
    * @default false
    */
-  forceIgniteFire: boolean
+  forceIgniteFire?: boolean
 
   /**
    * The path to the cron routes.

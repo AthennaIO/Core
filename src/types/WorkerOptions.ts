@@ -15,7 +15,7 @@ export type WorkerOptions = {
    *
    * @default false
    */
-  forceIgniteFire: boolean
+  forceIgniteFire?: boolean
 
   /**
    * The path to the worker routes.

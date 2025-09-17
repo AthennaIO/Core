@@ -15,7 +15,7 @@ export type HttpOptions = {
    *
    * @default false
    */
-  forceIgniteFire: boolean
+  forceIgniteFire?: boolean
 
   /**
    * Only initialize the server without booting it. Useful when you want to
