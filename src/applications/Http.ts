@@ -50,7 +50,10 @@ export class Http {
       host: Config.get('http.host', '127.0.0.1'),
       port: Config.get('http.port', 3000),
       routePath: Config.get('rc.http.route', Path.routes(`http.${Path.ext()}`)),
-      mcpRoutePath: Config.get('rc.mcp.route', Path.routes(`mcp.${Path.ext()}`)),
+      mcpRoutePath: Config.get(
+        'rc.mcp.route',
+        Path.routes(`mcp.${Path.ext()}`)
+      ),
       kernelPath: Config.get(
         'rc.http.kernel',
         '@athenna/http/kernels/HttpKernel'
@@ -118,7 +121,7 @@ export class Http {
     await kernel.registerRTracer()
     await kernel.registerLoggerTerminator()
     await kernel.registerRoutes(options.routePath)
-    await kernel.registerMcpRoutes(options.mcpRoutePath)
+    await kernel.registerRoutes(options.mcpRoutePath)
 
     if (Config.is('rc.bootLogs', true)) {
       Log.channelOrVanilla('application').success(
