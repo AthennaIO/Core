@@ -68,13 +68,21 @@ export class LoadHelper {
     await this.providers.athenna.concurrently(Provider => {
       debug('running shutdown() method of provider %s.', Provider.name)
 
-      if (Config.is('rc.shutdownLogs', true)) {
+      const log = () => {
         Log.channelOrVanilla('application').success(
           `Provider ({yellow} ${Provider.name}) successfully shutdown`
         )
       }
 
-      return new Provider().shutdown() as Promise<void>
+      const shutdown = new Provider().shutdown() as Promise<void>
+
+      if (!shutdown?.then) {
+        log()
+
+        return
+      }
+
+      return shutdown.then(() => log())
     })
   }
 
