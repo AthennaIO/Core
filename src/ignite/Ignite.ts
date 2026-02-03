@@ -20,6 +20,7 @@ import type {
 } from '#src/types'
 
 import { Ioc } from '@athenna/ioc'
+import { debug } from '#src/debug'
 import { Cron } from '#src/applications/Cron'
 import { Http } from '#src/applications/Http'
 import type { ServerImpl } from '@athenna/http'
@@ -35,7 +36,6 @@ import { Repl as ReplApp } from '#src/applications/Repl'
 import { parse as semverParse, satisfies as semverSatisfies } from 'semver'
 import { Is, Path, File, Module, Options, Macroable } from '@athenna/common'
 import { NotSatisfiedNodeVersion } from '#src/exceptions/NotSatisfiedNodeVersion'
-import { debug } from '#src/debug/index'
 
 export class Ignite extends Macroable {
   /**
@@ -380,15 +380,13 @@ export class Ignite extends Macroable {
 
     if (!signals.SIGINT) {
       signals.SIGINT = () => {
-        process.exit()
+        process.exit(0)
       }
     }
 
     if (!signals.SIGTERM) {
-      signals.SIGTERM = signal => {
-        LoadHelper.shutdownProviders().then(() =>
-          process.kill(process.pid, signal)
-        )
+      signals.SIGTERM = () => {
+        LoadHelper.shutdownProviders().then(() => process.exit(0))
       }
     }
 
