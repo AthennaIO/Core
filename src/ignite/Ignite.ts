@@ -87,6 +87,7 @@ export class Ignite extends Macroable {
         bootLogs: true,
         shutdownLogs: true,
         environments: [],
+        exitOnError: true,
         loadConfigSafe: true,
         athennaRcPath: './.athennarc.json',
         uncaughtExceptionHandler: this.handleError
@@ -528,25 +529,62 @@ export class Ignite extends Macroable {
     if (process.versions.bun || (!Is.Error(error) && !Is.Exception(error))) {
       console.error(error)
 
-      /**
-       * Return is needed only for testing purposes.
-       */
-      return process.exit(1)
+      return this.safeExit(1)
     }
 
     if (!Is.Exception(error)) {
       error = error.toAthennaException()
     }
 
+    error.details.push({ isUncaughtError: false })
+
     if (Config.is('app.logger.prettifyException', true)) {
       await Log.channelOrVanilla('exception').fatal(await error.prettify())
 
-      process.exit(1)
+      return this.safeExit(1)
     }
 
     await Log.channelOrVanilla('exception').fatal(error)
 
-    process.exit(1)
+    return this.safeExit(1)
+  }
+
+  /**
+   * Handle an uncaught error turning it pretty and logging as fatal.
+   */
+  public async handleUncaughtError(error: any) {
+    if (process.versions.bun || (!Is.Error(error) && !Is.Exception(error))) {
+      console.error(error)
+
+      return this.safeExit(1)
+    }
+
+    if (!Is.Exception(error)) {
+      error = error.toAthennaException()
+    }
+    
+    error.details.push({ isUncaughtError: true })
+
+    if (Config.is('app.logger.prettifyException', true)) {
+      await Log.channelOrVanilla('exception').fatal(await error.prettify())
+
+      return this.safeExit(1)
+    }
+
+    await Log.channelOrVanilla('exception').fatal(error)
+
+    return this.safeExit(1)
+  }
+  
+  /**
+   * Exit the application only if the exitOnError option is true.
+   */
+  private safeExit(code: number): void {
+    if (!this.options.exitOnError) {
+      return
+    }
+
+    process.exit(code)
   }
 
   /**
