@@ -90,7 +90,7 @@ export class Ignite extends Macroable {
         exitOnError: true,
         loadConfigSafe: true,
         athennaRcPath: './.athennarc.json',
-        uncaughtExceptionHandler: this.handleError
+        uncaughtExceptionHandler: this.handleUncaughtError
       })
 
       this.setUncaughtExceptionHandler()
@@ -562,7 +562,7 @@ export class Ignite extends Macroable {
     if (!Is.Exception(error)) {
       error = error.toAthennaException()
     }
-    
+
     error.details.push({ isUncaughtError: true })
 
     if (Config.is('app.logger.prettifyException', true)) {
@@ -575,7 +575,7 @@ export class Ignite extends Macroable {
 
     return this.safeExit(1)
   }
-  
+
   /**
    * Exit the application only if the exitOnError option is true.
    */
