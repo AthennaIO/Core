@@ -9,6 +9,13 @@
 
 export type IgniteOptions = {
   /**
+   * Exit the application if an error occurs.
+   *
+   * @default true
+   */
+  exitOnError?: boolean
+
+  /**
    * Show boot logs of the application. If this option is true, Athenna
    * will log operations that are being executed to boot your application.
    *
