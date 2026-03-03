@@ -88,6 +88,7 @@ export class Ignite extends Macroable {
         shutdownLogs: true,
         environments: [],
         exitOnError: true,
+        exitOnUncaughtError: false,
         loadConfigSafe: true,
         athennaRcPath: './.athennarc.json',
         uncaughtExceptionHandler: this.handleUncaughtError
@@ -529,11 +530,15 @@ export class Ignite extends Macroable {
     if (process.versions.bun || (!Is.Error(error) && !Is.Exception(error))) {
       console.error(error)
 
-      return this.safeExit(1)
+      return this.safeExitOnError(1)
     }
 
     if (!Is.Exception(error)) {
       error = error.toAthennaException()
+    }
+    
+    if (!error.details) {
+      error.details = []
     }
 
     error.details.push({ isUncaughtError: false })
@@ -541,12 +546,12 @@ export class Ignite extends Macroable {
     if (Config.is('app.logger.prettifyException', true)) {
       await Log.channelOrVanilla('exception').fatal(await error.prettify())
 
-      return this.safeExit(1)
+      return this.safeExitOnError(1)
     }
 
     await Log.channelOrVanilla('exception').fatal(error)
 
-    return this.safeExit(1)
+    return this.safeExitOnError(1)
   }
 
   /**
@@ -556,11 +561,15 @@ export class Ignite extends Macroable {
     if (process.versions.bun || (!Is.Error(error) && !Is.Exception(error))) {
       console.error(error)
 
-      return this.safeExit(1)
+      return this.safeExitOnUncaughtError(1)
     }
 
     if (!Is.Exception(error)) {
       error = error.toAthennaException()
+    }
+
+    if (!error.details) {
+      error.details = []
     }
 
     error.details.push({ isUncaughtError: true })
@@ -568,19 +577,30 @@ export class Ignite extends Macroable {
     if (Config.is('app.logger.prettifyException', true)) {
       await Log.channelOrVanilla('exception').fatal(await error.prettify())
 
-      return this.safeExit(1)
+      return this.safeExitOnUncaughtError(1)
     }
 
     await Log.channelOrVanilla('exception').fatal(error)
 
-    return this.safeExit(1)
+    return this.safeExitOnUncaughtError(1)
   }
 
   /**
    * Exit the application only if the exitOnError option is true.
    */
-  private safeExit(code: number): void {
+  private safeExitOnError(code: number): void {
     if (!this.options.exitOnError) {
+      return
+    }
+
+    process.exit(code)
+  }
+
+  /**
+   * Exit the application only if the exitOnUncaughtError option is true.
+   */
+  private safeExitOnUncaughtError(code: number): void {
+    if (!this.options.exitOnUncaughtError) {
       return
     }
 
