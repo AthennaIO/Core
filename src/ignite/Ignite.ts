@@ -536,7 +536,7 @@ export class Ignite extends Macroable {
     if (!Is.Exception(error)) {
       error = error.toAthennaException()
     }
-    
+
     if (!error.details) {
       error.details = []
     }
