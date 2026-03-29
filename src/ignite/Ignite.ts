@@ -91,7 +91,7 @@ export class Ignite extends Macroable {
         exitOnUncaughtError: false,
         loadConfigSafe: true,
         athennaRcPath: './.athennarc.json',
-        uncaughtExceptionHandler: this.handleUncaughtError
+        uncaughtExceptionHandler: this.handleUncaughtError.bind(this)
       })
 
       this.setUncaughtExceptionHandler()
@@ -218,6 +218,8 @@ export class Ignite extends Macroable {
    * providers and preload files.
    */
   public async fire(forceIgniteFire?: boolean) {
+    Config.set('rc.environments', this.options.environments)
+
     if (this.hasFired && !forceIgniteFire) {
       debug(
         'application already fired. if you need to refire use forceIgniteFire option in your application bootstrap.'
@@ -232,7 +234,7 @@ export class Ignite extends Macroable {
       this.setEnvVariablesFile()
       await this.setConfigurationFiles()
 
-      Config.push('rc.environments', this.options.environments)
+      Config.set('rc.environments', this.options.environments)
 
       await LoadHelper.regootProviders()
       await LoadHelper.preloadFiles()
