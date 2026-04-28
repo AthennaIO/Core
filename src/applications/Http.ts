@@ -118,7 +118,6 @@ export class Http {
     await kernel.registerSwagger()
     await kernel.registerVite()
     await kernel.registerRateLimit()
-    await kernel.registerRTracer()
     await kernel.registerLoggerTerminator()
     await kernel.registerRoutes(options.routePath)
     await kernel.registerRoutes(options.mcpRoutePath)
