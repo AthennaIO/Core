@@ -61,7 +61,6 @@ export class Worker {
     const kernel = new Kernel()
 
     await kernel.registerLogger()
-    await kernel.registerRTracer()
     await kernel.registerWorkers()
     await kernel.registerRoutes(options.routePath)
 
