@@ -66,8 +66,8 @@ export class BuildCommand extends BaseCommand {
 
       tasks.addPromise(
         `Compiling static files using ${Color.yellow.bold('vite')}`,
-        async () => {
-          const config = await this.getViteConfig(vite)
+        () => {
+          const config = this.getViteConfig()
 
           return vite.build(config)
         }
@@ -76,8 +76,8 @@ export class BuildCommand extends BaseCommand {
       if (Config.exists('http.vite.ssrEntrypoint')) {
         tasks.addPromise(
           `Compiling SSR entrypoint using ${Color.yellow.bold('vite')}`,
-          async () => {
-            const config = await this.getViteConfig(vite)
+          () => {
+            const config = this.getViteConfig()
 
             if (!config.build) {
               config.build = {}
@@ -134,16 +134,10 @@ export class BuildCommand extends BaseCommand {
     return import('vite')
   }
 
-  public async getViteConfig(vite: any) {
-    const { config } = await vite.loadConfigFromFile(
-      {
-        command: 'build',
-        mode: 'production'
-      },
-      undefined,
-      Path.pwd()
-    )
-
-    return config
+  public getViteConfig(): Record<string, any> {
+    return {
+      root: Path.pwd(),
+      mode: 'production'
+    }
   }
 }
