@@ -55,16 +55,7 @@ export class LintCommand extends BaseCommand {
     const ESLint = await this.getESLint()
     const eslint = new ESLint({ cwd: Path.pwd(), fix: this.fix })
 
-    /**
-     * What gets linted and what gets ignored is defined by the ESLint
-     * configuration of the application, never here. Linting "." is what
-     * lets ESLint apply that configuration to the whole project, and it
-     * is the only default that behaves the same in both config modes:
-     * an empty list silently lints nothing in eslintrc mode.
-     */
-    const results = await eslint.lintFiles(
-      this.paths.length ? this.paths : ['.']
-    )
+    const results = await eslint.lintFiles(this.getPaths())
 
     if (this.fix) {
       await ESLint.outputFixes(results)
@@ -100,6 +91,25 @@ export class LintCommand extends BaseCommand {
     if (errors) {
       process.exitCode = 1
     }
+  }
+
+  /**
+   * Resolve what should be linted.
+   *
+   * The arguments of the command win, then the "commands.lint.files"
+   * setting, and only then the whole application.
+   *
+   * Linting the whole application depends on the ignore list of ESLint
+   * being complete: a build folder or a bundled asset left in it turns a
+   * fifteen second run into a several minute one. Narrowing the scope
+   * through the setting keeps that predictable.
+   */
+  public getPaths(): string[] {
+    if (this.paths.length) {
+      return this.paths
+    }
+
+    return Config.get('rc.commands.lint.files', ['.'])
   }
 
   /**

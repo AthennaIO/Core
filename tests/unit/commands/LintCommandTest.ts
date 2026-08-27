@@ -8,6 +8,7 @@
  */
 
 import { Path, File, Folder } from '@athenna/common'
+import { LintCommand } from '#src/commands/LintCommand'
 import { Test, AfterEach, type Context } from '@athenna/test'
 import { BaseCommandTest } from '#tests/helpers/BaseCommandTest'
 
@@ -71,5 +72,28 @@ export default class LintCommandTest extends BaseCommandTest {
 
     output.assertSucceeded()
     output.assertLogged('No lint problems found')
+  }
+
+  @Test()
+  public async shouldFallBackToTheFilesSettingWhenNoPathIsGiven({ assert }: Context) {
+    Config.set('rc.commands.lint.files', ['src/**/*.ts'])
+
+    const command = new LintCommand()
+
+    command.paths = []
+    assert.deepEqual(command.getPaths(), ['src/**/*.ts'])
+
+    command.paths = ['bin']
+    assert.deepEqual(command.getPaths(), ['bin'])
+  }
+
+  @Test()
+  public async shouldLintTheWholeApplicationWhenThereIsNoFilesSetting({ assert }: Context) {
+    Config.delete('rc.commands.lint.files')
+
+    const command = new LintCommand()
+
+    command.paths = []
+    assert.deepEqual(command.getPaths(), ['.'])
   }
 }

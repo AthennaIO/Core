@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "5.43.0",
+  "version": "5.44.0",
   "description": "One foundation for multiple applications.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -272,7 +272,10 @@
       },
       "lint": {
         "stayAlive": true,
-        "path": "#src/commands/LintCommand"
+        "path": "#src/commands/LintCommand",
+        "files": [
+          "{bin,src,tests}/**/*.ts"
+        ]
       },
       "install": {
         "path": "#src/commands/InstallCommand"
