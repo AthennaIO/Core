@@ -1,6 +1,6 @@
 {
   "name": "@athenna/core",
-  "version": "5.42.0",
+  "version": "5.43.0",
   "description": "One foundation for multiple applications.",
   "license": "MIT",
   "author": "João Lenon <lenon@athenna.io>",
@@ -60,6 +60,7 @@
     "./commands/ServeCommand": "./src/commands/ServeCommand.js",
     "./commands/TestCommand": "./src/commands/TestCommand.js",
     "./commands/BuildCommand": "./src/commands/BuildCommand.js",
+    "./commands/LintCommand": "./src/commands/LintCommand.js",
     "./commands/InstallCommand": "./src/commands/InstallCommand.js",
     "./testing/BaseHttpTest": "./src/testing/BaseHttpTest.js",
     "./testing/BaseCronTest": "./src/testing/BaseCronTest.js",
@@ -78,25 +79,25 @@
   },
   "dependencies": {
     "pretty-repl": "^3.1.2",
-    "semver": "^7.7.2"
+    "semver": "^7.8.5"
   },
   "devDependencies": {
-    "@athenna/artisan": "^5.7.0",
-    "@athenna/common": "^5.18.0",
-    "@athenna/config": "^5.4.0",
-    "@athenna/cron": "^5.10.0",
-    "@athenna/http": "^5.39.0",
-    "@athenna/ioc": "^5.2.0",
-    "@athenna/logger": "^5.10.0",
-    "@athenna/queue": "^5.13.0",
-    "@athenna/test": "^5.5.0",
-    "@athenna/tsconfig": "^5.0.0",
+    "@athenna/artisan": "^5.13.0",
+    "@athenna/common": "^5.34.0",
+    "@athenna/config": "^5.6.0",
+    "@athenna/cron": "^5.14.0",
+    "@athenna/http": "^5.63.0",
+    "@athenna/ioc": "^5.3.0",
+    "@athenna/logger": "^5.21.0",
+    "@athenna/queue": "^5.34.0",
+    "@athenna/test": "^5.8.0",
+    "@athenna/tsconfig": "^5.3.0",
     "@athenna/view": "^5.4.0",
-    "@types/aws-lambda": "^8.10.152",
+    "@types/aws-lambda": "^8.10.162",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "aws-lambda": "^1.0.7",
-    "commitizen": "^4.3.1",
+    "commitizen": "^4.3.2",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^8.10.2",
@@ -107,11 +108,11 @@
     "eslint-plugin-promise": "^6.6.0",
     "husky": "^3.1.0",
     "lint-staged": "^12.5.0",
-    "nodemon": "^3.1.10",
+    "nodemon": "^3.1.14",
     "prettier": "^2.8.8",
     "reflect-metadata": "^0.2.2",
     "source-map-support": "^0.5.21",
-    "vite": "^6.3.5"
+    "vite": "^6.4.3"
   },
   "c8": {
     "all": true,
@@ -268,6 +269,10 @@
         "path": "#src/commands/BuildCommand",
         "tsconfig": "./tests/fixtures/tsconfig.json",
         "outDir": "build"
+      },
+      "lint": {
+        "stayAlive": true,
+        "path": "#src/commands/LintCommand"
       },
       "install": {
         "path": "#src/commands/InstallCommand"
